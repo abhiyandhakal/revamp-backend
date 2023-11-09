@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { createYoga } from "graphql-yoga";
 import { schema } from "./schema";
+import { EnvelopArmor } from "@escape.tech/graphql-armor";
 
 // dotenv config
 import * as dotenv from "dotenv";
@@ -8,8 +9,17 @@ dotenv.config();
 
 const port: string = process.env?.PORT || "4000";
 
+// graphql armor
+const armor = new EnvelopArmor({
+	maxDepth: {
+		enabled: true,
+		n: 10,
+	},
+});
+const protection = armor.protect();
+
 // Create a Yoga instance with a GraphQL schema.
-const yoga = createYoga({ schema });
+const yoga = createYoga({ schema, plugins: [...protection.plugins] });
 
 // Pass it into a server to hook into request handlers.
 const server = createServer(yoga);
