@@ -1,4 +1,6 @@
 import { createSchema } from "graphql-yoga";
+import db from "../db";
+import { user } from "../db/schema/user";
 
 export const schema = createSchema({
 	typeDefs: /* GraphQL */ `
@@ -8,7 +10,10 @@ export const schema = createSchema({
 	`,
 	resolvers: {
 		Query: {
-			hello: () => "world",
+			hello: async () => {
+				const result = await db.select().from(user);
+				return JSON.stringify(result);
+			},
 		},
 	},
 });
