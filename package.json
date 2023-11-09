@@ -1,27 +1,33 @@
 {
-  "name": "revamp-backend",
-  "version": "1.0.0",
-  "description": "A backend for revamp",
-  "main": "dist/index.js",
-  "scripts": {
-    "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "start": "node ."
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
-    "eslint": "^8.53.0",
-    "nodemon": "^3.0.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "dotenv": "^16.3.1",
-    "graphql": "^16.8.1",
-    "graphql-yoga": "^5.0.0"
-  }
+	"name": "revamp-backend",
+	"version": "1.0.0",
+	"description": "A backend for revamp",
+	"main": "dist/index.js",
+	"scripts": {
+		"generate": "drizzle-kit generate:pg",
+		"push": "drizzle-kit push:pg",
+		"dev": "nodemon src/index.ts",
+		"build": "tsc",
+		"start": "node ."
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^6.10.0",
+		"@typescript-eslint/parser": "^6.10.0",
+		"drizzle-kit": "^0.19.13",
+		"eslint": "^8.53.0",
+		"nodemon": "^3.0.1",
+		"ts-node": "^10.9.1",
+		"typescript": "^5.2.2"
+	},
+	"dependencies": {
+		"dotenv": "^16.3.1",
+		"drizzle-orm": "^0.28.6",
+		"graphql": "^16.8.1",
+		"graphql-yoga": "^5.0.0",
+		"pg": "^8.11.3",
+		"postgres": "^3.4.3"
+	}
 }
