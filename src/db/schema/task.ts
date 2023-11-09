@@ -5,16 +5,19 @@ export const task = pgTable("task", {
 	taskId: serial("taskId").primaryKey(),
 	title: text("title").notNull(),
 	description: text("description"),
-	priority: text("priority").notNull(),
+	priority: text("priority"),
 	deadline: timestamp("deadline", { withTimezone: true }),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
-	goalId: integer("goalId").references(() => goal.goalId),
+	goalId: integer("goalId")
+		.references(() => goal.goalId)
+		.notNull(),
 });
 
 export const milestone = pgTable("milestone", {
 	milestoneId: serial("milestoneId").primaryKey(),
-	milestoneName: text("milestoneName").notNull(),
+	milestone: text("milestone").notNull(),
 	taskId: integer("taskId")
 		.notNull()
-		.references(() => task.taskId),
+		.references(() => task.taskId)
+		.notNull(),
 });

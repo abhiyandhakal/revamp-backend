@@ -5,7 +5,7 @@ export const goal = pgTable("goal", {
 	goalId: serial("goalId").primaryKey(),
 	title: text("title").notNull(),
 	description: text("description"),
-	priority: text("priority").notNull(),
+	priority: text("priority").default("medium"),
 	relatedArea: text("relatedArea").notNull(),
 	streak: integer("streak").notNull().default(0),
 	status: text("status").notNull().default("active"),

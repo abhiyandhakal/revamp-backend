@@ -3,8 +3,10 @@ import { task } from "./task";
 
 export const todo = pgTable("todo", {
 	todoId: serial("todoId").primaryKey(),
-	todoName: text("todoName").notNull(),
+	todo: text("todo").notNull(),
 	isDone: text("isDone").notNull().default("false"),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
-	taskId: integer("taskId").references(() => task.taskId),
+	taskId: integer("taskId")
+		.references(() => task.taskId)
+		.notNull(),
 });
