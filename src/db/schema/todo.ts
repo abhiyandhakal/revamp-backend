@@ -6,6 +6,7 @@ export const todo = pgTable("todo", {
 	todo: text("todo").notNull(),
 	isDone: text("isDone").notNull().default("false"),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+	order: serial("order"),
 	taskId: integer("taskId")
 		.references(() => task.taskId)
 		.notNull(),

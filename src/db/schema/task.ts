@@ -8,6 +8,7 @@ export const task = pgTable("task", {
 	priority: text("priority"),
 	deadline: timestamp("deadline", { withTimezone: true }),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+	order: serial("order"),
 	goalId: integer("goalId")
 		.references(() => goal.goalId)
 		.notNull(),
