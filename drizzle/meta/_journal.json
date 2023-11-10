@@ -15,6 +15,20 @@
       "when": 1699546276171,
       "tag": "0001_known_snowbird",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1699593087305,
+      "tag": "0002_dapper_thundra",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1699593774458,
+      "tag": "0003_amusing_warhawk",
+      "breakpoints": true
     }
   ]
 }

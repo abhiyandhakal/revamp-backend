@@ -6,7 +6,7 @@ export const goal = pgTable("goal", {
 	title: text("title").notNull(),
 	description: text("description"),
 	priority: text("priority").default("medium"),
-	relatedArea: text("relatedArea").notNull(),
+	relatedArea: text("relatedArea"),
 	streak: integer("streak").notNull().default(0),
 	status: text("status").notNull().default("active"),
 	deadline: timestamp("deadline", { withTimezone: true }),
