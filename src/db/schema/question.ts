@@ -3,7 +3,6 @@ import { pgTable, serial, text } from "drizzle-orm/pg-core";
 export const question = pgTable("question", {
 	questionId: serial("questionId").primaryKey(),
 	question: text("question").notNull(),
-	answer: text("answer").notNull(),
 });
 
 export const option = pgTable("option", {
