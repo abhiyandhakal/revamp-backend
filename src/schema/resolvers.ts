@@ -1,18 +1,23 @@
+import clerkClient from "@clerk/clerk-sdk-node";
 import { Resolvers } from "../generated/graphql";
 
 const resolvers: Resolvers = {
 	Query: {
 		getUsers: async () => {
-			return [
-				{
-					id: "1",
-					name: "John",
-					email: "test@john.com",
+			const users = await clerkClient.users.getUserList();
+
+			const trimmedUsers = users.map(user => {
+				return {
+					id: user.id,
+					name: `${user.firstName} ${user.lastName}`,
+					email: user.emailAddresses[0].emailAddress,
 					password: "test",
-					createdAt: new Date().toISOString(),
-					updatedAt: new Date().toISOString(),
-				},
-			];
+					createdAt: user.createdAt.toString(),
+					updatedAt: user.updatedAt.toString(),
+				};
+			});
+
+			return trimmedUsers;
 		},
 	},
 };
