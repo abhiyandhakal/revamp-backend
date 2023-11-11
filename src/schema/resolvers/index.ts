@@ -1,5 +1,5 @@
 import clerkClient from "@clerk/clerk-sdk-node";
-import { Resolvers } from "../generated/graphql";
+import { Resolvers } from "../../generated/graphql";
 
 const resolvers: Resolvers = {
 	Query: {
