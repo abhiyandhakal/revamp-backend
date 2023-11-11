@@ -1,10 +1,44 @@
+type Pausetime {
+	pausetimeId: ID!
+	pauseTime: Timestamp!
+}
+
+type Resumetime {
+	resumetimeId: ID!
+	resumeTime: Timestamp!
+}
+
+type TimeDuration {
+	days: Int!
+	hours: Int!
+	minutes: Int!
+	seconds: Int!
+}
+
+type Timelapse {
+	timelapseId: ID!
+	startTime: Timestamp!
+	endTime: Timestamp
+	duration: TimeDuration
+	pausetimes: [Pausetime]
+	resumetimes: [Resumetime]
+}
+
+type UserEmailAddress {
+	emailAddress: EmailAddress!
+	verified: Boolean!
+	isPrimary: Boolean!
+}
+
 type User {
 	id: ID!
-	name: String!
-	email: String!
-	password: String!
-	createdAt: String!
-	updatedAt: String!
+	firstName: String!
+	lastName: String!
+	username: String!
+	imageUrl: URL!
+	banned: Boolean!
+	createdAt: Timestamp!
+	updatedAt: Timestamp!
 }
 
 type Query {
