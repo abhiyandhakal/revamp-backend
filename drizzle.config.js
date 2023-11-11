@@ -1,12 +1,11 @@
-import type { Config } from "drizzle-kit";
-import * as dotenv from "dotenv";
-dotenv.config();
+require("dotenv").config();
 
-export default {
+/** @type { import("drizzle-kit").Config } */
+module.exports = {
 	schema: "./src/db/schema",
 	out: "./drizzle",
 	driver: "pg",
 	dbCredentials: {
 		connectionString: process.env.DB_URL || "",
 	},
-} satisfies Config;
+};
