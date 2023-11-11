@@ -1,20 +1,11 @@
 import { createSchema } from "graphql-yoga";
-import clerkClient from "@clerk/clerk-sdk-node";
+import path from "path";
+import fs from "fs";
+import resolvers from "./resolvers";
+
+const typeDefs = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf8");
 
 export const schema = createSchema({
-	typeDefs: /* GraphQL */ `
-		type Query {
-			hello: String
-		}
-	`,
-	resolvers: {
-		Query: {
-			hello: async () => {
-				const userList = await clerkClient.users.getUserList();
-				const sessions = await clerkClient.sessions.getSessionList();
-				console.log(sessions);
-				return JSON.stringify(userList);
-			},
-		},
-	},
+	typeDefs,
+	resolvers,
 });

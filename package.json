@@ -8,19 +8,23 @@
 		"push": "drizzle-kit push:pg",
 		"dev": "nodemon src/index.ts",
 		"build": "tsc",
-		"start": "node ."
+		"start": "node .",
+		"codegen": "graphql-codegen --config codegen.ts"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
+		"@graphql-codegen/cli": "5.0.0",
 		"@typescript-eslint/eslint-plugin": "^6.10.0",
 		"@typescript-eslint/parser": "^6.10.0",
 		"drizzle-kit": "^0.19.13",
 		"eslint": "^8.53.0",
 		"nodemon": "^3.0.1",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.2.2"
+		"typescript": "^5.2.2",
+		"@graphql-codegen/typescript": "4.0.1",
+		"@graphql-codegen/typescript-resolvers": "4.0.1"
 	},
 	"dependencies": {
 		"@clerk/clerk-sdk-node": "^4.12.20",
