@@ -1,16 +1,26 @@
+import clerkClient from "@clerk/clerk-sdk-node";
 import { shield, rule } from "graphql-shield";
 import { YogaInitialContext } from "graphql-yoga";
 
 const isAuthenticated = rule()(async (_, __, context: YogaInitialContext) => {
-	console.log(context.request.headers);
+	const sessionId = context.request.headers.get("authorization")?.split(" ")[1];
+	if (!sessionId) return false;
+
+	const session = await clerkClient.sessions.getSession(sessionId);
+	if (!session) return false;
 
 	return true;
 });
 
-const permissions = shield({
-	Query: {
-		"*": isAuthenticated,
+const permissions = shield(
+	{
+		Query: {
+			"*": isAuthenticated,
+		},
 	},
-});
+	{
+		fallbackError: new Error("Unauthorized"),
+	},
+);
 
 export default permissions;
