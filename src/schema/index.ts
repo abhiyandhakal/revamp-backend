@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import resolvers from "./resolvers";
 
-const typeDefs = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf8");
+const typeDefs = fs.readFileSync(path.join("./graphql/schema.graphql"), "utf8");
 
 export const schema = createSchema({
 	typeDefs,
