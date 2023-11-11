@@ -1,9 +1,6 @@
-const { Config } = require("drizzle-kit");
 require("dotenv").config();
 
-/*
- * @type {Config}
- */
+/** @type { import("drizzle-kit").Config } */
 module.exports = {
 	schema: "./src/db/schema",
 	out: "./drizzle",
