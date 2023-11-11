@@ -24,10 +24,106 @@ type Timelapse {
 	resumetimes: [Resumetime]
 }
 
+type Todo {
+	todoId: ID!
+	todo: String!
+	order: Int!
+	isDone: Boolean!
+	createdAt: Timestamp!
+	updatedAt: Timestamp
+	timelapsed: Timelapse
+}
+
+type Task {
+	taskId: ID!
+	title: String!
+	description: String!
+	priority: Int!
+	order: Int!
+	deadline: Timestamp!
+	isDone: Boolean!
+	createdAt: Timestamp!
+	updatedAt: Timestamp!
+	streak: Int!
+	todos: [Todo]
+	timelapsed: Timelapse
+}
+
+type GoalQna {
+	goalQnaId: ID!
+	question: String!
+	answer: String!
+}
+
+type Goal {
+	goalId: ID!
+	title: String!
+	description: String!
+	priority: Int!
+	relatedArea: [String]
+	order: Int!
+	streak: Int!
+	status: String!
+	deadline: Timestamp!
+	isDone: Boolean!
+	createdAt: Timestamp!
+	updatedAt: Timestamp!
+	tasks: [Task!]!
+	goalQnas: [GoalQna]
+}
+
+type Tag {
+	tagId: ID!
+	tag: String!
+}
+
+type Aspect {
+	aspectId: ID!
+	aspect: String!
+	tags: [Tag!]!
+}
+
+type Question {
+	questionId: ID!
+	question: String!
+	options: [String!]!
+}
+
 type UserEmailAddress {
 	emailAddress: EmailAddress!
 	verified: Boolean!
 	isPrimary: Boolean!
+}
+
+type Comment {
+	commentId: ID!
+	comment: String!
+	createdAt: Timestamp!
+	updatedAt: Timestamp
+	author: User!
+}
+
+type JournalLike {
+	likedBy: User!
+	likedAt: Timestamp!
+}
+
+type JournalShare {
+	sharedBy: User!
+	sharedAt: Timestamp!
+	sharedIn: Community!
+}
+
+type Journal {
+	journalId: ID!
+	title: String!
+	content: String!
+	type: String!
+	access: String!
+	date: Timestamp!
+	comments: [Comment!]!
+	likedBy: [JournalLike!]!
+	sharedBy: [JournalShare!]!
 }
 
 type User {
@@ -39,6 +135,27 @@ type User {
 	banned: Boolean!
 	createdAt: Timestamp!
 	updatedAt: Timestamp!
+	aspects: [Aspect!]!
+	journals: [Journal!]!
+	goals: [Goal!]!
+	questions: [Question]
+	emailAddresses: [UserEmailAddress!]!
+}
+
+type UserWithRole {
+	user: User!
+	role: String!
+}
+
+type Community {
+	communityId: ID!
+	community: String!
+	description: String!
+	nametag: String!
+	privacy: String!
+	createdAt: Timestamp!
+	updatedAt: Timestamp!
+	users: [UserWithRole]!
 }
 
 type Query {
