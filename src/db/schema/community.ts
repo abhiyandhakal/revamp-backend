@@ -7,4 +7,5 @@ export const community = pgTable("community", {
 	nametag: text("nametag").notNull(),
 	privacy: text("privacy").notNull(),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+	updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow(),
 });
