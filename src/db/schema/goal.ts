@@ -12,6 +12,7 @@ export const goal = pgTable("goal", {
 	status: text("status").notNull().default("active"),
 	deadline: timestamp("deadline", { withTimezone: true }),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+	updateAt: timestamp("updateAt", { withTimezone: true }),
 	order: serial("order"),
 	userId: text("userId")
 		.notNull()
