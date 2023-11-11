@@ -10,7 +10,7 @@ module.exports = {
 		sourceType: "module",
 	},
 	plugins: ["@typescript-eslint"],
-	ignorePatterns: ["dist/", "node_modules/", "src/generated/"],
+	ignorePatterns: ["dist/", "node_modules/", "src/generated/", "drizzle.config.js"],
 	rules: {
 		indent: ["error", "tab"],
 		"linebreak-style": ["error", "unix"],
