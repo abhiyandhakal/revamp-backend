@@ -1,4 +1,4 @@
-import { text, pgTable, serial, timestamp, integer } from "drizzle-orm/pg-core";
+import { text, pgTable, serial, timestamp, integer, boolean } from "drizzle-orm/pg-core";
 import { user } from "./user";
 
 export const goal = pgTable("goal", {
@@ -7,6 +7,7 @@ export const goal = pgTable("goal", {
 	description: text("description"),
 	priority: text("priority").default("medium"),
 	relatedArea: text("relatedArea"),
+	isDone: boolean("isDone").notNull().default(false),
 	streak: integer("streak").notNull().default(0),
 	status: text("status").notNull().default("active"),
 	deadline: timestamp("deadline", { withTimezone: true }),
