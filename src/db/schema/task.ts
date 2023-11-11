@@ -1,4 +1,4 @@
-import { text, pgTable, serial, timestamp, integer } from "drizzle-orm/pg-core";
+import { text, pgTable, serial, timestamp, integer, boolean } from "drizzle-orm/pg-core";
 import { goal } from "./goal";
 
 export const task = pgTable("task", {
@@ -6,7 +6,7 @@ export const task = pgTable("task", {
 	title: text("title").notNull(),
 	description: text("description"),
 	priority: text("priority"),
-	isDone: text("isDone").notNull().default("false"),
+	isDone: boolean("isDone").notNull().default(false),
 	deadline: timestamp("deadline", { withTimezone: true }),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
 	updateAt: timestamp("updateAt", { withTimezone: true }),
