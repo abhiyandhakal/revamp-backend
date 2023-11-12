@@ -1,3 +1,7 @@
+scalar Timestamp
+scalar EmailAddress
+scalar URL
+
 type Pausetime {
 	pausetimeId: ID!
 	pauseTime: Timestamp!
@@ -37,13 +41,13 @@ type Todo {
 type Task {
 	taskId: ID!
 	title: String!
-	description: String!
-	priority: Int!
+	description: String
+	priority: String!
 	order: Int!
 	deadline: Timestamp!
 	isDone: Boolean!
 	createdAt: Timestamp!
-	updatedAt: Timestamp!
+	updatedAt: Timestamp
 	streak: Int!
 	todos: [Todo]
 	timelapsed: Timelapse
@@ -59,15 +63,15 @@ type Goal {
 	goalId: ID!
 	title: String!
 	description: String!
-	priority: Int!
-	relatedArea: [String]
+	priority: String
+	relatedArea: String
 	order: Int!
 	streak: Int!
 	status: String!
 	deadline: Timestamp!
 	isDone: Boolean!
 	createdAt: Timestamp!
-	updatedAt: Timestamp!
+	updatedAt: Timestamp
 	tasks: [Task!]!
 	goalQnas: [GoalQna]
 }
@@ -160,4 +164,8 @@ type Community {
 
 type Query {
 	getUsers: [User!]!
+}
+
+type Mutation {
+	setUser(userId: ID!): String!
 }

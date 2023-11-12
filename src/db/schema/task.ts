@@ -11,6 +11,7 @@ export const task = pgTable("task", {
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
 	updateAt: timestamp("updateAt", { withTimezone: true }),
 	order: serial("order"),
+	streak: integer("streak").notNull().default(0),
 	goalId: integer("goalId")
 		.references(() => goal.goalId)
 		.notNull(),
