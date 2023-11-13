@@ -5,7 +5,7 @@ export const task = pgTable("task", {
 	taskId: serial("taskId").primaryKey(),
 	title: text("title").notNull(),
 	description: text("description"),
-	priority: text("priority"),
+	priority: text("priority").default("medium"),
 	isDone: boolean("isDone").notNull().default(false),
 	deadline: timestamp("deadline", { withTimezone: true }),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
