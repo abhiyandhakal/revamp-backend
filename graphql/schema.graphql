@@ -69,13 +69,13 @@ type GoalQna {
 type Goal {
 	goalId: ID!
 	title: String!
-	description: String!
+	description: String
 	priority: String
 	relatedArea: String
 	order: Int!
 	streak: Int!
 	status: String!
-	deadline: Timestamp!
+	deadline: Timestamp
 	isDone: Boolean!
 	createdAt: Timestamp!
 	updatedAt: Timestamp

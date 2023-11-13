@@ -50,8 +50,8 @@ export type Community = {
 export type Goal = {
   __typename?: 'Goal';
   createdAt: Scalars['Timestamp']['output'];
-  deadline: Scalars['Timestamp']['output'];
-  description: Scalars['String']['output'];
+  deadline?: Maybe<Scalars['Timestamp']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   goalId: Scalars['ID']['output'];
   goalQnas?: Maybe<Array<Maybe<GoalQna>>>;
   isDone: Scalars['Boolean']['output'];
@@ -123,9 +123,15 @@ export type Pausetime = {
 
 export type Query = {
   __typename?: 'Query';
+  getGoals: Array<Goal>;
   getTasks: Array<Task>;
   getTodos: Array<Todo>;
   getUsers: Array<User>;
+};
+
+
+export type QueryGetGoalsArgs = {
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -165,7 +171,7 @@ export type Task = {
   isDone: Scalars['Boolean']['output'];
   milestones?: Maybe<Array<Maybe<Milestone>>>;
   order: Scalars['Int']['output'];
-  priority?: Maybe<Scalars['String']['output']>;
+  priority: Scalars['String']['output'];
   streak: Scalars['Int']['output'];
   taskId: Scalars['ID']['output'];
   timelapsed?: Maybe<Timelapse>;
@@ -402,8 +408,8 @@ export interface EmailAddressScalarConfig extends GraphQLScalarTypeConfig<Resolv
 
 export type GoalResolvers<ContextType = any, ParentType extends ResolversParentTypes['Goal'] = ResolversParentTypes['Goal']> = {
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  deadline?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  deadline?: Resolver<Maybe<ResolversTypes['Timestamp']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   goalId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   goalQnas?: Resolver<Maybe<Array<Maybe<ResolversTypes['GoalQna']>>>, ParentType, ContextType>;
   isDone?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -469,6 +475,7 @@ export type PausetimeResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getGoals?: Resolver<Array<ResolversTypes['Goal']>, ParentType, ContextType, RequireFields<QueryGetGoalsArgs, 'userId'>>;
   getTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTasksArgs, 'goalId'>>;
   getTodos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosArgs, 'taskId'>>;
   getUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
@@ -500,7 +507,7 @@ export type TaskResolvers<ContextType = any, ParentType extends ResolversParentT
   isDone?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   milestones?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milestone']>>>, ParentType, ContextType>;
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  priority?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  priority?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   streak?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   taskId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   timelapsed?: Resolver<Maybe<ResolversTypes['Timelapse']>, ParentType, ContextType>;

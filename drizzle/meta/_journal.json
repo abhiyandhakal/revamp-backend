@@ -71,6 +71,20 @@
       "when": 1699801555149,
       "tag": "0009_fluffy_miss_america",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1699843081960,
+      "tag": "0010_orange_star_brand",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1699844421044,
+      "tag": "0011_familiar_freak",
+      "breakpoints": true
     }
   ]
 }
