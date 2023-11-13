@@ -9,6 +9,9 @@ const isAuthenticated = rule()(async (_, __, context: YogaInitialContext) => {
 	const session = await clerkClient.sessions.getSession(sessionId);
 	if (!session) return false;
 
+	const expiryDate = new Date(session.expireAt);
+	if (expiryDate < new Date()) return false;
+
 	return true;
 });
 
