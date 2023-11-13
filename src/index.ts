@@ -3,7 +3,7 @@ import { createYoga } from "graphql-yoga";
 import { schema } from "./schema";
 import { applyMiddleware } from "graphql-middleware";
 import { EnvelopArmor } from "@escape.tech/graphql-armor";
-import permissions from "./permissions";
+import permissions from "./middlewares/permissions";
 
 // dotenv config
 import * as dotenv from "dotenv";

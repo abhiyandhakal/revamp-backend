@@ -1,4 +1,5 @@
 import clerkClient from "@clerk/clerk-sdk-node";
+import { GraphQLError } from "graphql";
 import { shield, rule } from "graphql-shield";
 import { YogaInitialContext } from "graphql-yoga";
 
@@ -20,9 +21,18 @@ const permissions = shield(
 		Query: {
 			"*": isAuthenticated,
 		},
+		Mutation: {
+			"*": isAuthenticated,
+		},
 	},
 	{
-		fallbackError: new Error("Unauthorized"),
+		async fallbackError(error) {
+			if (error instanceof GraphQLError) {
+				return new GraphQLError(error.message);
+			}
+
+			return new GraphQLError("Internal server error");
+		},
 	},
 );
 
