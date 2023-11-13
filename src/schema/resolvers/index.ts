@@ -4,10 +4,12 @@ import { user, userEmailAddress } from "../../db/schema/user";
 import { eq } from "drizzle-orm";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { getTodos } from "./todo";
+import { getTasks } from "./task";
 
 const resolvers: Resolvers = {
 	Query: {
 		getTodos: (_, { taskId }) => getTodos(taskId),
+		getTasks: (_, { goalId }) => getTasks(goalId),
 	},
 
 	Mutation: {

@@ -20,6 +20,7 @@ export const task = pgTable("task", {
 export const milestone = pgTable("milestone", {
 	milestoneId: serial("milestoneId").primaryKey(),
 	milestone: text("milestone").notNull(),
+	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
 	taskId: integer("taskId")
 		.notNull()
 		.references(() => task.taskId)

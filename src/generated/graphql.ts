@@ -98,6 +98,13 @@ export type JournalShare = {
   sharedIn: Community;
 };
 
+export type Milestone = {
+  __typename?: 'Milestone';
+  createdAt: Scalars['Timestamp']['output'];
+  milestone: Scalars['String']['output'];
+  milestoneId: Scalars['ID']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   setUser: Scalars['String']['output'];
@@ -116,8 +123,14 @@ export type Pausetime = {
 
 export type Query = {
   __typename?: 'Query';
+  getTasks: Array<Task>;
   getTodos: Array<Todo>;
   getUsers: Array<User>;
+};
+
+
+export type QueryGetTasksArgs = {
+  goalId: Scalars['ID']['input'];
 };
 
 
@@ -147,11 +160,12 @@ export type Tag = {
 export type Task = {
   __typename?: 'Task';
   createdAt: Scalars['Timestamp']['output'];
-  deadline: Scalars['Timestamp']['output'];
+  deadline?: Maybe<Scalars['Timestamp']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   isDone: Scalars['Boolean']['output'];
+  milestones?: Maybe<Array<Maybe<Milestone>>>;
   order: Scalars['Int']['output'];
-  priority: Scalars['String']['output'];
+  priority?: Maybe<Scalars['String']['output']>;
   streak: Scalars['Int']['output'];
   taskId: Scalars['ID']['output'];
   timelapsed?: Maybe<Timelapse>;
@@ -302,6 +316,7 @@ export type ResolversTypes = {
   Journal: ResolverTypeWrapper<Journal>;
   JournalLike: ResolverTypeWrapper<JournalLike>;
   JournalShare: ResolverTypeWrapper<JournalShare>;
+  Milestone: ResolverTypeWrapper<Milestone>;
   Mutation: ResolverTypeWrapper<{}>;
   Pausetime: ResolverTypeWrapper<Pausetime>;
   Query: ResolverTypeWrapper<{}>;
@@ -334,6 +349,7 @@ export type ResolversParentTypes = {
   Journal: Journal;
   JournalLike: JournalLike;
   JournalShare: JournalShare;
+  Milestone: Milestone;
   Mutation: {};
   Pausetime: Pausetime;
   Query: {};
@@ -435,6 +451,13 @@ export type JournalShareResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MilestoneResolvers<ContextType = any, ParentType extends ResolversParentTypes['Milestone'] = ResolversParentTypes['Milestone']> = {
+  createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
+  milestone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  milestoneId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   setUser?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetUserArgs, 'userId'>>;
 };
@@ -446,6 +469,7 @@ export type PausetimeResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTasksArgs, 'goalId'>>;
   getTodos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosArgs, 'taskId'>>;
   getUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
@@ -471,11 +495,12 @@ export type TagResolvers<ContextType = any, ParentType extends ResolversParentTy
 
 export type TaskResolvers<ContextType = any, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  deadline?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
+  deadline?: Resolver<Maybe<ResolversTypes['Timestamp']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   isDone?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  milestones?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milestone']>>>, ParentType, ContextType>;
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  priority?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  priority?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   streak?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   taskId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   timelapsed?: Resolver<Maybe<ResolversTypes['Timelapse']>, ParentType, ContextType>;
@@ -562,6 +587,7 @@ export type Resolvers<ContextType = any> = {
   Journal?: JournalResolvers<ContextType>;
   JournalLike?: JournalLikeResolvers<ContextType>;
   JournalShare?: JournalShareResolvers<ContextType>;
+  Milestone?: MilestoneResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Pausetime?: PausetimeResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
