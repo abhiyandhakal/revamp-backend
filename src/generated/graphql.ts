@@ -116,7 +116,13 @@ export type Pausetime = {
 
 export type Query = {
   __typename?: 'Query';
+  getTodos: Array<Todo>;
   getUsers: Array<User>;
+};
+
+
+export type QueryGetTodosArgs = {
+  taskId: Scalars['ID']['input'];
 };
 
 export type Question = {
@@ -440,6 +446,7 @@ export type PausetimeResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getTodos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosArgs, 'taskId'>>;
   getUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 

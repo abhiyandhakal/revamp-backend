@@ -3,8 +3,13 @@ import db from "../../db";
 import { user, userEmailAddress } from "../../db/schema/user";
 import { eq } from "drizzle-orm";
 import clerkClient from "@clerk/clerk-sdk-node";
+import { getTodos } from "./todo";
 
 const resolvers: Resolvers = {
+	Query: {
+		getTodos: (_, { taskId }) => getTodos(taskId),
+	},
+
 	Mutation: {
 		async setUser(_, { userId }) {
 			const userInDb = await db.select().from(user).where(eq(user.userId, userId));

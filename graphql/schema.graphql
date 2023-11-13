@@ -163,6 +163,7 @@ type Community {
 }
 
 type Query {
+	getTodos(taskId: ID!): [Todo!]!
 	getUsers: [User!]!
 }
 
