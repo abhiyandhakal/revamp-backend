@@ -38,18 +38,25 @@ type Todo {
 	timelapsed: Timelapse
 }
 
+type Milestone {
+	milestoneId: ID!
+	milestone: String!
+	createdAt: Timestamp!
+}
+
 type Task {
 	taskId: ID!
 	title: String!
 	description: String
-	priority: String!
+	priority: String
 	order: Int!
-	deadline: Timestamp!
+	deadline: Timestamp
 	isDone: Boolean!
 	createdAt: Timestamp!
 	updatedAt: Timestamp
 	streak: Int!
 	todos: [Todo]
+	milestones: [Milestone]
 	timelapsed: Timelapse
 }
 
