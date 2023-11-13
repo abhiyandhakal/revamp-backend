@@ -26,7 +26,7 @@ export async function getTasks(goalId: string | number): Promise<Task[]> {
 			return {
 				...singleTask,
 				taskId: singleTask.taskId.toString(),
-				updatedAt: singleTask.updateAt,
+				priority: singleTask.priority || "",
 				timelapsed,
 				milestones: milestones.map(milestone => ({
 					...milestone,

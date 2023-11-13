@@ -5,11 +5,13 @@ import { eq } from "drizzle-orm";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { getTodos } from "./todo";
 import { getTasks } from "./task";
+import { getGoals } from "./goal";
 
 const resolvers: Resolvers = {
 	Query: {
 		getTodos: (_, { taskId }) => getTodos(taskId),
 		getTasks: (_, { goalId }) => getTasks(goalId),
+		getGoals: (_, { userId }) => getGoals(userId),
 	},
 
 	Mutation: {
