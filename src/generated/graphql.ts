@@ -123,6 +123,8 @@ export type Pausetime = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllAspects: Array<Aspect>;
+  getAllQuestions: Array<Question>;
   getGoals: Array<Goal>;
   getTasks: Array<Task>;
   getTodos: Array<Todo>;
@@ -475,6 +477,8 @@ export type PausetimeResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getAllAspects?: Resolver<Array<ResolversTypes['Aspect']>, ParentType, ContextType>;
+  getAllQuestions?: Resolver<Array<ResolversTypes['Question']>, ParentType, ContextType>;
   getGoals?: Resolver<Array<ResolversTypes['Goal']>, ParentType, ContextType, RequireFields<QueryGetGoalsArgs, 'userId'>>;
   getTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTasksArgs, 'goalId'>>;
   getTodos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosArgs, 'taskId'>>;

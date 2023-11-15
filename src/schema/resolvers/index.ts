@@ -6,12 +6,16 @@ import clerkClient from "@clerk/clerk-sdk-node";
 import { getTodos } from "./todo";
 import { getTasks } from "./task";
 import { getGoals } from "./goal";
+import { getAllQuestions } from "./question";
+import { getAllAspects } from "./aspect";
 
 const resolvers: Resolvers = {
 	Query: {
 		getTodos: (_, { taskId }) => getTodos(taskId),
 		getTasks: (_, { goalId }) => getTasks(goalId),
 		getGoals: (_, { userId }) => getGoals(userId),
+		getAllQuestions,
+		getAllAspects,
 	},
 
 	Mutation: {
