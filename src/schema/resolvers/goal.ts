@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
 import { Goal, MutationSetGoalArgs } from "../../generated/graphql";
@@ -46,4 +46,13 @@ export async function setGoal(input: MutationSetGoalArgs): Promise<string> {
 	await db.insert(goal).values(newGoal);
 
 	return `Goal with title ${input.title} has been successfully created`;
+}
+
+export async function isGoalOfUser(userId: string, goalId: number | string): Promise<boolean> {
+	const goals = await db.execute(
+		sql`SELECT * FROM goal WHERE userId = ${userId} AND goalId = ${+goalId}`,
+	);
+
+	if (goals.length === 0) return false;
+	return true;
 }
