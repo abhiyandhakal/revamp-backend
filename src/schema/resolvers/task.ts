@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { milestone, task } from "../../db/schema/task";
-import { Task } from "../../generated/graphql";
+import { MutationSetTaskArgs, Task } from "../../generated/graphql";
 import { taskTimelapse } from "../../db/schema/relations/task-timelapse";
 import { getTimelapse } from "./timelapse";
 
@@ -15,8 +15,9 @@ export async function getTasks(goalId: string | number): Promise<Task[]> {
 				.innerJoin(task, eq(task.taskId, taskTimelapse.taskId))
 				.where(eq(task.taskId, singleTask.taskId));
 
-			const timelapseId = timelapseArr[0]["task-timelapse"].timelapseId;
-			const timelapsed = await getTimelapse(timelapseId);
+			const timelapseId =
+				timelapseArr.length > 0 ? timelapseArr[0]["task-timelapse"].timelapseId : null;
+			const timelapsed = timelapseArr.length > 0 ? await getTimelapse(timelapseId || 0) : null;
 
 			const milestones = await db
 				.select()
@@ -27,7 +28,7 @@ export async function getTasks(goalId: string | number): Promise<Task[]> {
 				...singleTask,
 				taskId: singleTask.taskId.toString(),
 				priority: singleTask.priority || "",
-				timelapsed,
+				timelapsed: timelapsed || null,
 				milestones: milestones.map(milestone => ({
 					...milestone,
 					milestoneId: milestone.milestoneId.toString(),
@@ -37,4 +38,10 @@ export async function getTasks(goalId: string | number): Promise<Task[]> {
 	);
 
 	return tasksWithTodos;
+}
+
+export async function setTask(input: MutationSetTaskArgs) {
+	await db.insert(task).values({ ...input, goalId: +input.goalId });
+
+	return `Task with title "${input.title}" has been successfully created`;
 }

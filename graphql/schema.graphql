@@ -190,4 +190,11 @@ type Mutation {
 		relatedArea: String
 		deadline: Timestamp
 	): String!
+	setTask(
+		goalId: ID!
+		title: String!
+		description: String
+		priority: String
+		deadline: Timestamp
+	): String!
 }

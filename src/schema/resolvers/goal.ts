@@ -47,12 +47,3 @@ export async function setGoal(input: MutationSetGoalArgs): Promise<string> {
 
 	return `Goal with title ${input.title} has been successfully created`;
 }
-
-export async function isGoalOfUser(userId: string, goalId: number | string): Promise<boolean> {
-	const goals = await db.execute(
-		sql`SELECT * FROM goal WHERE userId = ${userId} AND goalId = ${+goalId}`,
-	);
-
-	if (goals.length === 0) return false;
-	return true;
-}
