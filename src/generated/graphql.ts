@@ -107,7 +107,18 @@ export type Milestone = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  setGoal: Scalars['String']['output'];
   setUser: Scalars['String']['output'];
+};
+
+
+export type MutationSetGoalArgs = {
+  deadline?: InputMaybe<Scalars['Timestamp']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  priority?: InputMaybe<Scalars['String']['input']>;
+  relatedArea?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -474,6 +485,7 @@ export type MilestoneResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  setGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetGoalArgs, 'title' | 'userId'>>;
   setUser?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetUserArgs, 'userId'>>;
 };
 

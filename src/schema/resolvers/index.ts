@@ -1,7 +1,7 @@
 import { Resolvers } from "../../generated/graphql";
 import { getTodos } from "./todo";
 import { getTasks } from "./task";
-import { getGoals } from "./goal";
+import { getGoals, setGoal } from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
 import { getAllUsers, getSingleUser, setUser } from "./user";
@@ -19,6 +19,7 @@ const resolvers: Resolvers = {
 
 	Mutation: {
 		setUser: async (_, { userId }) => setUser(userId),
+		setGoal: async (_, args) => setGoal(args),
 	},
 };
 

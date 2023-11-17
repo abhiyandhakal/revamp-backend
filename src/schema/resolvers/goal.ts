@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
-import { Goal } from "../../generated/graphql";
+import { Goal, MutationSetGoalArgs } from "../../generated/graphql";
 import { getTasks } from "./task";
 import { goalQuestion } from "../../db/schema/goal-question";
 import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
@@ -36,4 +36,14 @@ export async function getGoals(userId: string): Promise<Goal[]> {
 	);
 
 	return goalsWithTasks;
+}
+
+export async function setGoal(input: MutationSetGoalArgs): Promise<string> {
+	const newGoal = {
+		...input,
+	};
+
+	await db.insert(goal).values(newGoal);
+
+	return `Goal with title ${input.title} has been successfully created`;
 }

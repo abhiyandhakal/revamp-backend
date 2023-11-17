@@ -182,4 +182,12 @@ type Query {
 
 type Mutation {
 	setUser(userId: ID!): String!
+	setGoal(
+		userId: ID!
+		title: String!
+		description: String
+		priority: String
+		relatedArea: String
+		deadline: Timestamp
+	): String!
 }
