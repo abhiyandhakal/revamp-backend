@@ -111,7 +111,7 @@ type Comment {
 	comment: String!
 	createdAt: Timestamp!
 	updatedAt: Timestamp
-	author: User!
+	authorId: ID!
 }
 
 type JournalLike {
@@ -151,6 +151,7 @@ type User {
 	goals: [Goal!]!
 	questions: [Question]
 	emailAddresses: [UserEmailAddress!]!
+	communities: [Community!]!
 }
 
 type UserWithRole {
@@ -176,6 +177,7 @@ type Query {
 	getUsers: [User!]!
 	getAllQuestions: [Question!]!
 	getAllAspects: [Aspect!]!
+	getSingleUser(userId: ID!): User!
 }
 
 type Mutation {

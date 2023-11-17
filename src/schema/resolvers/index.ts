@@ -1,4 +1,4 @@
-import { MutationSetUserArgs, Resolvers } from "../../generated/graphql";
+import { Resolvers } from "../../generated/graphql";
 import db from "../../db";
 import { user, userEmailAddress } from "../../db/schema/user";
 import { eq } from "drizzle-orm";
@@ -19,7 +19,7 @@ const resolvers: Resolvers = {
 	},
 
 	Mutation: {
-		setUser: async (_, { userId }: MutationSetUserArgs): Promise<string> => {
+		setUser: async (_, { userId }) => {
 			const userInDb = await db.select().from(user).where(eq(user.userId, userId));
 
 			if (userInDb.length !== 0) {

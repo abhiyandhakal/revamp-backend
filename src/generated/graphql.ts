@@ -28,7 +28,7 @@ export type Aspect = {
 
 export type Comment = {
   __typename?: 'Comment';
-  author: User;
+  authorId: Scalars['ID']['output'];
   comment: Scalars['String']['output'];
   commentId: Scalars['ID']['output'];
   createdAt: Scalars['Timestamp']['output'];
@@ -126,6 +126,7 @@ export type Query = {
   getAllAspects: Array<Aspect>;
   getAllQuestions: Array<Question>;
   getGoals: Array<Goal>;
+  getSingleUser: User;
   getTasks: Array<Task>;
   getTodos: Array<Todo>;
   getUsers: Array<User>;
@@ -133,6 +134,11 @@ export type Query = {
 
 
 export type QueryGetGoalsArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
+export type QueryGetSingleUserArgs = {
   userId: Scalars['ID']['input'];
 };
 
@@ -215,6 +221,7 @@ export type User = {
   __typename?: 'User';
   aspects: Array<Aspect>;
   banned: Scalars['Boolean']['output'];
+  communities: Array<Community>;
   createdAt: Scalars['Timestamp']['output'];
   emailAddresses: Array<UserEmailAddress>;
   firstName: Scalars['String']['output'];
@@ -384,7 +391,7 @@ export type AspectResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type CommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = {
-  author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  authorId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   comment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   commentId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
@@ -480,6 +487,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getAllAspects?: Resolver<Array<ResolversTypes['Aspect']>, ParentType, ContextType>;
   getAllQuestions?: Resolver<Array<ResolversTypes['Question']>, ParentType, ContextType>;
   getGoals?: Resolver<Array<ResolversTypes['Goal']>, ParentType, ContextType, RequireFields<QueryGetGoalsArgs, 'userId'>>;
+  getSingleUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetSingleUserArgs, 'userId'>>;
   getTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTasksArgs, 'goalId'>>;
   getTodos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosArgs, 'taskId'>>;
   getUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
@@ -561,6 +569,7 @@ export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes[
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   aspects?: Resolver<Array<ResolversTypes['Aspect']>, ParentType, ContextType>;
   banned?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  communities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   emailAddresses?: Resolver<Array<ResolversTypes['UserEmailAddress']>, ParentType, ContextType>;
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
