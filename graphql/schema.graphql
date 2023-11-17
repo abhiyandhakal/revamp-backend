@@ -174,7 +174,7 @@ type Query {
 	getTodos(taskId: ID!): [Todo!]!
 	getTasks(goalId: ID!): [Task!]!
 	getGoals(userId: ID!): [Goal!]!
-	getUsers: [User!]!
+	getAllUsers: [User!]!
 	getAllQuestions: [Question!]!
 	getAllAspects: [Aspect!]!
 	getSingleUser(userId: ID!): User!

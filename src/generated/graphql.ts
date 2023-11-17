@@ -125,11 +125,11 @@ export type Query = {
   __typename?: 'Query';
   getAllAspects: Array<Aspect>;
   getAllQuestions: Array<Question>;
+  getAllUsers: Array<User>;
   getGoals: Array<Goal>;
   getSingleUser: User;
   getTasks: Array<Task>;
   getTodos: Array<Todo>;
-  getUsers: Array<User>;
 };
 
 
@@ -486,11 +486,11 @@ export type PausetimeResolvers<ContextType = any, ParentType extends ResolversPa
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getAllAspects?: Resolver<Array<ResolversTypes['Aspect']>, ParentType, ContextType>;
   getAllQuestions?: Resolver<Array<ResolversTypes['Question']>, ParentType, ContextType>;
+  getAllUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   getGoals?: Resolver<Array<ResolversTypes['Goal']>, ParentType, ContextType, RequireFields<QueryGetGoalsArgs, 'userId'>>;
   getSingleUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetSingleUserArgs, 'userId'>>;
   getTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTasksArgs, 'goalId'>>;
   getTodos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosArgs, 'taskId'>>;
-  getUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
 export type QuestionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Question'] = ResolversParentTypes['Question']> = {
