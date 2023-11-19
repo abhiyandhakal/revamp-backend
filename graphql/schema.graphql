@@ -203,4 +203,8 @@ type Mutation {
 		deadline: Timestamp
 	): String!
 	setTodo(taskId: ID!, todo: String!): String!
+	deleteUser(userId: ID!): String!
+	deleteGoal(goalId: ID!): String!
+	deleteTask(taskId: ID!): String!
+	deleteTodo(todoId: ID!): String!
 }

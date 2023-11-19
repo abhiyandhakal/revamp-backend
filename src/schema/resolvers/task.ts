@@ -94,3 +94,7 @@ export async function setTask(input: MutationSetTaskArgs) {
 
 	return `Task with title "${input.title}" has been successfully created`;
 }
+
+export async function deleteTask(taskId: string | number) {
+	const timelapsed = await db.select().from(taskTimelapse).where(eq(taskTimelapse.taskId, +taskId));
+}

@@ -107,10 +107,34 @@ export type Milestone = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  deleteGoal: Scalars['String']['output'];
+  deleteTask: Scalars['String']['output'];
+  deleteTodo: Scalars['String']['output'];
+  deleteUser: Scalars['String']['output'];
   setGoal: Scalars['String']['output'];
   setTask: Scalars['String']['output'];
   setTodo: Scalars['String']['output'];
   setUser: Scalars['String']['output'];
+};
+
+
+export type MutationDeleteGoalArgs = {
+  goalId: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteTaskArgs = {
+  taskId: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteTodoArgs = {
+  todoId: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteUserArgs = {
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -532,6 +556,10 @@ export type MilestoneResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  deleteGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteGoalArgs, 'goalId'>>;
+  deleteTask?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'taskId'>>;
+  deleteTodo?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'todoId'>>;
+  deleteUser?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'userId'>>;
   setGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetGoalArgs, 'title' | 'userId'>>;
   setTask?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetTaskArgs, 'goalId' | 'title'>>;
   setTodo?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetTodoArgs, 'taskId' | 'todo'>>;
