@@ -173,7 +173,7 @@ type Community {
 type Query {
 	getTodos(taskId: ID!): [Todo!]!
 	getTasksOfGoal(goalId: ID!): [Task!]!
-	getTasksOfUser(goalId: ID!): [Task!]!
+	getTasksOfUser(userId: ID!): [Task!]!
 	getGoals(userId: ID!): [Goal!]!
 	getAllUsers: [User!]!
 	getAllQuestions: [Question!]!
