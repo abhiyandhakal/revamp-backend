@@ -179,7 +179,9 @@ type Query {
 	getAllUsers: [User!]!
 	getAllQuestions: [Question!]!
 	getAllAspects: [Aspect!]!
+	getSingleGoal(goalId: ID!): Goal!
 	getSingleTask(taskId: ID!): Task!
+	getSingleTodo(todoId: ID!): Todo!
 	getSingleUser(userId: ID!): User!
 }
 
