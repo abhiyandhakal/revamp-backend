@@ -109,6 +109,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   setGoal: Scalars['String']['output'];
   setTask: Scalars['String']['output'];
+  setTodo: Scalars['String']['output'];
   setUser: Scalars['String']['output'];
 };
 
@@ -129,6 +130,12 @@ export type MutationSetTaskArgs = {
   goalId: Scalars['ID']['input'];
   priority?: InputMaybe<Scalars['String']['input']>;
   title: Scalars['String']['input'];
+};
+
+
+export type MutationSetTodoArgs = {
+  taskId: Scalars['ID']['input'];
+  todo: Scalars['String']['input'];
 };
 
 
@@ -515,6 +522,7 @@ export type MilestoneResolvers<ContextType = any, ParentType extends ResolversPa
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   setGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetGoalArgs, 'title' | 'userId'>>;
   setTask?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetTaskArgs, 'goalId' | 'title'>>;
+  setTodo?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetTodoArgs, 'taskId' | 'todo'>>;
   setUser?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetUserArgs, 'userId'>>;
 };
 

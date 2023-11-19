@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { todo } from "../../db/schema/todo";
-import { Todo } from "../../generated/graphql";
+import { MutationSetTodoArgs, Todo } from "../../generated/graphql";
 import { todoTimelapse } from "../../db/schema/relations/todo-timelapse";
 import { timeLapse } from "../../db/schema/time-lapse";
 import { getTimelapse } from "./timelapse";
@@ -72,4 +72,10 @@ export async function getTodosOfUser(userId: string): Promise<Todo[]> {
 	);
 
 	return finalTodos;
+}
+
+export async function setTodo(args: MutationSetTodoArgs): Promise<string> {
+	await db.insert(todo).values({ ...args, taskId: +args.taskId });
+
+	return `Todo ${args.todo} created successfully`;
 }

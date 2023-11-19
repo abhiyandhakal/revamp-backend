@@ -200,4 +200,5 @@ type Mutation {
 		priority: String
 		deadline: Timestamp
 	): String!
+	setTodo(taskId: ID!, todo: String!): String!
 }
