@@ -1,5 +1,5 @@
 import { Resolvers } from "../../generated/graphql";
-import { getTodosOfTask, getTodosOfUser } from "./todo";
+import { getTodosOfTask, getTodosOfUser, setTodo } from "./todo";
 import { getSingleTask, getTasksOfGoal, getTasksOfUser, setTask } from "./task";
 import { getGoals, setGoal } from "./goal";
 import { getAllQuestions } from "./question";
@@ -24,6 +24,7 @@ const resolvers: Resolvers = {
 		setUser: async (_, { userId }) => setUser(userId),
 		setGoal: async (_, args) => setGoal(args),
 		setTask: async (_, args) => setTask(args),
+		setTodo: async (_, args) => setTodo(args),
 	},
 };
 
