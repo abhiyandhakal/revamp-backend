@@ -2,9 +2,10 @@ import { eq } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
 import { Goal, MutationSetGoalArgs } from "../../generated/graphql";
-import { getTasksOfGoal } from "./task";
+import { deleteTask, getTasksOfGoal } from "./task";
 import { goalQuestion } from "../../db/schema/goal-question";
 import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
+import { task } from "../../db/schema/task";
 
 export async function getSingleGoal(goalId: string | number): Promise<Goal> {
 	const goals = await db.select().from(goal).where(eq(goal.goalId, +goalId));
@@ -79,4 +80,22 @@ export async function setGoal(input: MutationSetGoalArgs): Promise<string> {
 	await db.insert(goal).values(newGoal);
 
 	return `Goal with title ${input.title} has been successfully created`;
+}
+
+export async function deleteGoal(goalId: string | number) {
+	// get goal
+	const goalArr = await db.select().from(goal).where(eq(goal.goalId, +goalId));
+
+	if (goalArr.length === 0) throw new Error("Goal not found");
+
+	// get tasks
+	const tasks = await db.select().from(task).where(eq(task.goalId, +goalId));
+
+	// delete tasks
+	await Promise.all(tasks.map(async singleTask => deleteTask(singleTask.taskId)));
+
+	// delete goal
+	await db.delete(goal).where(eq(goal.goalId, +goalId));
+
+	return `Goal with id ${goalId} has been successfully deleted`;
 }
