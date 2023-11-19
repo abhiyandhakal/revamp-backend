@@ -171,7 +171,8 @@ type Community {
 }
 
 type Query {
-	getTodos(taskId: ID!): [Todo!]!
+	getTodosOfTask(taskId: ID!): [Todo!]!
+	getTodosOfUser(userId: ID!): [Todo!]!
 	getTasksOfGoal(goalId: ID!): [Task!]!
 	getTasksOfUser(userId: ID!): [Task!]!
 	getGoals(userId: ID!): [Goal!]!

@@ -83,7 +83,7 @@ export async function getTasksOfUser(userId: string): Promise<Task[]> {
 		.innerJoin(goal, eq(goal.goalId, task.goalId))
 		.where(eq(goal.userId, userId));
 	const tasksWithTodos: Task[] = await Promise.all(
-		tasks.map(async singleTask => getTaskInGqlFormat(singleTask.task)),
+		tasks.map(async singleTask => await getTaskInGqlFormat(singleTask.task)),
 	);
 
 	return tasksWithTodos;

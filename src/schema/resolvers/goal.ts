@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
 import { Goal, MutationSetGoalArgs } from "../../generated/graphql";
-import { getTasks } from "./task";
+import { getTasksOfGoal } from "./task";
 import { goalQuestion } from "../../db/schema/goal-question";
 import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
 
@@ -11,7 +11,7 @@ export async function getGoals(userId: string): Promise<Goal[]> {
 
 	const goalsWithTasks: Goal[] = await Promise.all(
 		goals.map(async singleGoal => {
-			const tasks = await getTasks(singleGoal.goalId);
+			const tasks = await getTasksOfGoal(singleGoal.goalId);
 
 			const goalQuestions = await db
 				.select()
