@@ -4,7 +4,7 @@ import { todo } from "../../db/schema/todo";
 import { MutationSetTodoArgs, Todo } from "../../generated/graphql";
 import { todoTimelapse } from "../../db/schema/relations/todo-timelapse";
 import { timeLapse } from "../../db/schema/time-lapse";
-import { getTimelapse } from "./timelapse";
+import { deleteTimelapseOfTodo, getTimelapse } from "./timelapse";
 import { task } from "../../db/schema/task";
 import { goal } from "../../db/schema/goal";
 
@@ -83,13 +83,13 @@ export async function setTodo(args: MutationSetTodoArgs): Promise<string> {
 export async function deleteTodo(todoId: string | number): Promise<string> {
 	// get timelapse id
 	const timelapseId = await db
-		.select()
+		.select({ timelapseId: todoTimelapse.timelapseId })
 		.from(todoTimelapse)
 		.where(eq(todoTimelapse.todoId, +todoId));
 
 	if (timelapseId.length > 0) {
 		// delete timelapse
-		await db.delete(timeLapse).where(eq(timeLapse.timelapseId, timelapseId[0].timelapseId));
+		await deleteTimelapseOfTodo(timelapseId[0].timelapseId);
 	}
 
 	// delete todo

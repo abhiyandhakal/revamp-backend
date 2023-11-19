@@ -2,6 +2,8 @@ import { eq } from "drizzle-orm";
 import db from "../../db";
 import { pauseTime, resumeTime, timeLapse } from "../../db/schema/time-lapse";
 import { Timelapse } from "../../generated/graphql";
+import { taskTimelapse } from "../../db/schema/relations/task-timelapse";
+import { todoTimelapse } from "../../db/schema/relations/todo-timelapse";
 
 export async function getTimelapse(timelapseId: string | number): Promise<Timelapse> {
 	const timelapseArr = await db
@@ -41,4 +43,18 @@ export async function getTimelapse(timelapseId: string | number): Promise<Timela
 			resumeTime: resumetime.resumeTime,
 		})),
 	};
+}
+
+export async function deleteTimelapseOfTask(timelapseId: string | number) {
+	await db.delete(taskTimelapse).where(eq(taskTimelapse.timelapseId, +timelapseId));
+	await db.delete(pauseTime).where(eq(pauseTime.timeLapseId, +timelapseId));
+	await db.delete(resumeTime).where(eq(resumeTime.timeLapseId, +timelapseId));
+	await db.delete(timeLapse).where(eq(timeLapse.timelapseId, +timelapseId));
+}
+
+export async function deleteTimelapseOfTodo(timelapseId: string | number) {
+	await db.delete(todoTimelapse).where(eq(todoTimelapse.timelapseId, +timelapseId));
+	await db.delete(pauseTime).where(eq(pauseTime.timeLapseId, +timelapseId));
+	await db.delete(resumeTime).where(eq(resumeTime.timeLapseId, +timelapseId));
+	await db.delete(timeLapse).where(eq(timeLapse.timelapseId, +timelapseId));
 }
