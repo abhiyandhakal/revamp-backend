@@ -14,12 +14,12 @@ export async function getSingleTask(taskId: string | number): Promise<Task> {
 
 	if (!singleTask) throw new Error("Task not found");
 
-	const result = await getTaskInGqlFormat(singleTask);
+	const result = await sqlToGqlTask(singleTask);
 
 	return result;
 }
 
-export async function getTaskInGqlFormat(singleTask: typeof task.$inferSelect): Promise<Task> {
+export async function sqlToGqlTask(singleTask: typeof task.$inferSelect): Promise<Task> {
 	const timelapseArr = await db
 		.select()
 		.from(taskTimelapse)
@@ -57,7 +57,7 @@ export async function getTaskInGqlFormat(singleTask: typeof task.$inferSelect): 
 export async function getTasksOfGoal(goalId: string | number): Promise<Task[]> {
 	const tasks = await db.select().from(task).where(eq(task.goalId, +goalId));
 	const tasksWithTodos: Task[] = await Promise.all(
-		tasks.map(async singleTask => getTaskInGqlFormat(singleTask)),
+		tasks.map(async singleTask => sqlToGqlTask(singleTask)),
 	);
 
 	return tasksWithTodos;
@@ -70,7 +70,7 @@ export async function getTasksOfUser(userId: string): Promise<Task[]> {
 		.innerJoin(goal, eq(goal.goalId, task.goalId))
 		.where(eq(goal.userId, userId));
 	const tasksWithTodos: Task[] = await Promise.all(
-		tasks.map(async singleTask => await getTaskInGqlFormat(singleTask.task)),
+		tasks.map(async singleTask => await sqlToGqlTask(singleTask.task)),
 	);
 
 	return tasksWithTodos;
