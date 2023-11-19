@@ -5,7 +5,7 @@ import { MutationSetTaskArgs, Task } from "../../generated/graphql";
 import { taskTimelapse } from "../../db/schema/relations/task-timelapse";
 import { deleteTimelapseOfTask, getTimelapse } from "./timelapse";
 import { goal } from "../../db/schema/goal";
-import { deleteTodo } from "./todo";
+import { deleteTodo, sqlToGqlTodo } from "./todo";
 import { todo } from "../../db/schema/todo";
 
 export async function getSingleTask(taskId: string | number): Promise<Task> {
@@ -14,31 +14,9 @@ export async function getSingleTask(taskId: string | number): Promise<Task> {
 
 	if (!singleTask) throw new Error("Task not found");
 
-	const timelapseArr = await db
-		.select()
-		.from(taskTimelapse)
-		.innerJoin(task, eq(task.taskId, taskTimelapse.taskId))
-		.where(eq(task.taskId, singleTask.taskId));
+	const result = await getTaskInGqlFormat(singleTask);
 
-	const timelapseId =
-		timelapseArr.length > 0 ? timelapseArr[0]["task-timelapse"].timelapseId : null;
-	const timelapsed = timelapseArr.length > 0 ? await getTimelapse(timelapseId || 0) : null;
-
-	const milestones = await db
-		.select()
-		.from(milestone)
-		.where(eq(milestone.taskId, singleTask.taskId));
-
-	return {
-		...singleTask,
-		taskId: singleTask.taskId.toString(),
-		priority: singleTask.priority || "",
-		timelapsed: timelapsed || null,
-		milestones: milestones.map(milestone => ({
-			...milestone,
-			milestoneId: milestone.milestoneId.toString(),
-		})),
-	};
+	return result;
 }
 
 export async function getTaskInGqlFormat(singleTask: typeof task.$inferSelect): Promise<Task> {
@@ -57,11 +35,18 @@ export async function getTaskInGqlFormat(singleTask: typeof task.$inferSelect): 
 		.from(milestone)
 		.where(eq(milestone.taskId, singleTask.taskId));
 
+	const todos = await db.select().from(todo).where(eq(todo.taskId, singleTask.taskId));
+
+	const finalTodos = await Promise.all(
+		todos.map(async singleTodo => await sqlToGqlTodo(singleTodo)),
+	);
+
 	return {
 		...singleTask,
 		taskId: singleTask.taskId.toString(),
 		priority: singleTask.priority || "",
 		timelapsed: timelapsed || null,
+		todos: finalTodos,
 		milestones: milestones.map(milestone => ({
 			...milestone,
 			milestoneId: milestone.milestoneId.toString(),
