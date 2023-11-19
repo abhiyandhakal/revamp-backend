@@ -1,6 +1,6 @@
 import { Resolvers } from "../../generated/graphql";
 import { getTodos } from "./todo";
-import { getTasks, setTask } from "./task";
+import { getSingleTask, getTasksOfGoal, setTask } from "./task";
 import { getGoals, setGoal } from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
@@ -9,11 +9,12 @@ import { getAllUsers, getSingleUser, setUser } from "./user";
 const resolvers: Resolvers = {
 	Query: {
 		getTodos: (_, { taskId }) => getTodos(taskId),
-		getTasks: (_, { goalId }) => getTasks(goalId),
+		getTasksOfGoal: (_, { goalId }) => getTasksOfGoal(goalId),
 		getGoals: (_, { userId }) => getGoals(userId),
 		getAllQuestions,
 		getAllAspects,
 		getAllUsers,
+		getSingleTask: (_, { taskId }) => getSingleTask(taskId),
 		getSingleUser: (_, { userId }) => getSingleUser(userId),
 	},
 

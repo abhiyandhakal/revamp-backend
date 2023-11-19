@@ -5,36 +5,71 @@ import { MutationSetTaskArgs, Task } from "../../generated/graphql";
 import { taskTimelapse } from "../../db/schema/relations/task-timelapse";
 import { getTimelapse } from "./timelapse";
 
-export async function getTasks(goalId: string | number): Promise<Task[]> {
+export async function getSingleTask(taskId: string | number): Promise<Task> {
+	const taskList = await db.select().from(task).where(eq(task.taskId, +taskId));
+	const singleTask = taskList[0];
+
+	if (!singleTask) throw new Error("Task not found");
+
+	const timelapseArr = await db
+		.select()
+		.from(taskTimelapse)
+		.innerJoin(task, eq(task.taskId, taskTimelapse.taskId))
+		.where(eq(task.taskId, singleTask.taskId));
+
+	const timelapseId =
+		timelapseArr.length > 0 ? timelapseArr[0]["task-timelapse"].timelapseId : null;
+	const timelapsed = timelapseArr.length > 0 ? await getTimelapse(timelapseId || 0) : null;
+
+	const milestones = await db
+		.select()
+		.from(milestone)
+		.where(eq(milestone.taskId, singleTask.taskId));
+
+	return {
+		...singleTask,
+		taskId: singleTask.taskId.toString(),
+		priority: singleTask.priority || "",
+		timelapsed: timelapsed || null,
+		milestones: milestones.map(milestone => ({
+			...milestone,
+			milestoneId: milestone.milestoneId.toString(),
+		})),
+	};
+}
+
+export async function getTaskInGqlFormat(singleTask: typeof task.$inferSelect): Promise<Task> {
+	const timelapseArr = await db
+		.select()
+		.from(taskTimelapse)
+		.innerJoin(task, eq(task.taskId, taskTimelapse.taskId))
+		.where(eq(task.taskId, singleTask.taskId));
+
+	const timelapseId =
+		timelapseArr.length > 0 ? timelapseArr[0]["task-timelapse"].timelapseId : null;
+	const timelapsed = timelapseArr.length > 0 ? await getTimelapse(timelapseId || 0) : null;
+
+	const milestones = await db
+		.select()
+		.from(milestone)
+		.where(eq(milestone.taskId, singleTask.taskId));
+
+	return {
+		...singleTask,
+		taskId: singleTask.taskId.toString(),
+		priority: singleTask.priority || "",
+		timelapsed: timelapsed || null,
+		milestones: milestones.map(milestone => ({
+			...milestone,
+			milestoneId: milestone.milestoneId.toString(),
+		})),
+	};
+}
+
+export async function getTasksOfGoal(goalId: string | number): Promise<Task[]> {
 	const tasks = await db.select().from(task).where(eq(task.goalId, +goalId));
 	const tasksWithTodos: Task[] = await Promise.all(
-		tasks.map(async singleTask => {
-			const timelapseArr = await db
-				.select()
-				.from(taskTimelapse)
-				.innerJoin(task, eq(task.taskId, taskTimelapse.taskId))
-				.where(eq(task.taskId, singleTask.taskId));
-
-			const timelapseId =
-				timelapseArr.length > 0 ? timelapseArr[0]["task-timelapse"].timelapseId : null;
-			const timelapsed = timelapseArr.length > 0 ? await getTimelapse(timelapseId || 0) : null;
-
-			const milestones = await db
-				.select()
-				.from(milestone)
-				.where(eq(milestone.taskId, singleTask.taskId));
-
-			return {
-				...singleTask,
-				taskId: singleTask.taskId.toString(),
-				priority: singleTask.priority || "",
-				timelapsed: timelapsed || null,
-				milestones: milestones.map(milestone => ({
-					...milestone,
-					milestoneId: milestone.milestoneId.toString(),
-				})),
-			};
-		}),
+		tasks.map(async singleTask => getTaskInGqlFormat(singleTask)),
 	);
 
 	return tasksWithTodos;

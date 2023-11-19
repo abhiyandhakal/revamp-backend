@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
 import { Goal, MutationSetGoalArgs } from "../../generated/graphql";
