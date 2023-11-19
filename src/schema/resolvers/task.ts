@@ -97,4 +97,6 @@ export async function setTask(input: MutationSetTaskArgs) {
 
 export async function deleteTask(taskId: string | number) {
 	const timelapsed = await db.select().from(taskTimelapse).where(eq(taskTimelapse.taskId, +taskId));
+
+	if (timelapsed.length > 0) throw new Error("Task has timelapsed");
 }

@@ -87,10 +87,10 @@ export async function deleteTodo(todoId: string | number): Promise<string> {
 		.from(todoTimelapse)
 		.where(eq(todoTimelapse.todoId, +todoId));
 
-	if (timelapseId.length === 0) throw new Error("Todo not found");
-
-	// delete timelapse
-	await db.delete(timeLapse).where(eq(timeLapse.timelapseId, timelapseId[0].timelapseId));
+	if (timelapseId.length > 0) {
+		// delete timelapse
+		await db.delete(timeLapse).where(eq(timeLapse.timelapseId, timelapseId[0].timelapseId));
+	}
 
 	// delete todo
 	const deletedTodo = await db.delete(todo).where(eq(todo.todoId, +todoId)).returning();
