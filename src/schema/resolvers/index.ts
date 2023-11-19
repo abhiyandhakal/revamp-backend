@@ -1,7 +1,7 @@
 import { Resolvers } from "../../generated/graphql";
 import { deleteTodo, getSingleTodo, getTodosOfTask, getTodosOfUser, setTodo } from "./todo";
-import { getSingleTask, getTasksOfGoal, getTasksOfUser, setTask } from "./task";
-import { getGoals, setGoal } from "./goal";
+import { deleteTask, getSingleTask, getTasksOfGoal, getTasksOfUser, setTask } from "./task";
+import { deleteGoal, getGoals, setGoal } from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
 import { getAllUsers, getSingleUser, setUser } from "./user";
@@ -26,6 +26,8 @@ const resolvers: Resolvers = {
 		setGoal: async (_, args) => setGoal(args),
 		setTask: async (_, args) => setTask(args),
 		setTodo: async (_, args) => setTodo(args),
+		deleteGoal: async (_, { goalId }) => deleteGoal(goalId),
+		deleteTask: async (_, { taskId }) => deleteTask(taskId),
 		deleteTodo: async (_, { todoId }) => deleteTodo(todoId),
 	},
 };
