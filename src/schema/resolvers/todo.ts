@@ -40,13 +40,17 @@ export async function sqlToGqlTodo(singleTodo: typeof todo.$inferSelect): Promis
 
 	const timelapsed = timelapseds[0];
 
-	const timelapsedTotal = await getTimelapse(timelapsed.timelapse.timelapseId);
-
-	return {
+	let gqlTodo: Todo = {
 		...singleTodo,
 		todoId: singleTodo.todoId.toString(),
-		timelapsed: timelapsedTotal,
 	};
+
+	if (timelapsed) {
+		const timelapsedTotal = await getTimelapse(timelapsed.timelapse.timelapseId);
+		gqlTodo = { ...gqlTodo, timelapsed: timelapsedTotal };
+	}
+
+	return gqlTodo;
 }
 
 export async function getTodosOfTask(taskId: number | string): Promise<Todo[]> {
