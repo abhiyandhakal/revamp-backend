@@ -3,8 +3,10 @@ import db from "../../db";
 import { milestone, task } from "../../db/schema/task";
 import { MutationSetTaskArgs, Task } from "../../generated/graphql";
 import { taskTimelapse } from "../../db/schema/relations/task-timelapse";
-import { getTimelapse } from "./timelapse";
+import { deleteTimelapseOfTask, getTimelapse } from "./timelapse";
 import { goal } from "../../db/schema/goal";
+import { deleteTodo } from "./todo";
+import { todo } from "../../db/schema/todo";
 
 export async function getSingleTask(taskId: string | number): Promise<Task> {
 	const taskList = await db.select().from(task).where(eq(task.taskId, +taskId));
@@ -95,8 +97,27 @@ export async function setTask(input: MutationSetTaskArgs) {
 	return `Task with title "${input.title}" has been successfully created`;
 }
 
-export async function deleteTask(taskId: string | number) {
-	const timelapsed = await db.select().from(taskTimelapse).where(eq(taskTimelapse.taskId, +taskId));
+export async function deleteTask(taskId: string | number): Promise<string> {
+	// get timelapse id
+	const timelapseId = await db
+		.select({ timelapseId: taskTimelapse.timelapseId })
+		.from(taskTimelapse)
+		.where(eq(taskTimelapse.taskId, +taskId));
 
-	if (timelapsed.length > 0) throw new Error("Task has timelapsed");
+	if (timelapseId.length > 0) {
+		// delete timelapse
+		await deleteTimelapseOfTask(timelapseId[0].timelapseId);
+	}
+
+	// delete corresponding todos
+	const todos = await db.select().from(todo).where(eq(todo.taskId, +taskId));
+	await Promise.all(todos.map(async todo => await deleteTodo(todo.todoId)));
+
+	// delete milestones
+	// WILL BE IMPLEMENTED IN THE FUTURE
+
+	// delete task
+	const deletedTask = await db.delete(task).where(eq(task.taskId, +taskId)).returning();
+
+	return `Task ${deletedTask[0].title} deleted successfully`;
 }
