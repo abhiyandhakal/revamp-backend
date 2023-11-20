@@ -207,4 +207,24 @@ type Mutation {
 	deleteGoal(goalId: ID!): String!
 	deleteTask(taskId: ID!): String!
 	deleteTodo(todoId: ID!): String!
+	editGoal(
+		goalId: ID!
+		title: String
+		description: String
+		priority: String
+		relatedArea: String
+		deadline: Timestamp
+		order: Int
+	): String!
+	editTask(
+		taskId: ID!
+		title: String
+		description: String
+		priority: String
+		isDone: Boolean
+		deadline: Timestamp
+		order: Int
+		streak: Int
+	): String!
+	editTodo(todoId: ID!, todo: String, isDone: Boolean, order: Int): String!
 }
