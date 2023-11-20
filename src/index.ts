@@ -3,7 +3,8 @@ import { createYoga } from "graphql-yoga";
 import { schema } from "./schema";
 import { applyMiddleware } from "graphql-middleware";
 import { EnvelopArmor } from "@escape.tech/graphql-armor";
-import permissions from "./permissions";
+import permissions from "./middlewares/permissions";
+import errorHandler from "./middlewares/error-handler";
 
 // dotenv config
 import * as dotenv from "dotenv";
@@ -20,7 +21,7 @@ const armor = new EnvelopArmor({
 });
 const protection = armor.protect();
 
-const schemaWithMiddleware = applyMiddleware(schema, permissions);
+const schemaWithMiddleware = applyMiddleware(schema, permissions, errorHandler);
 
 // Create a Yoga instance with a GraphQL schema.
 const yoga = createYoga({ schema: schemaWithMiddleware, plugins: [...protection.plugins] });

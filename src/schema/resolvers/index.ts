@@ -1,24 +1,34 @@
-import clerkClient from "@clerk/clerk-sdk-node";
 import { Resolvers } from "../../generated/graphql";
+import { deleteTodo, getSingleTodo, getTodosOfTask, getTodosOfUser, setTodo } from "./todo";
+import { deleteTask, getSingleTask, getTasksOfGoal, getTasksOfUser, setTask } from "./task";
+import { deleteGoal, getGoals, setGoal } from "./goal";
+import { getAllQuestions } from "./question";
+import { getAllAspects } from "./aspect";
+import { getAllUsers, getSingleUser, setUser } from "./user";
 
 const resolvers: Resolvers = {
 	Query: {
-		getUsers: async () => {
-			const users = await clerkClient.users.getUserList();
+		getTodosOfTask: (_, { taskId }) => getTodosOfTask(taskId),
+		getTodosOfUser: (_, { userId }) => getTodosOfUser(userId),
+		getTasksOfGoal: (_, { goalId }) => getTasksOfGoal(goalId),
+		getTasksOfUser: (_, { userId }) => getTasksOfUser(userId),
+		getGoals: (_, { userId }) => getGoals(userId),
+		getAllQuestions,
+		getAllAspects,
+		getAllUsers,
+		getSingleTask: (_, { taskId }) => getSingleTask(taskId),
+		getSingleTodo: (_, { todoId }) => getSingleTodo(todoId),
+		getSingleUser: (_, { userId }) => getSingleUser(userId),
+	},
 
-			const trimmedUsers = users.map(user => {
-				return {
-					id: user.id,
-					name: `${user.firstName} ${user.lastName}`,
-					email: user.emailAddresses[0].emailAddress,
-					password: "test",
-					createdAt: user.createdAt.toString(),
-					updatedAt: user.updatedAt.toString(),
-				};
-			});
-
-			return trimmedUsers;
-		},
+	Mutation: {
+		setUser: async (_, { userId }) => setUser(userId),
+		setGoal: async (_, args) => setGoal(args),
+		setTask: async (_, args) => setTask(args),
+		setTodo: async (_, args) => setTodo(args),
+		deleteGoal: async (_, { goalId }) => deleteGoal(goalId),
+		deleteTask: async (_, { taskId }) => deleteTask(taskId),
+		deleteTodo: async (_, { todoId }) => deleteTodo(todoId),
 	},
 };
 

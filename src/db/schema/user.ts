@@ -15,7 +15,7 @@ export const userEmailAddress = pgTable("user-email", {
 	userId: text("userId")
 		.notNull()
 		.references(() => user.userId),
-	emailAddress: text("emailAddress").notNull(),
+	emailAddress: text("emailAddress").primaryKey(),
 	isPrimary: boolean("isPrimary").notNull(),
 	verified: boolean("verified").notNull(),
 });

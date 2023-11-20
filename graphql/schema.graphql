@@ -1,3 +1,7 @@
+scalar Timestamp
+scalar EmailAddress
+scalar URL
+
 type Pausetime {
 	pausetimeId: ID!
 	pauseTime: Timestamp!
@@ -34,18 +38,25 @@ type Todo {
 	timelapsed: Timelapse
 }
 
+type Milestone {
+	milestoneId: ID!
+	milestone: String!
+	createdAt: Timestamp!
+}
+
 type Task {
 	taskId: ID!
 	title: String!
-	description: String!
-	priority: Int!
+	description: String
+	priority: String!
 	order: Int!
-	deadline: Timestamp!
+	deadline: Timestamp
 	isDone: Boolean!
 	createdAt: Timestamp!
-	updatedAt: Timestamp!
+	updatedAt: Timestamp
 	streak: Int!
 	todos: [Todo]
+	milestones: [Milestone]
 	timelapsed: Timelapse
 }
 
@@ -58,16 +69,16 @@ type GoalQna {
 type Goal {
 	goalId: ID!
 	title: String!
-	description: String!
-	priority: Int!
-	relatedArea: [String]
+	description: String
+	priority: String
+	relatedArea: String
 	order: Int!
 	streak: Int!
 	status: String!
-	deadline: Timestamp!
+	deadline: Timestamp
 	isDone: Boolean!
 	createdAt: Timestamp!
-	updatedAt: Timestamp!
+	updatedAt: Timestamp
 	tasks: [Task!]!
 	goalQnas: [GoalQna]
 }
@@ -100,7 +111,7 @@ type Comment {
 	comment: String!
 	createdAt: Timestamp!
 	updatedAt: Timestamp
-	author: User!
+	authorId: ID!
 }
 
 type JournalLike {
@@ -140,6 +151,7 @@ type User {
 	goals: [Goal!]!
 	questions: [Question]
 	emailAddresses: [UserEmailAddress!]!
+	communities: [Community!]!
 }
 
 type UserWithRole {
@@ -159,5 +171,40 @@ type Community {
 }
 
 type Query {
-	getUsers: [User!]!
+	getTodosOfTask(taskId: ID!): [Todo!]!
+	getTodosOfUser(userId: ID!): [Todo!]!
+	getTasksOfGoal(goalId: ID!): [Task!]!
+	getTasksOfUser(userId: ID!): [Task!]!
+	getGoals(userId: ID!): [Goal!]!
+	getAllUsers: [User!]!
+	getAllQuestions: [Question!]!
+	getAllAspects: [Aspect!]!
+	getSingleGoal(goalId: ID!): Goal!
+	getSingleTask(taskId: ID!): Task!
+	getSingleTodo(todoId: ID!): Todo!
+	getSingleUser(userId: ID!): User!
+}
+
+type Mutation {
+	setUser(userId: ID!): String!
+	setGoal(
+		userId: ID!
+		title: String!
+		description: String
+		priority: String
+		relatedArea: String
+		deadline: Timestamp
+	): String!
+	setTask(
+		goalId: ID!
+		title: String!
+		description: String
+		priority: String
+		deadline: Timestamp
+	): String!
+	setTodo(taskId: ID!, todo: String!): String!
+	deleteUser(userId: ID!): String!
+	deleteGoal(goalId: ID!): String!
+	deleteTask(taskId: ID!): String!
+	deleteTodo(todoId: ID!): String!
 }
