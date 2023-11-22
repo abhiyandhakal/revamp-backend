@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
-import { Goal, MutationSetGoalArgs } from "../../generated/graphql";
+import { Goal, MutationEditGoalArgs, MutationSetGoalArgs } from "../../generated/graphql";
 import { deleteTask, getTasksOfGoal } from "./task";
 import { goalQuestion } from "../../db/schema/goal-question";
 import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
@@ -98,4 +98,24 @@ export async function deleteGoal(goalId: string | number) {
 	await db.delete(goal).where(eq(goal.goalId, +goalId));
 
 	return `Goal with id ${goalId} has been successfully deleted`;
+}
+
+export async function editGoal(args: MutationEditGoalArgs): Promise<string> {
+	const goalArr = await db.select().from(goal).where(eq(goal.goalId, +args.goalId));
+	const singleGoal = goalArr[0];
+	if (!singleGoal) throw new Error("No such goal found");
+
+	await db
+		.update(goal)
+		.set({
+			deadline: args.deadline || singleGoal.deadline,
+			description: args.description || singleGoal.description,
+			order: args.order || singleGoal.order,
+			priority: args.priority || singleGoal.priority,
+			relatedArea: args.relatedArea || singleGoal.relatedArea,
+			title: args.title || singleGoal.title,
+		})
+		.where(eq(goal.goalId, +args.goalId));
+
+	return "Goal edited successfully";
 }
