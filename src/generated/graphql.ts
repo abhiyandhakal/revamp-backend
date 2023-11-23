@@ -145,6 +145,8 @@ export type MutationEditGoalArgs = {
   deadline?: InputMaybe<Scalars['Timestamp']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   goalId: Scalars['ID']['input'];
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isDone?: InputMaybe<Scalars['Boolean']['input']>;
   order?: InputMaybe<Scalars['Int']['input']>;
   priority?: InputMaybe<Scalars['String']['input']>;
   relatedArea?: InputMaybe<Scalars['String']['input']>;

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { milestone, task } from "../../db/schema/task";
-import { MutationSetTaskArgs, Task } from "../../generated/graphql";
+import { MutationEditTaskArgs, MutationSetTaskArgs, Task } from "../../generated/graphql";
 import { taskTimelapse } from "../../db/schema/relations/task-timelapse";
 import { deleteTimelapseOfTask, getTimelapse } from "./timelapse";
 import { goal } from "../../db/schema/goal";
@@ -105,4 +105,25 @@ export async function deleteTask(taskId: string | number): Promise<string> {
 	const deletedTask = await db.delete(task).where(eq(task.taskId, +taskId)).returning();
 
 	return `Task ${deletedTask[0].title} deleted successfully`;
+}
+
+export async function editTask(input: MutationEditTaskArgs): Promise<string> {
+	const taskList = await db.select().from(task).where(eq(task.taskId, +input.taskId));
+	const singleTask = taskList[0];
+
+	if (!singleTask) throw new Error("Task not found");
+
+	await db
+		.update(task)
+		.set({
+			deadline: input.deadline || singleTask.deadline,
+			description: input.description || singleTask.description,
+			isDone: input.isDone || singleTask.isDone,
+			order: input.order || singleTask.order,
+			priority: input.priority || singleTask.priority,
+			title: input.title || singleTask.title,
+		})
+		.where(eq(task.taskId, +input.taskId));
+
+	return "Task edited successfully";
 }

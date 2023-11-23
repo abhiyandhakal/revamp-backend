@@ -215,6 +215,8 @@ type Mutation {
 		relatedArea: String
 		deadline: Timestamp
 		order: Int
+		isDone: Boolean
+		isActive: Boolean
 	): String!
 	editTask(
 		taskId: ID!
