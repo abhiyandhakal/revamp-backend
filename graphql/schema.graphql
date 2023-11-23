@@ -74,7 +74,7 @@ type Goal {
 	relatedArea: String
 	order: Int!
 	streak: Int!
-	status: String!
+	isActive: Boolean!
 	deadline: Timestamp
 	isDone: Boolean!
 	createdAt: Timestamp!

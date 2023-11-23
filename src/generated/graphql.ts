@@ -54,11 +54,11 @@ export type Goal = {
   description?: Maybe<Scalars['String']['output']>;
   goalId: Scalars['ID']['output'];
   goalQnas?: Maybe<Array<Maybe<GoalQna>>>;
+  isActive: Scalars['Boolean']['output'];
   isDone: Scalars['Boolean']['output'];
   order: Scalars['Int']['output'];
   priority?: Maybe<Scalars['String']['output']>;
   relatedArea?: Maybe<Scalars['String']['output']>;
-  status: Scalars['String']['output'];
   streak: Scalars['Int']['output'];
   tasks: Array<Task>;
   title: Scalars['String']['output'];
@@ -539,11 +539,11 @@ export type GoalResolvers<ContextType = any, ParentType extends ResolversParentT
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   goalId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   goalQnas?: Resolver<Maybe<Array<Maybe<ResolversTypes['GoalQna']>>>, ParentType, ContextType>;
+  isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isDone?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   priority?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   relatedArea?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   streak?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   tasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
