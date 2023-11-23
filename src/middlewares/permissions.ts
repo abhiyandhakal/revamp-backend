@@ -2,6 +2,10 @@ import clerkClient from "@clerk/clerk-sdk-node";
 import { GraphQLError } from "graphql";
 import { shield, rule } from "graphql-shield";
 import { YogaInitialContext } from "graphql-yoga";
+import db from "../db";
+import { user } from "../db/schema/user";
+import { eq } from "drizzle-orm";
+import { setUser } from "../schema/resolvers/user";
 
 const isAuthenticated = rule()(async (_, args, context: YogaInitialContext) => {
 	const sessionId = context.request.headers.get("authorization")?.split(" ")[1];
@@ -10,9 +14,17 @@ const isAuthenticated = rule()(async (_, args, context: YogaInitialContext) => {
 	const session = await clerkClient.sessions.getSession(sessionId);
 	if (!session) return new GraphQLError("Session not found");
 
-	if (args.userId) {
-		const userFromClerkSession = await clerkClient.users.getUser(session.userId);
+	const userFromClerkSession = await clerkClient.users.getUser(session.userId);
 
+	if (!userFromClerkSession) return new GraphQLError("User not found");
+
+	const userFromDbArr = await db.select().from(user).where(eq(user.userId, session.userId));
+
+	if (userFromDbArr.length === 0) {
+		await setUser(session.userId);
+	}
+
+	if (args.userId) {
 		if (userFromClerkSession.id !== args.userId) {
 			return new GraphQLError("User id does not match with the session user id");
 		}

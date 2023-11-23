@@ -119,7 +119,7 @@ export async function editTodo(args: MutationEditTodoArgs): Promise<string> {
 		isDone: args.isDone || singleTodo.isDone,
 		order: args.order || singleTodo.order,
 		todo: args.todo || singleTodo.todo,
-		updateAt: new Date(),
+		updatedAt: new Date(),
 	});
 
 	return "Todo edited successfully";
