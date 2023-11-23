@@ -116,6 +116,7 @@ export async function editGoal(args: MutationEditGoalArgs): Promise<string> {
 			title: args.title || singleGoal.title,
 			isDone: args.isDone || singleGoal.isDone,
 			isActive: args.isActive || singleGoal.isActive,
+			updateAt: new Date(),
 		})
 		.where(eq(goal.goalId, +args.goalId));
 

@@ -122,6 +122,7 @@ export async function editTask(input: MutationEditTaskArgs): Promise<string> {
 			order: input.order || singleTask.order,
 			priority: input.priority || singleTask.priority,
 			title: input.title || singleTask.title,
+			updateAt: new Date(),
 		})
 		.where(eq(task.taskId, +input.taskId));
 
