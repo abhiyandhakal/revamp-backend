@@ -1,5 +1,5 @@
 import db from "../../db";
-import { User, UserEmailAddress } from "../../generated/graphql";
+import { User, UserEmailAddress, UserWithLessDetails } from "../../generated/graphql";
 import { user, userEmailAddress } from "../../db/schema/user";
 import { eq } from "drizzle-orm";
 import { getAspectsOfUser } from "./aspect";
@@ -35,12 +35,13 @@ export const getSingleUser = async (userId: string): Promise<User> => {
 	};
 };
 
-export const getAllUsers = async (): Promise<User[]> => {
-	const userIds = await db.select({ userId: user.userId }).from(user);
+export const getAllUsers = async (): Promise<UserWithLessDetails[]> => {
+	const userIdsFromDb = await db.select().from(user);
 
-	const users = await Promise.all(
-		userIds.map(async singleUser => getSingleUser(singleUser.userId)),
-	);
+	const users: UserWithLessDetails[] = userIdsFromDb.map(user => ({
+		...user,
+		id: user.userId,
+	}));
 
 	return users;
 };
