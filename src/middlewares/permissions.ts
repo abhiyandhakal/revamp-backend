@@ -1,9 +1,10 @@
 import clerkClient, { Session } from "@clerk/clerk-sdk-node";
 import { GraphQLError } from "graphql";
-import { shield, rule } from "graphql-shield";
+import { shield, rule, and } from "graphql-shield";
 import { YogaInitialContext } from "graphql-yoga";
 import db from "../db";
 import { user } from "../db/schema/user";
+import { goal } from "../db/schema/goal";
 import { eq } from "drizzle-orm";
 import { setUser } from "../schema/resolvers/user";
 
@@ -49,13 +50,39 @@ const isAuthenticated = rule()(async (_, args, context: YogaInitialContext) => {
 	}
 });
 
+const isGoalOfUser = rule()(async (_, args, context: YogaInitialContext) => {
+	try {
+		const session = await getSession(context.request.headers);
+
+		const userIdArr = await db
+			.select({ userId: goal.userId })
+			.from(goal)
+			.where(eq(goal.goalId, args.goalId));
+
+		const userId = userIdArr[0].userId;
+
+		if (!userId) return new GraphQLError("Goal not found for the user");
+
+		if (userId !== session.userId) return new GraphQLError("Goal not found for the user");
+
+		return true;
+	} catch (error) {
+		if (error instanceof Error) {
+			return new GraphQLError(error.message);
+		}
+		return new GraphQLError("Authorization Error");
+	}
+});
+
 const permissions = shield(
 	{
 		Query: {
 			"*": isAuthenticated,
+			getSingleGoal: and(isAuthenticated, isGoalOfUser),
 		},
 		Mutation: {
 			"*": isAuthenticated,
+			deleteGoal: and(isAuthenticated, isGoalOfUser),
 		},
 	},
 	{
