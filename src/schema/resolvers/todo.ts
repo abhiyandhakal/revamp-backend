@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { todo } from "../../db/schema/todo";
-import { MutationSetTodoArgs, Todo } from "../../generated/graphql";
+import { MutationEditTodoArgs, MutationSetTodoArgs, Todo } from "../../generated/graphql";
 import { todoTimelapse } from "../../db/schema/relations/todo-timelapse";
 import { timeLapse } from "../../db/schema/time-lapse";
 import { deleteTimelapseOfTodo, getTimelapse } from "./timelapse";
@@ -100,4 +100,27 @@ export async function deleteTodo(todoId: string | number): Promise<string> {
 	const deletedTodo = await db.delete(todo).where(eq(todo.todoId, +todoId)).returning();
 
 	return `Todo ${deletedTodo[0].todo} deleted successfully`;
+}
+// (alias) type MutationEditTodoArgs = {
+//     isDone?: InputMaybe<boolean> | undefined;
+//     order?: InputMaybe<number> | undefined;
+//     todo?: InputMaybe<string> | undefined;
+//     todoId: Scalars['ID']['input'];
+// }
+// import MutationEditTodoArgs
+
+export async function editTodo(args: MutationEditTodoArgs): Promise<string> {
+	const todoArr = await db.select().from(todo).where(eq(todo.todoId, +args.todoId));
+	const singleTodo = todoArr[0];
+
+	if (!singleTodo) throw new Error("Todo not found");
+
+	await db.update(todo).set({
+		isDone: args.isDone || singleTodo.isDone,
+		order: args.order || singleTodo.order,
+		todo: args.todo || singleTodo.todo,
+		updateAt: new Date(),
+	});
+
+	return "Todo edited successfully";
 }
