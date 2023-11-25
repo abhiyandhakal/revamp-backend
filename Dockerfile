@@ -17,8 +17,6 @@ RUN npm install -g pnpm
 RUN pnpm install
 RUN pnpm build
 
-ENV NEXT_TELEMETRY_DISABLED 1
-
 EXPOSE 8000
 
 CMD ["pnpm", "start"]
