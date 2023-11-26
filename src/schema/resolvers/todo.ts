@@ -8,8 +8,8 @@ import { deleteTimelapseOfTodo, getTimelapse } from "./timelapse";
 import { task } from "../../db/schema/task";
 import { goal } from "../../db/schema/goal";
 
-export async function getSingleTodo(todoId: string | number): Promise<Todo> {
-	const todos = await db.select().from(todo).where(eq(todo.todoId, +todoId));
+export async function getSingleTodo(todoId: number): Promise<Todo> {
+	const todos = await db.select().from(todo).where(eq(todo.todoId, todoId));
 	const singleTodo = todos[0];
 
 	if (!singleTodo) throw new Error("Todo not found");
@@ -26,7 +26,7 @@ export async function getSingleTodo(todoId: string | number): Promise<Todo> {
 
 	return {
 		...singleTodo,
-		todoId: singleTodo.todoId.toString(),
+		todoId: singleTodo.todoId,
 		timelapsed: timelapsedTotal,
 	};
 }
@@ -42,7 +42,7 @@ export async function sqlToGqlTodo(singleTodo: typeof todo.$inferSelect): Promis
 
 	let gqlTodo: Todo = {
 		...singleTodo,
-		todoId: singleTodo.todoId.toString(),
+		todoId: singleTodo.todoId,
 	};
 
 	if (timelapsed) {
@@ -53,8 +53,8 @@ export async function sqlToGqlTodo(singleTodo: typeof todo.$inferSelect): Promis
 	return gqlTodo;
 }
 
-export async function getTodosOfTask(taskId: number | string): Promise<Todo[]> {
-	const todos = await db.select().from(todo).where(eq(todo.taskId, +taskId));
+export async function getTodosOfTask(taskId: number): Promise<Todo[]> {
+	const todos = await db.select().from(todo).where(eq(todo.taskId, taskId));
 
 	const finalTodos: Todo[] = await Promise.all(
 		todos.map(async singleTodo => await sqlToGqlTodo(singleTodo)),
@@ -79,7 +79,7 @@ export async function getTodosOfUser(userId: string): Promise<Todo[]> {
 }
 
 export async function setTodo(args: MutationSetTodoArgs): Promise<string> {
-	await db.insert(todo).values({ ...args, taskId: +args.taskId });
+	await db.insert(todo).values({ ...args, taskId: args.taskId });
 
 	return `Todo ${args.todo} created successfully`;
 }

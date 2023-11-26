@@ -26,7 +26,6 @@ export const getSingleUser = async (userId: string): Promise<User> => {
 
 	return {
 		...userInDb[0],
-		id: userInDb[0].userId,
 		aspects,
 		journals: [],
 		goals,

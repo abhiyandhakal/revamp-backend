@@ -32,14 +32,13 @@ export async function getTimelapse(timelapseId: string | number): Promise<Timela
 
 	return {
 		...timelapse,
-		timelapseId: timelapse.timelapseId.toString(),
 		duration: duration === 0 ? null : { days, hours, minutes, seconds },
 		pausetimes: pauseTimes.map(pausetime => ({
-			pausetimeId: pausetime.pauseTimeId.toString(),
+			pausetimeId: pausetime.pauseTimeId,
 			pauseTime: pausetime.pauseTime,
 		})),
 		resumetimes: resumeTimes.map(resumetime => ({
-			resumetimeId: resumetime.resumeTimeId.toString(),
+			resumetimeId: resumetime.resumeTimeId,
 			resumeTime: resumetime.resumeTime,
 		})),
 	};

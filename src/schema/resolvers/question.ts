@@ -14,7 +14,6 @@ export const getAllQuestions = async (): Promise<Question[]> => {
 
 			return {
 				...question,
-				questionId: question.questionId.toString(),
 				options: options.map(option => option.option),
 			};
 		}),

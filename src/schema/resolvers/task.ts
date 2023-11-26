@@ -43,14 +43,10 @@ export async function sqlToGqlTask(singleTask: typeof task.$inferSelect): Promis
 
 	return {
 		...singleTask,
-		taskId: singleTask.taskId.toString(),
 		priority: singleTask.priority || "",
 		timelapsed: timelapsed || null,
 		todos: finalTodos,
-		milestones: milestones.map(milestone => ({
-			...milestone,
-			milestoneId: milestone.milestoneId.toString(),
-		})),
+		milestones,
 	};
 }
 

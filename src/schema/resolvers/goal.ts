@@ -13,27 +13,8 @@ export async function getSingleGoal(goalId: string | number): Promise<Goal> {
 
 	if (!singleGoal) throw new Error("Goal not found");
 
-	const tasks = await getTasksOfGoal(singleGoal.goalId);
-
-	const goalQuestions = await db
-		.select()
-		.from(goalQuestion)
-		.innerJoin(
-			goalQuestionRelation,
-			eq(goalQuestionRelation.goalQuestionId, goalQuestion.goalQuestionId),
-		)
-		.where(eq(goalQuestionRelation.goalId, singleGoal.goalId));
-
-	return {
-		...singleGoal,
-		goalId: singleGoal.goalId.toString(),
-		tasks,
-		goalQnas: goalQuestions.map(gq => ({
-			goalQnaId: gq["goal-question"].goalQuestionId.toString(),
-			question: gq["goal-question"].question,
-			answer: gq["goal-question-relation"].answer,
-		})),
-	};
+	const singleGoalSql = await sqlToGqlGoal(singleGoal);
+	return singleGoalSql;
 }
 
 export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promise<Goal> {
@@ -52,10 +33,9 @@ export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promis
 
 	return {
 		...singleGoal,
-		goalId: singleGoal.goalId.toString(),
 		tasks,
 		goalQnas: goalQuestions.map(gq => ({
-			goalQnaId: gq["goal-question"].goalQuestionId.toString(),
+			goalQnaId: gq["goal-question"].goalQuestionId,
 			question: gq["goal-question"].question,
 			answer: gq["goal-question-relation"].answer,
 		})),

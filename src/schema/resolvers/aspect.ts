@@ -14,8 +14,7 @@ export const getAllAspects = async (): Promise<Aspect[]> => {
 
 			return {
 				...singleAspect,
-				aspectId: singleAspect.aspectId.toString(),
-				tags: tags.map(singleTag => ({ tag: singleTag.tag, tagId: singleTag.tagId.toString() })),
+				tags: tags.map(singleTag => ({ tag: singleTag.tag, tagId: singleTag.tagId })),
 			};
 		}),
 	);
@@ -39,8 +38,7 @@ export const getAspectsOfUser = async (userId: string): Promise<Aspect[]> => {
 
 			return {
 				...singleAspect.aspect,
-				aspectId: singleAspect.aspect.aspectId.toString(),
-				tags: tags.map(singleTag => ({ tag: singleTag.tag, tagId: singleTag.tagId.toString() })),
+				tags: tags.map(singleTag => ({ tag: singleTag.tag, tagId: singleTag.tagId })),
 			};
 		}),
 	);
