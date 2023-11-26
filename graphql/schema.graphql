@@ -112,7 +112,7 @@ type Comment {
 	comment: String!
 	createdAt: Timestamp!
 	updatedAt: Timestamp
-	authorId: Int!
+	authorId: ID!
 }
 
 type JournalLike {

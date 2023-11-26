@@ -5,11 +5,11 @@ import { Timelapse } from "../../generated/graphql";
 import { taskTimelapse } from "../../db/schema/relations/task-timelapse";
 import { todoTimelapse } from "../../db/schema/relations/todo-timelapse";
 
-export async function getTimelapse(timelapseId: string | number): Promise<Timelapse> {
+export async function getTimelapse(timelapseId: number): Promise<Timelapse> {
 	const timelapseArr = await db
 		.select()
 		.from(timeLapse)
-		.where(eq(timeLapse.timelapseId, +timelapseId));
+		.where(eq(timeLapse.timelapseId, timelapseId));
 
 	const timelapse = timelapseArr[0];
 
@@ -44,16 +44,16 @@ export async function getTimelapse(timelapseId: string | number): Promise<Timela
 	};
 }
 
-export async function deleteTimelapseOfTask(timelapseId: string | number) {
-	await db.delete(taskTimelapse).where(eq(taskTimelapse.timelapseId, +timelapseId));
-	await db.delete(pauseTime).where(eq(pauseTime.timeLapseId, +timelapseId));
-	await db.delete(resumeTime).where(eq(resumeTime.timeLapseId, +timelapseId));
-	await db.delete(timeLapse).where(eq(timeLapse.timelapseId, +timelapseId));
+export async function deleteTimelapseOfTask(timelapseId: number) {
+	await db.delete(taskTimelapse).where(eq(taskTimelapse.timelapseId, timelapseId));
+	await db.delete(pauseTime).where(eq(pauseTime.timeLapseId, timelapseId));
+	await db.delete(resumeTime).where(eq(resumeTime.timeLapseId, timelapseId));
+	await db.delete(timeLapse).where(eq(timeLapse.timelapseId, timelapseId));
 }
 
-export async function deleteTimelapseOfTodo(timelapseId: string | number) {
-	await db.delete(todoTimelapse).where(eq(todoTimelapse.timelapseId, +timelapseId));
-	await db.delete(pauseTime).where(eq(pauseTime.timeLapseId, +timelapseId));
-	await db.delete(resumeTime).where(eq(resumeTime.timeLapseId, +timelapseId));
-	await db.delete(timeLapse).where(eq(timeLapse.timelapseId, +timelapseId));
+export async function deleteTimelapseOfTodo(timelapseId: number) {
+	await db.delete(todoTimelapse).where(eq(todoTimelapse.timelapseId, timelapseId));
+	await db.delete(pauseTime).where(eq(pauseTime.timeLapseId, timelapseId));
+	await db.delete(resumeTime).where(eq(resumeTime.timeLapseId, timelapseId));
+	await db.delete(timeLapse).where(eq(timeLapse.timelapseId, timelapseId));
 }

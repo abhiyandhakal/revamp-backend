@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { option, question } from "../../db/schema/question";
-import { Question } from "../../generated/graphql";
+import { QueryResolvers, Question } from "../../generated/graphql";
 
-export const getAllQuestions = async (): Promise<Question[]> => {
+export const getAllQuestions: QueryResolvers["getAllQuestions"] = async () => {
 	const questions = await db.select().from(question);
 	const questionsWithOptions: Question[] = await Promise.all(
 		questions.map(async question => {

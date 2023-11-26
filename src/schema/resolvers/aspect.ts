@@ -2,10 +2,10 @@ import { eq } from "drizzle-orm";
 import db from "../../db";
 import { aspect } from "../../db/schema/aspect";
 import { tag } from "../../db/schema/tag";
-import { Aspect } from "../../generated/graphql";
+import { Aspect, QueryResolvers } from "../../generated/graphql";
 import { userAspect } from "../../db/schema/relations/user-aspect";
 
-export const getAllAspects = async (): Promise<Aspect[]> => {
+export const getAllAspects: QueryResolvers["getAllAspects"] = async () => {
 	const aspects = await db.select().from(aspect);
 
 	const aspectsWithTags: Aspect[] = await Promise.all(

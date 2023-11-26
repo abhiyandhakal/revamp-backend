@@ -11,7 +11,6 @@ export const getCommentsOfJournal = async (journalId: number | string): Promise<
 		commentsFromDb.map(async singleComment => {
 			return {
 				...singleComment,
-				commentId: singleComment.commentId.toString(),
 				authorId: singleComment.userId,
 			};
 		}),
@@ -31,7 +30,6 @@ export const getJournals = async (userId: string): Promise<Journal[]> => {
 
 			return {
 				...singleJournal,
-				journalId: singleJournal.journalId.toString(),
 				comments,
 				likedBy: [],
 				sharedBy: [],

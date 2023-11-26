@@ -28,7 +28,7 @@ export type Aspect = {
 
 export type Comment = {
   __typename?: 'Comment';
-  authorId: Scalars['Int']['output'];
+  authorId: Scalars['ID']['output'];
   comment: Scalars['String']['output'];
   commentId: Scalars['Int']['output'];
   createdAt: Scalars['Timestamp']['output'];
@@ -510,7 +510,7 @@ export type AspectResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type CommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = {
-  authorId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  authorId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   comment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   commentId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;

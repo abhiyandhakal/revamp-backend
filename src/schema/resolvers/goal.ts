@@ -1,13 +1,13 @@
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
-import { Goal, MutationEditGoalArgs, MutationSetGoalArgs } from "../../generated/graphql";
-import { deleteTask, getTasksOfGoal } from "./task";
+import { Goal, MutationResolvers, QueryResolvers } from "../../generated/graphql";
+import { deleteTaskFunc, getTasksOfGoalFunc } from "./task";
 import { goalQuestion } from "../../db/schema/goal-question";
 import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
 import { task } from "../../db/schema/task";
 
-export async function getSingleGoal(goalId: string | number): Promise<Goal> {
+export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function (_, { goalId }) {
 	const goals = await db.select().from(goal).where(eq(goal.goalId, +goalId));
 	const singleGoal = goals[0];
 
@@ -15,12 +15,12 @@ export async function getSingleGoal(goalId: string | number): Promise<Goal> {
 
 	const singleGoalSql = await sqlToGqlGoal(singleGoal);
 	return singleGoalSql;
-}
+};
 
 export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promise<Goal> {
 	if (!singleGoal) throw new Error("Goal not found");
 
-	const tasks = await getTasksOfGoal(singleGoal.goalId);
+	const tasks = await getTasksOfGoalFunc(singleGoal.goalId);
 
 	const goalQuestions = await db
 		.select()
@@ -42,7 +42,7 @@ export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promis
 	};
 }
 
-export async function getGoals(userId: string): Promise<Goal[]> {
+export const getGoals: QueryResolvers["getGoals"] = async function (_, { userId }) {
 	const goals = await db.select().from(goal).where(eq(goal.userId, userId));
 
 	const goalsWithTasks: Goal[] = await Promise.all(
@@ -50,9 +50,9 @@ export async function getGoals(userId: string): Promise<Goal[]> {
 	);
 
 	return goalsWithTasks;
-}
+};
 
-export async function setGoal(input: MutationSetGoalArgs): Promise<string> {
+export const setGoal: MutationResolvers["setGoal"] = async function (_, input) {
 	const newGoal = {
 		...input,
 	};
@@ -60,9 +60,9 @@ export async function setGoal(input: MutationSetGoalArgs): Promise<string> {
 	await db.insert(goal).values(newGoal);
 
 	return `Goal with title ${input.title} has been successfully created`;
-}
+};
 
-export async function deleteGoal(goalId: string | number) {
+export const deleteGoal: MutationResolvers["deleteGoal"] = async function (_, { goalId }) {
 	// get goal
 	const goalArr = await db.select().from(goal).where(eq(goal.goalId, +goalId));
 
@@ -72,15 +72,15 @@ export async function deleteGoal(goalId: string | number) {
 	const tasks = await db.select().from(task).where(eq(task.goalId, +goalId));
 
 	// delete tasks
-	await Promise.all(tasks.map(async singleTask => deleteTask(singleTask.taskId)));
+	await Promise.all(tasks.map(async singleTask => deleteTaskFunc(singleTask.taskId)));
 
 	// delete goal
 	await db.delete(goal).where(eq(goal.goalId, +goalId));
 
 	return `Goal with id ${goalId} has been successfully deleted`;
-}
+};
 
-export async function editGoal(args: MutationEditGoalArgs): Promise<string> {
+export const editGoal: MutationResolvers["editGoal"] = async function (_, args) {
 	const goalArr = await db.select().from(goal).where(eq(goal.goalId, +args.goalId));
 	const singleGoal = goalArr[0];
 	if (!singleGoal) throw new Error("No such goal found");
@@ -101,4 +101,4 @@ export async function editGoal(args: MutationEditGoalArgs): Promise<string> {
 		.where(eq(goal.goalId, +args.goalId));
 
 	return "Goal edited successfully";
-}
+};
