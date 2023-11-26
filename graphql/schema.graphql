@@ -46,6 +46,7 @@ type Milestone {
 
 type Task {
 	taskId: Int!
+	goalId: Int!
 	title: String!
 	description: String
 	priority: String!

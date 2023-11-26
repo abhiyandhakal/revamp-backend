@@ -294,6 +294,7 @@ export type Task = {
   createdAt: Scalars['Timestamp']['output'];
   deadline?: Maybe<Scalars['Timestamp']['output']>;
   description?: Maybe<Scalars['String']['output']>;
+  goalId: Scalars['Int']['output'];
   isDone: Scalars['Boolean']['output'];
   milestones?: Maybe<Array<Maybe<Milestone>>>;
   order: Scalars['Int']['output'];
@@ -649,6 +650,7 @@ export type TaskResolvers<ContextType = any, ParentType extends ResolversParentT
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   deadline?: Resolver<Maybe<ResolversTypes['Timestamp']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  goalId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   isDone?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   milestones?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milestone']>>>, ParentType, ContextType>;
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
