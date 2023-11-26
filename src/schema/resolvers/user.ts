@@ -3,7 +3,7 @@ import { MutationResolvers, QueryResolvers, User, UserEmailAddress } from "../..
 import { user, userEmailAddress } from "../../db/schema/user";
 import { eq } from "drizzle-orm";
 import { getAspectsOfUser } from "./aspect";
-import { getGoals } from "./goal";
+import { getGoalsFunc } from "./goal";
 import clerkClient from "@clerk/clerk-sdk-node";
 
 const getUserEmailAddresses = async (userId: string): Promise<UserEmailAddress[]> => {
@@ -20,24 +20,15 @@ export const getSingleUser: QueryResolvers["getSingleUser"] = async (_, { userId
 
 	if (userInDb.length === 0) throw new Error("User does not exist");
 
-	const aspects = await getAspectsOfUser(userId);
-	const goals = await getGoals(userId);
-	const emailAddresses = await getUserEmailAddresses(userId);
+	const gqlUser = await sqlToGqlUser(userInDb[0]);
 
-	return {
-		...userInDb[0],
-		aspects,
-		journals: [],
-		goals,
-		emailAddresses,
-		communities: [],
-	};
+	return gqlUser;
 };
 
 const sqlToGqlUser = async (singleUser: typeof user.$inferSelect): Promise<User> => {
 	const userId = singleUser.userId;
 	const aspects = await getAspectsOfUser(userId);
-	const goals = await getGoals(userId);
+	const goals = await getGoalsFunc(userId);
 	const emailAddresses = await getUserEmailAddresses(userId);
 
 	return {
@@ -60,7 +51,7 @@ export const getAllUsers: QueryResolvers["getAllUsers"] = async () => {
 	return users;
 };
 
-export const setUser: MutationResolvers["setUser"] = async (_, { userId }) => {
+export const setUserFunc = async (userId: string): Promise<string> => {
 	const userInDb = await db.select().from(user).where(eq(user.userId, userId));
 
 	if (userInDb.length !== 0) {
@@ -103,3 +94,4 @@ export const setUser: MutationResolvers["setUser"] = async (_, { userId }) => {
 
 	return "User created successfully";
 };
+export const setUser: MutationResolvers["setUser"] = (_, { userId }) => setUserFunc(userId);

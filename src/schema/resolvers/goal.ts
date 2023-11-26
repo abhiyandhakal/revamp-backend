@@ -42,7 +42,7 @@ export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promis
 	};
 }
 
-export const getGoals: QueryResolvers["getGoals"] = async function (_, { userId }) {
+export const getGoalsFunc = async function (userId: string): Promise<Goal[]> {
 	const goals = await db.select().from(goal).where(eq(goal.userId, userId));
 
 	const goalsWithTasks: Goal[] = await Promise.all(
@@ -51,6 +51,7 @@ export const getGoals: QueryResolvers["getGoals"] = async function (_, { userId 
 
 	return goalsWithTasks;
 };
+export const getGoals: QueryResolvers["getGoals"] = (_, { userId }) => getGoalsFunc(userId);
 
 export const setGoal: MutationResolvers["setGoal"] = async function (_, input) {
 	const newGoal = {

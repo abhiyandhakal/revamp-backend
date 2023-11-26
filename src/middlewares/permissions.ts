@@ -5,7 +5,7 @@ import { YogaInitialContext } from "graphql-yoga";
 import db from "../db";
 import { user } from "../db/schema/user";
 import { eq } from "drizzle-orm";
-import { setUser } from "../schema/resolvers/user";
+import { setUserFunc } from "../schema/resolvers/user";
 
 const isAuthenticated = rule()(async (_, args, context: YogaInitialContext) => {
 	const sessionId = context.request.headers.get("authorization")?.split(" ")[1];
@@ -21,7 +21,7 @@ const isAuthenticated = rule()(async (_, args, context: YogaInitialContext) => {
 	const userFromDbArr = await db.select().from(user).where(eq(user.userId, session.userId));
 
 	if (userFromDbArr.length === 0) {
-		await setUser(session.userId);
+		await setUserFunc(session.userId);
 	}
 
 	if (args.userId) {
