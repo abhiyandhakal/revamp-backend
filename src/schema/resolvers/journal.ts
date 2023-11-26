@@ -4,14 +4,13 @@ import { comment } from "../../db/schema/comment";
 import { journal } from "../../db/schema/journal";
 import { Journal, Comment } from "../../generated/graphql";
 
-export const getCommentsOfJournal = async (journalId: number | string): Promise<Comment[]> => {
-	const commentsFromDb = await db.select().from(comment).where(eq(comment.journalId, +journalId));
+export const getCommentsOfJournal = async (journalId: number): Promise<Comment[]> => {
+	const commentsFromDb = await db.select().from(comment).where(eq(comment.journalId, journalId));
 
 	const comments: Comment[] = await Promise.all(
 		commentsFromDb.map(async singleComment => {
 			return {
 				...singleComment,
-				commentId: singleComment.commentId.toString(),
 				authorId: singleComment.userId,
 			};
 		}),
@@ -31,7 +30,6 @@ export const getJournals = async (userId: string): Promise<Journal[]> => {
 
 			return {
 				...singleJournal,
-				journalId: singleJournal.journalId.toString(),
 				comments,
 				likedBy: [],
 				sharedBy: [],

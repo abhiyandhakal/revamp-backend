@@ -1,9 +1,9 @@
 import db from "../../db";
-import { User, UserEmailAddress } from "../../generated/graphql";
+import { MutationResolvers, QueryResolvers, User, UserEmailAddress } from "../../generated/graphql";
 import { user, userEmailAddress } from "../../db/schema/user";
 import { eq } from "drizzle-orm";
 import { getAspectsOfUser } from "./aspect";
-import { getGoals } from "./goal";
+import { getGoalsFunc } from "./goal";
 import clerkClient from "@clerk/clerk-sdk-node";
 
 const getUserEmailAddresses = async (userId: string): Promise<UserEmailAddress[]> => {
@@ -15,18 +15,24 @@ const getUserEmailAddresses = async (userId: string): Promise<UserEmailAddress[]
 	return userEmailAddresses;
 };
 
-export const getSingleUser = async (userId: string): Promise<User> => {
+export const getSingleUser: QueryResolvers["getSingleUser"] = async (_, { userId }) => {
 	const userInDb = await db.select().from(user).where(eq(user.userId, userId));
 
 	if (userInDb.length === 0) throw new Error("User does not exist");
 
+	const gqlUser = await sqlToGqlUser(userInDb[0]);
+
+	return gqlUser;
+};
+
+const sqlToGqlUser = async (singleUser: typeof user.$inferSelect): Promise<User> => {
+	const userId = singleUser.userId;
 	const aspects = await getAspectsOfUser(userId);
-	const goals = await getGoals(userId);
+	const goals = await getGoalsFunc(userId);
 	const emailAddresses = await getUserEmailAddresses(userId);
 
 	return {
-		...userInDb[0],
-		id: userInDb[0].userId,
+		...singleUser,
 		aspects,
 		journals: [],
 		goals,
@@ -35,17 +41,17 @@ export const getSingleUser = async (userId: string): Promise<User> => {
 	};
 };
 
-export const getAllUsers = async (): Promise<User[]> => {
-	const userIds = await db.select({ userId: user.userId }).from(user);
+export const getAllUsers: QueryResolvers["getAllUsers"] = async () => {
+	const usersFromDb = await db.select().from(user);
 
 	const users = await Promise.all(
-		userIds.map(async singleUser => getSingleUser(singleUser.userId)),
+		usersFromDb.map(async singleUser => await sqlToGqlUser(singleUser)),
 	);
 
 	return users;
 };
 
-export const setUser = async (userId: string): Promise<string> => {
+export const setUserFunc = async (userId: string): Promise<string> => {
 	const userInDb = await db.select().from(user).where(eq(user.userId, userId));
 
 	if (userInDb.length !== 0) {
@@ -88,3 +94,4 @@ export const setUser = async (userId: string): Promise<string> => {
 
 	return "User created successfully";
 };
+export const setUser: MutationResolvers["setUser"] = (_, { userId }) => setUserFunc(userId);
