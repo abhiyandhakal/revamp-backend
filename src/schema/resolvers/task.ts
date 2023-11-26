@@ -9,7 +9,7 @@ import { deleteTodoFunc, sqlToGqlTodo } from "./todo";
 import { todo } from "../../db/schema/todo";
 
 export const getSingleTask: QueryResolvers["getSingleTask"] = async function (_, { taskId }) {
-	const taskList = await db.select().from(task).where(eq(task.taskId, +taskId));
+	const taskList = await db.select().from(task).where(eq(task.taskId, taskId));
 	const singleTask = taskList[0];
 
 	if (!singleTask) throw new Error("Task not found");
@@ -51,7 +51,7 @@ export async function sqlToGqlTask(singleTask: typeof task.$inferSelect): Promis
 }
 
 export const getTasksOfGoalFunc = async function (goalId: number): Promise<Task[]> {
-	const tasks = await db.select().from(task).where(eq(task.goalId, +goalId));
+	const tasks = await db.select().from(task).where(eq(task.goalId, goalId));
 	const tasksWithTodos: Task[] = await Promise.all(
 		tasks.map(async singleTask => sqlToGqlTask(singleTask)),
 	);
@@ -85,7 +85,7 @@ export const deleteTaskFunc = async function (taskId: number): Promise<string> {
 	const timelapseId = await db
 		.select({ timelapseId: taskTimelapse.timelapseId })
 		.from(taskTimelapse)
-		.where(eq(taskTimelapse.taskId, +taskId));
+		.where(eq(taskTimelapse.taskId, taskId));
 
 	if (timelapseId.length > 0) {
 		// delete timelapse
@@ -100,7 +100,7 @@ export const deleteTaskFunc = async function (taskId: number): Promise<string> {
 	// WILL BE IMPLEMENTED IN THE FUTURE
 
 	// delete task
-	const deletedTask = await db.delete(task).where(eq(task.taskId, +taskId)).returning();
+	const deletedTask = await db.delete(task).where(eq(task.taskId, taskId)).returning();
 
 	return `Task ${deletedTask[0].title} deleted successfully`;
 };

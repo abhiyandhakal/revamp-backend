@@ -8,7 +8,7 @@ import { deleteTimelapseOfTodo, getTimelapse } from "./timelapse";
 import { task } from "../../db/schema/task";
 import { goal } from "../../db/schema/goal";
 
-export const getSingleTodo: QueryResolvers["getSingleTodo"] = async function(_, { todoId }) {
+export const getSingleTodo: QueryResolvers["getSingleTodo"] = async function (_, { todoId }) {
 	const todos = await db.select().from(todo).where(eq(todo.todoId, todoId));
 	const singleTodo = todos[0];
 
@@ -63,7 +63,7 @@ export const getTodosOfTask: QueryResolvers["getTodosOfTask"] = async (_, { task
 	return finalTodos;
 };
 
-export const getTodosOfUser: QueryResolvers["getTodosOfUser"] = async function(_, { userId }) {
+export const getTodosOfUser: QueryResolvers["getTodosOfUser"] = async function (_, { userId }) {
 	const todos = await db
 		.select()
 		.from(todo)
@@ -78,7 +78,7 @@ export const getTodosOfUser: QueryResolvers["getTodosOfUser"] = async function(_
 	return finalTodos;
 };
 
-export const setTodo: MutationResolvers["setTodo"] = async function(_, args) {
+export const setTodo: MutationResolvers["setTodo"] = async function (_, args) {
 	await db.insert(todo).values({ ...args, taskId: args.taskId });
 
 	return `Todo ${args.todo} created successfully`;
@@ -97,17 +97,17 @@ export const deleteTodoFunc = async (todoId: number): Promise<string> => {
 	}
 
 	// delete todo
-	const deletedTodo = await db.delete(todo).where(eq(todo.todoId, +todoId)).returning();
+	const deletedTodo = await db.delete(todo).where(eq(todo.todoId, todoId)).returning();
 
 	return `Todo ${deletedTodo[0].todo} deleted successfully`;
 };
 
-export const deleteTodo: MutationResolvers["deleteTodo"] = async function(_, { todoId }) {
+export const deleteTodo: MutationResolvers["deleteTodo"] = async function (_, { todoId }) {
 	return await deleteTodoFunc(todoId);
 };
 
-export const editTodo: MutationResolvers["editTodo"] = async function(_, args) {
-	const todoArr = await db.select().from(todo).where(eq(todo.todoId, +args.todoId));
+export const editTodo: MutationResolvers["editTodo"] = async function (_, args) {
+	const todoArr = await db.select().from(todo).where(eq(todo.todoId, args.todoId));
 	const singleTodo = todoArr[0];
 
 	if (!singleTodo) throw new Error("Todo not found");
