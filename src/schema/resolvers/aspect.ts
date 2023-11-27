@@ -2,10 +2,10 @@ import { eq } from "drizzle-orm";
 import db from "../../db";
 import { aspect } from "../../db/schema/aspect";
 import { tag } from "../../db/schema/tag";
-import { Aspect } from "../../generated/graphql";
+import { Aspect, QueryResolvers } from "../../generated/graphql";
 import { userAspect } from "../../db/schema/relations/user-aspect";
 
-export const getAllAspects = async (): Promise<Aspect[]> => {
+export const getAllAspects: QueryResolvers["getAllAspects"] = async () => {
 	const aspects = await db.select().from(aspect);
 
 	const aspectsWithTags: Aspect[] = await Promise.all(
@@ -14,8 +14,7 @@ export const getAllAspects = async (): Promise<Aspect[]> => {
 
 			return {
 				...singleAspect,
-				aspectId: singleAspect.aspectId.toString(),
-				tags: tags.map(singleTag => ({ tag: singleTag.tag, tagId: singleTag.tagId.toString() })),
+				tags: tags.map(singleTag => ({ tag: singleTag.tag, tagId: singleTag.tagId })),
 			};
 		}),
 	);
@@ -39,8 +38,7 @@ export const getAspectsOfUser = async (userId: string): Promise<Aspect[]> => {
 
 			return {
 				...singleAspect.aspect,
-				aspectId: singleAspect.aspect.aspectId.toString(),
-				tags: tags.map(singleTag => ({ tag: singleTag.tag, tagId: singleTag.tagId.toString() })),
+				tags: tags.map(singleTag => ({ tag: singleTag.tag, tagId: singleTag.tagId })),
 			};
 		}),
 	);

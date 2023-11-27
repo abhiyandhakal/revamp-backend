@@ -3,12 +3,12 @@ scalar EmailAddress
 scalar URL
 
 type Pausetime {
-	pausetimeId: ID!
+	pausetimeId: Int!
 	pauseTime: Timestamp!
 }
 
 type Resumetime {
-	resumetimeId: ID!
+	resumetimeId: Int!
 	resumeTime: Timestamp!
 }
 
@@ -20,7 +20,7 @@ type TimeDuration {
 }
 
 type Timelapse {
-	timelapseId: ID!
+	timelapseId: Int!
 	startTime: Timestamp!
 	endTime: Timestamp
 	duration: TimeDuration
@@ -29,7 +29,7 @@ type Timelapse {
 }
 
 type Todo {
-	todoId: ID!
+	todoId: Int!
 	todo: String!
 	order: Int!
 	isDone: Boolean!
@@ -39,13 +39,14 @@ type Todo {
 }
 
 type Milestone {
-	milestoneId: ID!
+	milestoneId: Int!
 	milestone: String!
 	createdAt: Timestamp!
 }
 
 type Task {
-	taskId: ID!
+	taskId: Int!
+	goalId: Int!
 	title: String!
 	description: String
 	priority: String!
@@ -61,13 +62,13 @@ type Task {
 }
 
 type GoalQna {
-	goalQnaId: ID!
+	goalQnaId: Int!
 	question: String!
 	answer: String!
 }
 
 type Goal {
-	goalId: ID!
+	goalId: Int!
 	title: String!
 	description: String
 	priority: String
@@ -84,18 +85,18 @@ type Goal {
 }
 
 type Tag {
-	tagId: ID!
+	tagId: Int!
 	tag: String!
 }
 
 type Aspect {
-	aspectId: ID!
+	aspectId: Int!
 	aspect: String!
 	tags: [Tag!]!
 }
 
 type Question {
-	questionId: ID!
+	questionId: Int!
 	question: String!
 	options: [String!]!
 }
@@ -107,7 +108,7 @@ type UserEmailAddress {
 }
 
 type Comment {
-	commentId: ID!
+	commentId: Int!
 	comment: String!
 	createdAt: Timestamp!
 	updatedAt: Timestamp
@@ -126,7 +127,7 @@ type JournalShare {
 }
 
 type Journal {
-	journalId: ID!
+	journalId: Int!
 	title: String!
 	content: String!
 	type: String!
@@ -138,7 +139,7 @@ type Journal {
 }
 
 type User {
-	id: ID!
+	userId: ID!
 	firstName: String!
 	lastName: String!
 	username: String!
@@ -169,7 +170,7 @@ type UserWithRole {
 }
 
 type Community {
-	communityId: ID!
+	communityId: Int!
 	community: String!
 	description: String!
 	nametag: String!
@@ -180,17 +181,17 @@ type Community {
 }
 
 type Query {
-	getTodosOfTask(taskId: ID!): [Todo!]!
+	getTodosOfTask(taskId: Int!): [Todo!]!
 	getTodosOfUser(userId: ID!): [Todo!]!
-	getTasksOfGoal(goalId: ID!): [Task!]!
+	getTasksOfGoal(goalId: Int!): [Task!]!
 	getTasksOfUser(userId: ID!): [Task!]!
 	getGoals(userId: ID!): [Goal!]!
 	getAllUsers: [UserWithLessDetails!]!
 	getAllQuestions: [Question!]!
 	getAllAspects: [Aspect!]!
-	getSingleGoal(goalId: ID!): Goal!
-	getSingleTask(taskId: ID!): Task!
-	getSingleTodo(todoId: ID!): Todo!
+	getSingleGoal(goalId: Int!): Goal!
+	getSingleTask(taskId: Int!): Task!
+	getSingleTodo(todoId: Int!): Todo!
 	getSingleUser(userId: ID!): User!
 }
 
@@ -205,19 +206,19 @@ type Mutation {
 		deadline: Timestamp
 	): String!
 	setTask(
-		goalId: ID!
+		goalId: Int!
 		title: String!
 		description: String
 		priority: String
 		deadline: Timestamp
 	): String!
-	setTodo(taskId: ID!, todo: String!): String!
+	setTodo(taskId: Int!, todo: String!): String!
 	deleteUser(userId: ID!): String!
-	deleteGoal(goalId: ID!): String!
-	deleteTask(taskId: ID!): String!
-	deleteTodo(todoId: ID!): String!
+	deleteGoal(goalId: Int!): String!
+	deleteTask(taskId: Int!): String!
+	deleteTodo(todoId: Int!): String!
 	editGoal(
-		goalId: ID!
+		goalId: Int!
 		title: String
 		description: String
 		priority: String
@@ -228,7 +229,7 @@ type Mutation {
 		isActive: Boolean
 	): String!
 	editTask(
-		taskId: ID!
+		taskId: Int!
 		title: String
 		description: String
 		priority: String
@@ -237,5 +238,5 @@ type Mutation {
 		order: Int
 		streak: Int
 	): String!
-	editTodo(todoId: ID!, todo: String, isDone: Boolean, order: Int): String!
+	editTodo(todoId: Int!, todo: String, isDone: Boolean, order: Int): String!
 }

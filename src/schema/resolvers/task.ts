@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { milestone, task } from "../../db/schema/task";
-import { MutationEditTaskArgs, MutationSetTaskArgs, Task } from "../../generated/graphql";
+import { MutationResolvers, QueryResolvers, Task } from "../../generated/graphql";
 import { taskTimelapse } from "../../db/schema/relations/task-timelapse";
 import { deleteTimelapseOfTask, getTimelapse } from "./timelapse";
 import { goal } from "../../db/schema/goal";
-import { deleteTodo, sqlToGqlTodo } from "./todo";
+import { deleteTodoFunc, sqlToGqlTodo } from "./todo";
 import { todo } from "../../db/schema/todo";
 
-export async function getSingleTask(taskId: string | number): Promise<Task> {
-	const taskList = await db.select().from(task).where(eq(task.taskId, +taskId));
+export const getSingleTask: QueryResolvers["getSingleTask"] = async function (_, { taskId }) {
+	const taskList = await db.select().from(task).where(eq(task.taskId, taskId));
 	const singleTask = taskList[0];
 
 	if (!singleTask) throw new Error("Task not found");
@@ -17,7 +17,7 @@ export async function getSingleTask(taskId: string | number): Promise<Task> {
 	const result = await sqlToGqlTask(singleTask);
 
 	return result;
-}
+};
 
 export async function sqlToGqlTask(singleTask: typeof task.$inferSelect): Promise<Task> {
 	const timelapseArr = await db
@@ -43,27 +43,25 @@ export async function sqlToGqlTask(singleTask: typeof task.$inferSelect): Promis
 
 	return {
 		...singleTask,
-		taskId: singleTask.taskId.toString(),
 		priority: singleTask.priority || "",
 		timelapsed: timelapsed || null,
 		todos: finalTodos,
-		milestones: milestones.map(milestone => ({
-			...milestone,
-			milestoneId: milestone.milestoneId.toString(),
-		})),
+		milestones,
 	};
 }
 
-export async function getTasksOfGoal(goalId: string | number): Promise<Task[]> {
-	const tasks = await db.select().from(task).where(eq(task.goalId, +goalId));
+export const getTasksOfGoalFunc = async function (goalId: number): Promise<Task[]> {
+	const tasks = await db.select().from(task).where(eq(task.goalId, goalId));
 	const tasksWithTodos: Task[] = await Promise.all(
 		tasks.map(async singleTask => sqlToGqlTask(singleTask)),
 	);
 
 	return tasksWithTodos;
-}
+};
+export const getTasksOfGoal: QueryResolvers["getTasksOfGoal"] = async (_, { goalId }) =>
+	await getTasksOfGoalFunc(goalId);
 
-export async function getTasksOfUser(userId: string): Promise<Task[]> {
+export const getTasksOfUser: QueryResolvers["getTasksOfUser"] = async function (_, { userId }) {
 	const tasks = await db
 		.select()
 		.from(task)
@@ -74,20 +72,20 @@ export async function getTasksOfUser(userId: string): Promise<Task[]> {
 	);
 
 	return tasksWithTodos;
-}
+};
 
-export async function setTask(input: MutationSetTaskArgs) {
-	await db.insert(task).values({ ...input, goalId: +input.goalId });
+export const setTask: MutationResolvers["setTask"] = async function (_, input) {
+	await db.insert(task).values({ ...input, goalId: input.goalId });
 
 	return `Task with title "${input.title}" has been successfully created`;
-}
+};
 
-export async function deleteTask(taskId: string | number): Promise<string> {
+export const deleteTaskFunc = async function (taskId: number): Promise<string> {
 	// get timelapse id
 	const timelapseId = await db
 		.select({ timelapseId: taskTimelapse.timelapseId })
 		.from(taskTimelapse)
-		.where(eq(taskTimelapse.taskId, +taskId));
+		.where(eq(taskTimelapse.taskId, taskId));
 
 	if (timelapseId.length > 0) {
 		// delete timelapse
@@ -95,20 +93,22 @@ export async function deleteTask(taskId: string | number): Promise<string> {
 	}
 
 	// delete corresponding todos
-	const todos = await db.select().from(todo).where(eq(todo.taskId, +taskId));
-	await Promise.all(todos.map(async todo => await deleteTodo(todo.todoId)));
+	const todos = await db.select().from(todo).where(eq(todo.taskId, taskId));
+	await Promise.all(todos.map(async todo => await deleteTodoFunc(todo.todoId)));
 
 	// delete milestones
 	// WILL BE IMPLEMENTED IN THE FUTURE
 
 	// delete task
-	const deletedTask = await db.delete(task).where(eq(task.taskId, +taskId)).returning();
+	const deletedTask = await db.delete(task).where(eq(task.taskId, taskId)).returning();
 
 	return `Task ${deletedTask[0].title} deleted successfully`;
-}
+};
+export const deleteTask: MutationResolvers["deleteTask"] = async (_, { taskId }) =>
+	await deleteTaskFunc(taskId);
 
-export async function editTask(input: MutationEditTaskArgs): Promise<string> {
-	const taskList = await db.select().from(task).where(eq(task.taskId, +input.taskId));
+export const editTask: MutationResolvers["editTask"] = async function (_, input) {
+	const taskList = await db.select().from(task).where(eq(task.taskId, input.taskId));
 	const singleTask = taskList[0];
 
 	if (!singleTask) throw new Error("Task not found");
@@ -124,7 +124,7 @@ export async function editTask(input: MutationEditTaskArgs): Promise<string> {
 			title: input.title || singleTask.title,
 			updatedAt: new Date(),
 		})
-		.where(eq(task.taskId, +input.taskId));
+		.where(eq(task.taskId, input.taskId));
 
 	return "Task edited successfully";
-}
+};
