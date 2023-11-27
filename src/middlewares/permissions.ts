@@ -80,6 +80,7 @@ const permissions = shield(
 		},
 		Mutation: {
 			"*": isAuthenticated,
+			editGoal: and(isAuthenticated, isGoalOfUser),
 			deleteGoal: and(isAuthenticated, isGoalOfUser),
 		},
 	},
