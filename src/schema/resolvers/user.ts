@@ -44,11 +44,10 @@ const sqlToGqlUser = async (singleUser: typeof user.$inferSelect): Promise<User>
 export const getAllUsers: QueryResolvers["getAllUsers"] = async () => {
 	const usersFromDb = await db.select().from(user);
 
-	const users = await Promise.all(
-		usersFromDb.map(async singleUser => await sqlToGqlUser(singleUser)),
-	);
-
-	return users;
+	return usersFromDb.map(singleUser => ({
+		...singleUser,
+		id: singleUser.userId,
+	}));
 };
 
 export const setUserFunc = async (userId: string): Promise<string> => {

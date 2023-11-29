@@ -213,7 +213,7 @@ export type Query = {
   __typename?: 'Query';
   getAllAspects: Array<Aspect>;
   getAllQuestions: Array<Question>;
-  getAllUsers: Array<User>;
+  getAllUsers: Array<UserWithLessDetails>;
   getGoals: Array<Goal>;
   getSingleGoal: Goal;
   getSingleTask: Task;
@@ -361,6 +361,16 @@ export type UserEmailAddress = {
   verified: Scalars['Boolean']['output'];
 };
 
+export type UserWithLessDetails = {
+  __typename?: 'UserWithLessDetails';
+  banned: Scalars['Boolean']['output'];
+  firstName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  imageUrl: Scalars['URL']['output'];
+  lastName: Scalars['String']['output'];
+  username: Scalars['String']['output'];
+};
+
 export type UserWithRole = {
   __typename?: 'UserWithRole';
   role: Scalars['String']['output'];
@@ -466,6 +476,7 @@ export type ResolversTypes = {
   URL: ResolverTypeWrapper<Scalars['URL']['output']>;
   User: ResolverTypeWrapper<User>;
   UserEmailAddress: ResolverTypeWrapper<UserEmailAddress>;
+  UserWithLessDetails: ResolverTypeWrapper<UserWithLessDetails>;
   UserWithRole: ResolverTypeWrapper<UserWithRole>;
 };
 
@@ -499,6 +510,7 @@ export type ResolversParentTypes = {
   URL: Scalars['URL']['output'];
   User: User;
   UserEmailAddress: UserEmailAddress;
+  UserWithLessDetails: UserWithLessDetails;
   UserWithRole: UserWithRole;
 };
 
@@ -615,7 +627,7 @@ export type PausetimeResolvers<ContextType = any, ParentType extends ResolversPa
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getAllAspects?: Resolver<Array<ResolversTypes['Aspect']>, ParentType, ContextType>;
   getAllQuestions?: Resolver<Array<ResolversTypes['Question']>, ParentType, ContextType>;
-  getAllUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  getAllUsers?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType>;
   getGoals?: Resolver<Array<ResolversTypes['Goal']>, ParentType, ContextType, RequireFields<QueryGetGoalsArgs, 'userId'>>;
   getSingleGoal?: Resolver<ResolversTypes['Goal'], ParentType, ContextType, RequireFields<QueryGetSingleGoalArgs, 'goalId'>>;
   getSingleTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<QueryGetSingleTaskArgs, 'taskId'>>;
@@ -726,6 +738,16 @@ export type UserEmailAddressResolvers<ContextType = any, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserWithLessDetailsResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserWithLessDetails'] = ResolversParentTypes['UserWithLessDetails']> = {
+  banned?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  imageUrl?: Resolver<ResolversTypes['URL'], ParentType, ContextType>;
+  lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserWithRoleResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserWithRole'] = ResolversParentTypes['UserWithRole']> = {
   role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -757,6 +779,7 @@ export type Resolvers<ContextType = any> = {
   URL?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   UserEmailAddress?: UserEmailAddressResolvers<ContextType>;
+  UserWithLessDetails?: UserWithLessDetailsResolvers<ContextType>;
   UserWithRole?: UserWithRoleResolvers<ContextType>;
 };
 

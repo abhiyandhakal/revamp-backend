@@ -155,6 +155,15 @@ type User {
 	communities: [Community!]!
 }
 
+type UserWithLessDetails {
+	id: ID!
+	firstName: String!
+	lastName: String!
+	username: String!
+	imageUrl: URL!
+	banned: Boolean!
+}
+
 type UserWithRole {
 	user: User!
 	role: String!
@@ -177,7 +186,7 @@ type Query {
 	getTasksOfGoal(goalId: Int!): [Task!]!
 	getTasksOfUser(userId: ID!): [Task!]!
 	getGoals(userId: ID!): [Goal!]!
-	getAllUsers: [User!]!
+	getAllUsers: [UserWithLessDetails!]!
 	getAllQuestions: [Question!]!
 	getAllAspects: [Aspect!]!
 	getSingleGoal(goalId: Int!): Goal!

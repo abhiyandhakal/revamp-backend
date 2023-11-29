@@ -24,7 +24,12 @@ const protection = armor.protect();
 const schemaWithMiddleware = applyMiddleware(schema, permissions, errorHandler);
 
 // Create a Yoga instance with a GraphQL schema.
-const yoga = createYoga({ schema: schemaWithMiddleware, plugins: [...protection.plugins] });
+const yoga = createYoga({
+	schema: schemaWithMiddleware,
+	plugins: [...protection.plugins],
+	graphiql: process.env.NODE_ENV === "development",
+	landingPage: false,
+});
 
 // Pass it into a server to hook into request handlers.
 const server = createServer(yoga);
