@@ -13,17 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Deploy using ssh
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.PRIVATE_KEY }}
-        port: 22
-        script: |
-          cd /root/revamp-backend
-          git pull origin master
-          # stop the running instance
-          docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
-          docker build -t revamp-backend .
-          docker run -p 8000:8000 revamp-backend
+      - name: Debug SSH Variables
+        run: |
+          echo "Username: $USERNAME"
+          echo "Passphrase: $HOST"
+
+      - name: Deploy using ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /root/revamp-backend
+            git pull origin master
+            # stop the running instance
+            docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
+            docker build -t revamp-backend .
+            docker run -p 8000:8000 revamp-backend
