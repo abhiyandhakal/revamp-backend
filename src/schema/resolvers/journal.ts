@@ -2,9 +2,11 @@ import { eq } from "drizzle-orm";
 import db from "../../db";
 import { comment } from "../../db/schema/comment";
 import { journal } from "../../db/schema/journal";
-import { Journal, Comment, UserWithLessDetails, JournalLike } from "../../generated/graphql";
+import { Journal, Comment, JournalLike, QueryResolvers } from "../../generated/graphql";
 import { user } from "../../db/schema/user";
 import { userLikesJournal } from "../../db/schema/relations/user-likes-journal";
+import { YogaInitialContext } from "graphql-yoga";
+import { getSession } from "../../middlewares/permissions";
 
 const getCommentsOfJournal = async (journalId: number): Promise<Comment[]> => {
 	const commentsFromDb = await db.select().from(comment).where(eq(comment.journalId, journalId));
@@ -45,22 +47,40 @@ const getJournalLikes = async (journalId: number): Promise<JournalLike[]> => {
 	return likes;
 };
 
-export const getJournals = async (userId: string): Promise<Journal[]> => {
+export const sqlToGqlJournal = async (
+	singleJournal: typeof journal.$inferSelect,
+): Promise<Journal> => {
+	const comments = await getCommentsOfJournal(singleJournal.journalId);
+	const likes = await getJournalLikes(singleJournal.journalId);
+
+	return {
+		...singleJournal,
+		comments,
+		likedBy: likes,
+		sharedBy: [],
+	};
+};
+
+export const getSingleJournal: QueryResolvers["getSingleJournal"] = async (
+	_,
+	{ journalId },
+	ctx: YogaInitialContext,
+) => {
+	const journalFromDb = await db.select().from(journal).where(eq(journal.journalId, journalId));
+	if (journalFromDb.length === 0) throw new Error("Journal not found");
+	const session = await getSession(ctx.request.headers);
+
+	if (session.userId !== journalFromDb[0].userId) throw new Error("Journal not found");
+
+	return sqlToGqlJournal(journalFromDb[0]);
+};
+
+export const getJournalsOfUser: QueryResolvers["getJournalsOfUser"] = async (_, { userId }) => {
 	const journalsFromDb = await db.select().from(journal).where(eq(journal.userId, userId));
 	if (journalsFromDb.length === 0) throw new Error("No journals found");
 
 	const journals: Journal[] = await Promise.all(
-		journalsFromDb.map(async singleJournal => {
-			const comments = await getCommentsOfJournal(singleJournal.journalId);
-			const likes = await getJournalLikes(singleJournal.journalId);
-
-			return {
-				...singleJournal,
-				comments,
-				likedBy: likes,
-				sharedBy: [],
-			};
-		}),
+		journalsFromDb.map(async singleJournal => sqlToGqlJournal(singleJournal)),
 	);
 
 	return journals;

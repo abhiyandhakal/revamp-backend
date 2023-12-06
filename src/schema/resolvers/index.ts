@@ -8,6 +8,7 @@ import {
 	getTasksOfUser,
 	setTask,
 } from "./task";
+import { getJournalsOfUser, getSingleJournal } from "./journal";
 import { deleteGoal, editGoal, getGoals, getSingleGoal, setGoal } from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
@@ -23,10 +24,12 @@ const resolvers: Resolvers = {
 		getAllQuestions,
 		getAllAspects,
 		getAllUsers,
+		getJournalsOfUser,
 		getSingleGoal,
 		getSingleTask,
 		getSingleTodo,
 		getSingleUser,
+		getSingleJournal,
 	},
 
 	Mutation: {
