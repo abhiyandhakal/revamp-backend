@@ -112,7 +112,7 @@ type Comment {
 	comment: String!
 	createdAt: Timestamp!
 	updatedAt: Timestamp
-	authorId: ID!
+	author: UserWithLessDetails!
 }
 
 type JournalLike {
@@ -189,10 +189,12 @@ type Query {
 	getAllUsers: [UserWithLessDetails!]!
 	getAllQuestions: [Question!]!
 	getAllAspects: [Aspect!]!
+	getJournalsOfUser(userId: ID!): [Journal!]!
 	getSingleGoal(goalId: Int!): Goal!
 	getSingleTask(taskId: Int!): Task!
 	getSingleTodo(todoId: Int!): Todo!
 	getSingleUser(userId: ID!): User!
+	getSingleJournal(journalId: Int!): Journal!
 }
 
 type Mutation {

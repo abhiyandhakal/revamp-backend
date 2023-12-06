@@ -28,7 +28,7 @@ export type Aspect = {
 
 export type Comment = {
   __typename?: 'Comment';
-  authorId: Scalars['ID']['output'];
+  author: UserWithLessDetails;
   comment: Scalars['String']['output'];
   commentId: Scalars['Int']['output'];
   createdAt: Scalars['Timestamp']['output'];
@@ -215,7 +215,9 @@ export type Query = {
   getAllQuestions: Array<Question>;
   getAllUsers: Array<UserWithLessDetails>;
   getGoals: Array<Goal>;
+  getJournalsOfUser: Array<Journal>;
   getSingleGoal: Goal;
+  getSingleJournal: Journal;
   getSingleTask: Task;
   getSingleTodo: Todo;
   getSingleUser: User;
@@ -231,8 +233,18 @@ export type QueryGetGoalsArgs = {
 };
 
 
+export type QueryGetJournalsOfUserArgs = {
+  userId: Scalars['ID']['input'];
+};
+
+
 export type QueryGetSingleGoalArgs = {
   goalId: Scalars['Int']['input'];
+};
+
+
+export type QueryGetSingleJournalArgs = {
+  journalId: Scalars['Int']['input'];
 };
 
 
@@ -522,7 +534,7 @@ export type AspectResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type CommentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = {
-  authorId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  author?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
   comment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   commentId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
@@ -629,7 +641,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getAllQuestions?: Resolver<Array<ResolversTypes['Question']>, ParentType, ContextType>;
   getAllUsers?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType>;
   getGoals?: Resolver<Array<ResolversTypes['Goal']>, ParentType, ContextType, RequireFields<QueryGetGoalsArgs, 'userId'>>;
+  getJournalsOfUser?: Resolver<Array<ResolversTypes['Journal']>, ParentType, ContextType, RequireFields<QueryGetJournalsOfUserArgs, 'userId'>>;
   getSingleGoal?: Resolver<ResolversTypes['Goal'], ParentType, ContextType, RequireFields<QueryGetSingleGoalArgs, 'goalId'>>;
+  getSingleJournal?: Resolver<ResolversTypes['Journal'], ParentType, ContextType, RequireFields<QueryGetSingleJournalArgs, 'journalId'>>;
   getSingleTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<QueryGetSingleTaskArgs, 'taskId'>>;
   getSingleTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<QueryGetSingleTodoArgs, 'todoId'>>;
   getSingleUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetSingleUserArgs, 'userId'>>;

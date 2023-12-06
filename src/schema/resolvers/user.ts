@@ -1,5 +1,11 @@
 import db from "../../db";
-import { MutationResolvers, QueryResolvers, User, UserEmailAddress } from "../../generated/graphql";
+import {
+	MutationResolvers,
+	QueryResolvers,
+	User,
+	UserEmailAddress,
+	UserWithLessDetails,
+} from "../../generated/graphql";
 import { user, userEmailAddress } from "../../db/schema/user";
 import { eq } from "drizzle-orm";
 import { getAspectsOfUser } from "./aspect";
