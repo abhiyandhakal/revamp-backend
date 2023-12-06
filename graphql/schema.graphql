@@ -116,12 +116,12 @@ type Comment {
 }
 
 type JournalLike {
-	likedBy: User!
+	likedBy: UserWithLessDetails!
 	likedAt: Timestamp!
 }
 
 type JournalShare {
-	sharedBy: User!
+	sharedBy: UserWithLessDetails!
 	sharedAt: Timestamp!
 	sharedIn: Community!
 }

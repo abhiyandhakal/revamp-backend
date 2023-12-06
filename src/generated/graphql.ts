@@ -88,13 +88,13 @@ export type Journal = {
 export type JournalLike = {
   __typename?: 'JournalLike';
   likedAt: Scalars['Timestamp']['output'];
-  likedBy: User;
+  likedBy: UserWithLessDetails;
 };
 
 export type JournalShare = {
   __typename?: 'JournalShare';
   sharedAt: Scalars['Timestamp']['output'];
-  sharedBy: User;
+  sharedBy: UserWithLessDetails;
   sharedIn: Community;
 };
 
@@ -598,13 +598,13 @@ export type JournalResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type JournalLikeResolvers<ContextType = any, ParentType extends ResolversParentTypes['JournalLike'] = ResolversParentTypes['JournalLike']> = {
   likedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  likedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  likedBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type JournalShareResolvers<ContextType = any, ParentType extends ResolversParentTypes['JournalShare'] = ResolversParentTypes['JournalShare']> = {
   sharedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  sharedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  sharedBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
   sharedIn?: Resolver<ResolversTypes['Community'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
