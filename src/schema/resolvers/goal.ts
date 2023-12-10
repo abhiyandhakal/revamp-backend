@@ -95,8 +95,8 @@ export const editGoal: MutationResolvers["editGoal"] = async function (_, args) 
 			priority: args.priority || singleGoal.priority,
 			relatedArea: args.relatedArea || singleGoal.relatedArea,
 			title: args.title || singleGoal.title,
-			isDone: args.isDone || singleGoal.isDone,
-			isActive: args.isActive || singleGoal.isActive,
+			isDone: args.isDone != undefined ? args.isDone : singleGoal.isDone,
+			isActive: args.isActive != undefined ? args.isActive : singleGoal.isActive,
 			updatedAt: new Date(),
 		})
 		.where(eq(goal.goalId, args.goalId));
