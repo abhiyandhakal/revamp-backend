@@ -6,7 +6,7 @@ export const journal = pgTable("journal", {
 	title: text("title").notNull(),
 	content: text("content").notNull(),
 	type: text("type").notNull(),
-	access: text("access").notNull(),
+	access: text("access").default("private"),
 	date: timestamp("date", { withTimezone: true }).notNull(),
 	userId: text("userId")
 		.notNull()

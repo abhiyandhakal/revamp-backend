@@ -55,6 +55,7 @@ export const sqlToGqlJournal = async (
 
 	return {
 		...singleJournal,
+		access: singleJournal.access || "private",
 		comments,
 		likedBy: likes,
 		sharedBy: [],

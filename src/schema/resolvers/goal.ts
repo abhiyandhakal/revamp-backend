@@ -7,7 +7,7 @@ import { goalQuestion } from "../../db/schema/goal-question";
 import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
 import { task } from "../../db/schema/task";
 
-export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function (_, { goalId }) {
+export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function(_, { goalId }) {
 	const goals = await db.select().from(goal).where(eq(goal.goalId, goalId));
 	const singleGoal = goals[0];
 
@@ -42,7 +42,7 @@ export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promis
 	};
 }
 
-export const getGoalsFunc = async function (userId: string): Promise<Goal[]> {
+export const getGoalsFunc = async function(userId: string): Promise<Goal[]> {
 	const goals = await db.select().from(goal).where(eq(goal.userId, userId));
 
 	const goalsWithTasks: Goal[] = await Promise.all(
@@ -53,7 +53,7 @@ export const getGoalsFunc = async function (userId: string): Promise<Goal[]> {
 };
 export const getGoals: QueryResolvers["getGoals"] = (_, { userId }) => getGoalsFunc(userId);
 
-export const setGoal: MutationResolvers["setGoal"] = async function (_, input) {
+export const setGoal: MutationResolvers["setGoal"] = async function(_, input) {
 	const newGoal = {
 		...input,
 	};
@@ -63,7 +63,7 @@ export const setGoal: MutationResolvers["setGoal"] = async function (_, input) {
 	return `Goal with title ${input.title} has been successfully created`;
 };
 
-export const deleteGoal: MutationResolvers["deleteGoal"] = async function (_, { goalId }) {
+export const deleteGoal: MutationResolvers["deleteGoal"] = async function(_, { goalId }) {
 	// get goal
 	const goalArr = await db.select().from(goal).where(eq(goal.goalId, goalId));
 
@@ -81,10 +81,12 @@ export const deleteGoal: MutationResolvers["deleteGoal"] = async function (_, { 
 	return `Goal with id ${goalId} has been successfully deleted`;
 };
 
-export const editGoal: MutationResolvers["editGoal"] = async function (_, args) {
+export const editGoal: MutationResolvers["editGoal"] = async function(_, args) {
 	const goalArr = await db.select().from(goal).where(eq(goal.goalId, args.goalId));
 	const singleGoal = goalArr[0];
 	if (!singleGoal) throw new Error("No such goal found");
+
+	console.log(args?.isActive);
 
 	await db
 		.update(goal)
@@ -95,8 +97,8 @@ export const editGoal: MutationResolvers["editGoal"] = async function (_, args) 
 			priority: args.priority || singleGoal.priority,
 			relatedArea: args.relatedArea || singleGoal.relatedArea,
 			title: args.title || singleGoal.title,
-			isDone: args.isDone || singleGoal.isDone,
-			isActive: args.isActive || singleGoal.isActive,
+			isDone: args.isDone != undefined ? args.isDone : singleGoal.isDone,
+			isActive: args.isActive != undefined ? args.isActive : singleGoal.isActive,
 			updatedAt: new Date(),
 		})
 		.where(eq(goal.goalId, args.goalId));
