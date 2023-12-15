@@ -7,6 +7,7 @@ import { timeLapse } from "../../db/schema/time-lapse";
 import { deleteTimelapseOfTodo, getTimelapse } from "./timelapse";
 import { task } from "../../db/schema/task";
 import { goal } from "../../db/schema/goal";
+import { increaseGoalStreak } from "../../lib/streak";
 
 export const getSingleTodo: QueryResolvers["getSingleTodo"] = async function (_, { todoId }) {
 	const todos = await db.select().from(todo).where(eq(todo.todoId, todoId));
@@ -118,6 +119,18 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 		todo: args.todo || singleTodo.todo,
 		updatedAt: new Date(),
 	});
+
+	if (args.isDone) {
+		const goalIdArr = await db
+			.select({ goalId: task.goalId })
+			.from(todo)
+			.innerJoin(task, eq(task.taskId, todo.taskId))
+			.where(eq(todo.todoId, args.todoId));
+		const goalId = goalIdArr[0]?.goalId;
+		if (!goalId) throw new Error("Todo doesn't belong to any goal");
+
+		increaseGoalStreak(goalId);
+	}
 
 	return "Todo edited successfully";
 };

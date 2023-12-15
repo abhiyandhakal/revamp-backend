@@ -7,6 +7,7 @@ import { deleteTimelapseOfTask, getTimelapse } from "./timelapse";
 import { goal } from "../../db/schema/goal";
 import { deleteTodoFunc, sqlToGqlTodo } from "./todo";
 import { todo } from "../../db/schema/todo";
+import { increaseGoalStreak } from "../../lib/streak";
 
 export const getSingleTask: QueryResolvers["getSingleTask"] = async function (_, { taskId }) {
 	const taskList = await db.select().from(task).where(eq(task.taskId, taskId));
@@ -125,6 +126,10 @@ export const editTask: MutationResolvers["editTask"] = async function (_, input)
 			updatedAt: new Date(),
 		})
 		.where(eq(task.taskId, input.taskId));
+
+	if (input.isDone) {
+		increaseGoalStreak(singleTask.goalId);
+	}
 
 	return "Task edited successfully";
 };

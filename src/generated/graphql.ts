@@ -311,7 +311,6 @@ export type Task = {
   milestones?: Maybe<Array<Maybe<Milestone>>>;
   order: Scalars['Int']['output'];
   priority: Scalars['String']['output'];
-  streak: Scalars['Int']['output'];
   taskId: Scalars['Int']['output'];
   timelapsed?: Maybe<Timelapse>;
   title: Scalars['String']['output'];
@@ -681,7 +680,6 @@ export type TaskResolvers<ContextType = any, ParentType extends ResolversParentT
   milestones?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milestone']>>>, ParentType, ContextType>;
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   priority?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  streak?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   taskId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timelapsed?: Resolver<Maybe<ResolversTypes['Timelapse']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
