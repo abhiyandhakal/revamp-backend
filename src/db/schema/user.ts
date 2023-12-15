@@ -9,6 +9,7 @@ export const user = pgTable("account", {
 	banned: boolean("banned").notNull(),
 	createdAt: timestamp("createdAt").notNull(),
 	updatedAt: timestamp("updatedAt").notNull(),
+	timezone: text("timezone").notNull(),
 });
 
 export const userEmailAddress = pgTable("user-email", {

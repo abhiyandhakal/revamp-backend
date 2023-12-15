@@ -13,6 +13,7 @@ export const goal = pgTable("goal", {
 	deadline: timestamp("deadline", { withTimezone: true }),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
 	updatedAt: timestamp("updatedAt", { withTimezone: true }),
+	streakUpdatedAt: timestamp("streakUpdatedAt", { withTimezone: true }),
 	order: serial("order"),
 	userId: text("userId")
 		.notNull()
