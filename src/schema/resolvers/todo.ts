@@ -113,7 +113,7 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 	if (!singleTodo) throw new Error("Todo not found");
 
 	await db.update(todo).set({
-		isDone: args.isDone || singleTodo.isDone,
+		isDone: args.isDone == undefined ? singleTodo.isDone : args.isDone,
 		order: args.order || singleTodo.order,
 		todo: args.todo || singleTodo.todo,
 		updatedAt: new Date(),

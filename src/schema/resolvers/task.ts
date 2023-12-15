@@ -118,7 +118,7 @@ export const editTask: MutationResolvers["editTask"] = async function (_, input)
 		.set({
 			deadline: input.deadline || singleTask.deadline,
 			description: input.description || singleTask.description,
-			isDone: input.isDone || singleTask.isDone,
+			isDone: input.isDone != undefined ? input.isDone : singleTask.isDone,
 			order: input.order || singleTask.order,
 			priority: input.priority || singleTask.priority,
 			title: input.title || singleTask.title,
