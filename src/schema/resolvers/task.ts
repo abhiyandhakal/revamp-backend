@@ -126,5 +126,28 @@ export const editTask: MutationResolvers["editTask"] = async function (_, input)
 		})
 		.where(eq(task.taskId, input.taskId));
 
+	if (input.isDone) {
+		const goalId = singleTask.goalId;
+
+		const goalStreaks = await db
+			.select({ streak: goal.streak, streakUpdatedAt: goal.streakUpdatedAt })
+			.from(goal)
+			.where(eq(goal.goalId, goalId));
+		const goalStreak = goalStreaks[0];
+		const streakUpdatedAt = new Date(
+			goalStreak.streakUpdatedAt?.toLocaleDateString() || "",
+		).getTime();
+
+		if (!goalStreak.streakUpdatedAt || streakUpdatedAt < Date.now()) {
+			await db
+				.update(goal)
+				.set({
+					streak: (goalStreak.streak || 0) + 1,
+					streakUpdatedAt: new Date(),
+				})
+				.where(eq(goal.goalId, goalId));
+		}
+	}
+
 	return "Task edited successfully";
 };

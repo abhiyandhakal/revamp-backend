@@ -1,11 +1,5 @@
 import db from "../../db";
-import {
-	MutationResolvers,
-	QueryResolvers,
-	User,
-	UserEmailAddress,
-	UserWithLessDetails,
-} from "../../generated/graphql";
+import { MutationResolvers, QueryResolvers, User, UserEmailAddress } from "../../generated/graphql";
 import { user, userEmailAddress } from "../../db/schema/user";
 import { eq } from "drizzle-orm";
 import { getAspectsOfUser } from "./aspect";
@@ -78,6 +72,7 @@ export const setUserFunc = async (userId: string): Promise<string> => {
 		banned: userInClerk.banned,
 		createdAt: new Date(userInClerk.createdAt),
 		updatedAt: new Date(userInClerk.updatedAt),
+		timezone: "Asia/Kathmandu",
 	};
 	await db.insert(user).values(newUser);
 

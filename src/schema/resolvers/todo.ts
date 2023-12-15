@@ -119,5 +119,34 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 		updatedAt: new Date(),
 	});
 
+	if (args.isDone) {
+		const goalIdArr = await db
+			.select({ goalId: task.goalId })
+			.from(todo)
+			.innerJoin(task, eq(task.taskId, todo.taskId))
+			.where(eq(todo.todoId, args.todoId));
+		const goalId = goalIdArr[0]?.goalId;
+		if (!goalId) throw new Error("Todo doesn't belong to any goal");
+
+		const goalStreaks = await db
+			.select({ streak: goal.streak, streakUpdatedAt: goal.streakUpdatedAt })
+			.from(goal)
+			.where(eq(goal.goalId, goalId));
+		const goalStreak = goalStreaks[0];
+		const streakUpdatedAt = new Date(
+			goalStreak.streakUpdatedAt?.toLocaleDateString() || "",
+		).getTime();
+
+		if (!goalStreak.streakUpdatedAt || streakUpdatedAt < Date.now()) {
+			await db
+				.update(goal)
+				.set({
+					streak: (goalStreak.streak || 0) + 1,
+					streakUpdatedAt: new Date(),
+				})
+				.where(eq(goal.goalId, goalId));
+		}
+	}
+
 	return "Todo edited successfully";
 };
