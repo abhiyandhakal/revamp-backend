@@ -7,6 +7,7 @@ import { deleteTimelapseOfTask, getTimelapse } from "./timelapse";
 import { goal } from "../../db/schema/goal";
 import { deleteTodoFunc, sqlToGqlTodo } from "./todo";
 import { todo } from "../../db/schema/todo";
+import { increaseGoalStreak } from "../../lib/streak";
 
 export const getSingleTask: QueryResolvers["getSingleTask"] = async function (_, { taskId }) {
 	const taskList = await db.select().from(task).where(eq(task.taskId, taskId));
@@ -127,26 +128,7 @@ export const editTask: MutationResolvers["editTask"] = async function (_, input)
 		.where(eq(task.taskId, input.taskId));
 
 	if (input.isDone) {
-		const goalId = singleTask.goalId;
-
-		const goalStreaks = await db
-			.select({ streak: goal.streak, streakUpdatedAt: goal.streakUpdatedAt })
-			.from(goal)
-			.where(eq(goal.goalId, goalId));
-		const goalStreak = goalStreaks[0];
-		const streakUpdatedAt = new Date(
-			goalStreak.streakUpdatedAt?.toLocaleDateString() || "",
-		).getTime();
-
-		if (!goalStreak.streakUpdatedAt || streakUpdatedAt < Date.now()) {
-			await db
-				.update(goal)
-				.set({
-					streak: (goalStreak.streak || 0) + 1,
-					streakUpdatedAt: new Date(),
-				})
-				.where(eq(goal.goalId, goalId));
-		}
+		increaseGoalStreak(singleTask.goalId);
 	}
 
 	return "Task edited successfully";

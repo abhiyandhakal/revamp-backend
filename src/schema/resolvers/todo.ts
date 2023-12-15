@@ -7,6 +7,7 @@ import { timeLapse } from "../../db/schema/time-lapse";
 import { deleteTimelapseOfTodo, getTimelapse } from "./timelapse";
 import { task } from "../../db/schema/task";
 import { goal } from "../../db/schema/goal";
+import { increaseGoalStreak } from "../../lib/streak";
 
 export const getSingleTodo: QueryResolvers["getSingleTodo"] = async function (_, { todoId }) {
 	const todos = await db.select().from(todo).where(eq(todo.todoId, todoId));
@@ -128,24 +129,7 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 		const goalId = goalIdArr[0]?.goalId;
 		if (!goalId) throw new Error("Todo doesn't belong to any goal");
 
-		const goalStreaks = await db
-			.select({ streak: goal.streak, streakUpdatedAt: goal.streakUpdatedAt })
-			.from(goal)
-			.where(eq(goal.goalId, goalId));
-		const goalStreak = goalStreaks[0];
-		const streakUpdatedAt = new Date(
-			goalStreak.streakUpdatedAt?.toLocaleDateString() || "",
-		).getTime();
-
-		if (!goalStreak.streakUpdatedAt || streakUpdatedAt < Date.now()) {
-			await db
-				.update(goal)
-				.set({
-					streak: (goalStreak.streak || 0) + 1,
-					streakUpdatedAt: new Date(),
-				})
-				.where(eq(goal.goalId, goalId));
-		}
+		increaseGoalStreak(goalId);
 	}
 
 	return "Todo edited successfully";
