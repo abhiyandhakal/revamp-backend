@@ -2,12 +2,17 @@ import { eq } from "drizzle-orm";
 import db from "../db";
 import { goal } from "../db/schema/goal";
 import { user } from "../db/schema/user";
+import { task } from "../db/schema/task";
+import { checkIfOlderThanToday } from "../lib/check-date";
 
 export const goalStreakSchedule = async () => {
 	// get all goals
 	const goals = await db
 		.select({ goalId: goal.goalId, streakUpdatedAt: goal.streakUpdatedAt })
-		.from(goal);
+		.from(goal)
+		.where(eq(goal.isActive, true));
+
+	const tasks = await db.select().from(task);
 
 	// check if streakUpdatedAt is today
 	goals.forEach(singleGoal => {
@@ -16,6 +21,12 @@ export const goalStreakSchedule = async () => {
 				// reset streak
 				db.update(goal).set({ streak: 0 }).where(eq(goal.goalId, singleGoal.goalId));
 			}
+		}
+	});
+
+	tasks.forEach(singleTask => {
+		if (checkIfOlderThanToday(singleTask.deadline)) {
+			db.update(goal).set({ streak: 0 }).where(eq(goal.goalId, singleTask.goalId));
 		}
 	});
 };

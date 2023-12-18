@@ -1,31 +1,33 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import db from "../db";
 import { goal } from "../db/schema/goal";
 import { user } from "../db/schema/user";
+import { checkIfToday } from "./check-date";
 
 export const increaseGoalStreak = async (goalId: number) => {
 	try {
-		const goalStreaks = await db
-			.select({ streak: goal.streak, streakUpdatedAt: goal.streakUpdatedAt, userId: goal.userId })
+		const goals = await db
+			.select()
 			.from(goal)
-			.where(eq(goal.goalId, goalId));
-		const goalStreak = goalStreaks[0];
-		const streakUpdatedAt =
-			goalStreak.streakUpdatedAt && new Date(goalStreak.streakUpdatedAt.toLocaleDateString());
-		if (!goalStreak.streakUpdatedAt || (streakUpdatedAt ? streakUpdatedAt < new Date() : true)) {
+			.where(and(eq(goal.goalId, goalId), eq(goal.isActive, true)));
+
+		const singleGoal = goals[0];
+		if (!checkIfToday(singleGoal.streakUpdatedAt)) {
+			const date = new Date();
+
 			await db
 				.update(goal)
 				.set({
-					streak: (goalStreak.streak || 0) + 1,
-					streakUpdatedAt: new Date(),
+					streak: singleGoal.streak + 1,
+					streakUpdatedAt: date,
 				})
 				.where(eq(goal.goalId, goalId));
 		}
 
-		await increaseUserStreak(goalStreak.userId);
+		await increaseUserStreak(singleGoal.userId);
 	} catch (error) {
 		if (error instanceof Error) {
-			console.log("Error in increasing goal streak of goalId: " + goalId, error.message);
+			console.log("Error in increasing goal streak of goalId " + goalId + ": ", error.message);
 		}
 	}
 };
