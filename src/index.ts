@@ -52,5 +52,5 @@ schedule.scheduleJob("0 0 * * *", dailyJournalSchedule);
 schedule.scheduleJob("0 0 * * 0", weeklyJournalSchedule);
 schedule.scheduleJob("0 0 1 * *", monthlyJournalSchedule);
 // streak
-// start at 11:55pm
-schedule.scheduleJob("55 23 * * *", () => goalStreakSchedule().then(() => userStreakSchedule()));
+// start at 11:59pm
+schedule.scheduleJob("59 23 * * *", () => goalStreakSchedule().then(() => userStreakSchedule()));
