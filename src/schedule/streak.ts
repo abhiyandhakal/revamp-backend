@@ -3,7 +3,7 @@ import db from "../db";
 import { goal } from "../db/schema/goal";
 import { user } from "../db/schema/user";
 import { task } from "../db/schema/task";
-import { checkIfOlderThanToday } from "../lib/check-date";
+import { checkIfOlderThanToday, checkIfToday } from "../lib/check-date";
 
 export const goalStreakSchedule = async () => {
 	// get all goals
@@ -22,13 +22,20 @@ export const goalStreakSchedule = async () => {
 				db.update(goal).set({ streak: 0 }).where(eq(goal.goalId, singleGoal.goalId));
 			}
 		}
-	});
 
-	tasks.forEach(singleTask => {
-		if (checkIfOlderThanToday(singleTask.deadline)) {
-			db.update(goal).set({ streak: 0 }).where(eq(goal.goalId, singleTask.goalId));
+		if (!checkIfToday(singleGoal.streakUpdatedAt)) {
+			// reset streak
+			db.update(goal).set({ streak: 0 }).where(eq(goal.goalId, singleGoal.goalId));
 		}
 	});
+
+	await Promise.all(
+		tasks.map(async singleTask => {
+			if (checkIfOlderThanToday(singleTask.deadline)) {
+				await db.update(goal).set({ streak: 0 }).where(eq(goal.goalId, singleTask.goalId));
+			}
+		}),
+	);
 };
 
 export const userStreakSchedule = async () => {
@@ -38,4 +45,9 @@ export const userStreakSchedule = async () => {
 		.from(user);
 
 	// check if streakUpdatedAt is today
+	users.forEach(singleUser => {
+		if (!checkIfToday(singleUser.streakUpdatedAt)) {
+			db.update(user).set({ streak: 0 }).where(eq(user.userId, singleUser.userId));
+		}
+	});
 };
