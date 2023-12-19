@@ -5,6 +5,13 @@ import { applyMiddleware } from "graphql-middleware";
 import { EnvelopArmor } from "@escape.tech/graphql-armor";
 import permissions from "./middlewares/permissions";
 import errorHandler from "./middlewares/error-handler";
+import schedule from "node-schedule";
+import {
+	dailyJournalSchedule,
+	monthlyJournalSchedule,
+	weeklyJournalSchedule,
+} from "./schedule/journal";
+import { goalStreakSchedule, userStreakSchedule } from "./schedule/streak";
 
 // dotenv config
 import * as dotenv from "dotenv";
@@ -38,3 +45,12 @@ const server = createServer(yoga);
 server.listen(port, () => {
 	console.info(`Server is running on http://localhost:${port}/graphql`);
 });
+
+// schedule jobs
+// journal
+schedule.scheduleJob("0 0 * * *", dailyJournalSchedule);
+schedule.scheduleJob("0 0 * * 0", weeklyJournalSchedule);
+schedule.scheduleJob("0 0 1 * *", monthlyJournalSchedule);
+// streak
+// start at 11:59pm
+schedule.scheduleJob("59 23 * * *", () => goalStreakSchedule().then(() => userStreakSchedule()));

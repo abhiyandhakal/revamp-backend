@@ -55,7 +55,6 @@ type Task {
 	isDone: Boolean!
 	createdAt: Timestamp!
 	updatedAt: Timestamp
-	streak: Int!
 	todos: [Todo]
 	milestones: [Milestone]
 	timelapsed: Timelapse

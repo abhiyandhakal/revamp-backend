@@ -1,12 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-<<<<<<< HEAD
-  "id": "4f8be190-f8a7-4379-a5f8-a03951bc76a3",
-=======
-  "id": "974e9be1-2804-4f7b-b8fe-25dc6f25efac",
->>>>>>> 576e2d4c62d76e6668aeea22b6ea6221f60b6119
-  "prevId": "4e8423a2-8d4b-480d-bda9-5c8a41eddb51",
+  "id": "d944d08b-b872-46a5-872a-2812422f092d",
+  "prevId": "8f1ba33c-f2a7-42f2-9953-4c1c060eec35",
   "tables": {
     "aspect": {
       "name": "aspect",
@@ -255,6 +251,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "streakUpdatedAt": {
+          "name": "streakUpdatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
         "order": {
           "name": "order",
           "type": "serial",
@@ -327,6 +329,13 @@
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "isUpdated": {
+          "name": "isUpdated",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'false'"
         },
         "userId": {
           "name": "userId",
@@ -1069,13 +1078,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "streak": {
-          "name": "streak",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
         "goalId": {
           "name": "goalId",
           "type": "integer",
@@ -1339,6 +1341,25 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "streak": {
+          "name": "streak",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "streakUpdatedAt": {
+          "name": "streakUpdatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

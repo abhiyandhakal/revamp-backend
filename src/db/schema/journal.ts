@@ -6,8 +6,9 @@ export const journal = pgTable("journal", {
 	title: text("title").notNull(),
 	content: text("content").notNull(),
 	type: text("type").notNull(),
-	access: text("access").default("private"),
+	access: text("access").default("private").notNull(),
 	date: timestamp("date", { withTimezone: true }).notNull(),
+	isUpdated: text("isUpdated").default("false"),
 	userId: text("userId")
 		.notNull()
 		.references(() => user.userId),
