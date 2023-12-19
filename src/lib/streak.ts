@@ -1,43 +1,62 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import db from "../db";
 import { goal } from "../db/schema/goal";
 import { user } from "../db/schema/user";
+import { checkIfToday } from "./check-date";
 
 export const increaseGoalStreak = async (goalId: number) => {
 	try {
-		const goalStreaks = await db
-			.select({ streak: goal.streak, streakUpdatedAt: goal.streakUpdatedAt, userId: goal.userId })
+		const goals = await db
+			.select({
+				streak: goal.streak,
+				streakUpdatedAt: goal.streakUpdatedAt,
+				userId: goal.userId,
+				goalId: goal.goalId,
+				isActive: goal.isActive,
+			})
 			.from(goal)
-			.where(eq(goal.goalId, goalId));
-		const goalStreak = goalStreaks[0];
-		const streakUpdatedAt =
-			goalStreak.streakUpdatedAt && new Date(goalStreak.streakUpdatedAt.toLocaleDateString());
-		if (!goalStreak.streakUpdatedAt || (streakUpdatedAt ? streakUpdatedAt < new Date() : true)) {
+			.where(and(eq(goal.goalId, goalId), eq(goal.isActive, true)));
+
+		const singleGoal = goals[0];
+		console.log(singleGoal);
+
+		if (!checkIfToday(singleGoal.streakUpdatedAt) && singleGoal.isActive) {
+			const date = new Date();
+
 			await db
 				.update(goal)
 				.set({
-					streak: (goalStreak.streak || 0) + 1,
-					streakUpdatedAt: new Date(),
+					streak: singleGoal.streak + 1,
+					streakUpdatedAt: date,
 				})
 				.where(eq(goal.goalId, goalId));
 		}
 
-		await increaseUserStreak(goalStreak.userId);
+		await increaseUserStreak(singleGoal.userId, singleGoal.goalId);
 	} catch (error) {
 		if (error instanceof Error) {
-			console.log("Error in increasing goal streak of goalId: " + goalId, error.message);
+			console.log("Error in increasing goal streak of goalId " + goalId + ": ", error.message);
 		}
 	}
 };
 
-async function increaseUserStreak(userId: string) {
-	const userStreaks = await db
-		.select({ streak: user.streak, streakUpdatedAt: user.streakUpdatedAt })
+async function increaseUserStreak(userId: string, goalId: number) {
+	const userWithGoalArr = await db
+		.select()
 		.from(user)
+		.innerJoin(goal, and(eq(goal.userId, user.userId), eq(goal.goalId, goalId)))
 		.where(eq(user.userId, userId));
+	const singleUser = userWithGoalArr[0];
 
-	const userStreak = userStreaks[0];
-	const streakUpdatedAt = new Date(
-		userStreak.streakUpdatedAt?.toLocaleDateString() || "",
-	).getTime();
+	if (!checkIfToday(singleUser.account.streakUpdatedAt)) {
+		const date = new Date();
+
+		await db
+			.update(user)
+			.set({
+				streak: singleUser.account.streak + 1,
+				streakUpdatedAt: date,
+			})
+			.where(eq(user.userId, userId));
+	}
 }

@@ -111,6 +111,7 @@ export const deleteTask: MutationResolvers["deleteTask"] = async (_, { taskId })
 export const editTask: MutationResolvers["editTask"] = async function (_, input) {
 	const taskList = await db.select().from(task).where(eq(task.taskId, input.taskId));
 	const singleTask = taskList[0];
+	const previouslyDone = singleTask.isDone;
 
 	if (!singleTask) throw new Error("Task not found");
 
@@ -127,7 +128,7 @@ export const editTask: MutationResolvers["editTask"] = async function (_, input)
 		})
 		.where(eq(task.taskId, input.taskId));
 
-	if (input.isDone) {
+	if (input.isDone && !previouslyDone) {
 		increaseGoalStreak(singleTask.goalId);
 	}
 

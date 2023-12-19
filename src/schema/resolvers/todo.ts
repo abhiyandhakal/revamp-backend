@@ -113,6 +113,8 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 
 	if (!singleTodo) throw new Error("Todo not found");
 
+	const isPreviousDone = singleTodo.isDone;
+
 	await db.update(todo).set({
 		isDone: args.isDone == undefined ? singleTodo.isDone : args.isDone,
 		order: args.order || singleTodo.order,
@@ -120,7 +122,7 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 		updatedAt: new Date(),
 	});
 
-	if (args.isDone) {
+	if (args.isDone && !isPreviousDone) {
 		const goalIdArr = await db
 			.select({ goalId: task.goalId })
 			.from(todo)

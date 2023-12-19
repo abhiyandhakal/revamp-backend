@@ -11,6 +11,7 @@ import {
 	monthlyJournalSchedule,
 	weeklyJournalSchedule,
 } from "./schedule/journal";
+import { goalStreakSchedule, userStreakSchedule } from "./schedule/streak";
 
 // dotenv config
 import * as dotenv from "dotenv";
@@ -45,6 +46,11 @@ server.listen(port, () => {
 	console.info(`Server is running on http://localhost:${port}/graphql`);
 });
 
+// schedule jobs
+// journal
 schedule.scheduleJob("0 0 * * *", dailyJournalSchedule);
 schedule.scheduleJob("0 0 * * 0", weeklyJournalSchedule);
 schedule.scheduleJob("0 0 1 * *", monthlyJournalSchedule);
+// streak
+// start at 11:59pm
+schedule.scheduleJob("59 23 * * *", () => goalStreakSchedule().then(() => userStreakSchedule()));
