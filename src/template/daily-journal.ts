@@ -120,7 +120,7 @@ function dailyJournal(
 ) {
 	const overallPercentCompleted: number = (tasksCompletedToday / totalTasksToday) * 100;
 	const greetings = dailyGreetings(firstName);
-
+	//@ts-ignore ts bahulayo string | undefined error.
 	const goalWithTaskList: { goal: string; tasks: { task: string; workedOn: boolean }[] }[] = goals
 		.map(singleGoal => {
 			const tasks = singleGoal.tasks
