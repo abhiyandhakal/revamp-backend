@@ -164,7 +164,7 @@ type UserWithLessDetails {
 }
 
 type UserWithRole {
-	user: User!
+	user: UserWithLessDetails!
 	role: String!
 }
 
@@ -194,6 +194,8 @@ type Query {
 	getSingleTodo(todoId: Int!): Todo!
 	getSingleUser(userId: ID!): User!
 	getSingleJournal(journalId: Int!): Journal!
+	community(communityId: Int!): Community!
+	communities: [Community!]!
 }
 
 type Mutation {

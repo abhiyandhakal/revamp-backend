@@ -211,6 +211,8 @@ export type Pausetime = {
 
 export type Query = {
   __typename?: 'Query';
+  communities: Array<Community>;
+  community: Community;
   getAllAspects: Array<Aspect>;
   getAllQuestions: Array<Question>;
   getAllUsers: Array<UserWithLessDetails>;
@@ -225,6 +227,11 @@ export type Query = {
   getTasksOfUser: Array<Task>;
   getTodosOfTask: Array<Todo>;
   getTodosOfUser: Array<Todo>;
+};
+
+
+export type QueryCommunityArgs = {
+  communityId: Scalars['Int']['input'];
 };
 
 
@@ -385,7 +392,7 @@ export type UserWithLessDetails = {
 export type UserWithRole = {
   __typename?: 'UserWithRole';
   role: Scalars['String']['output'];
-  user: User;
+  user: UserWithLessDetails;
 };
 
 
@@ -636,6 +643,8 @@ export type PausetimeResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  communities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
+  community?: Resolver<ResolversTypes['Community'], ParentType, ContextType, RequireFields<QueryCommunityArgs, 'communityId'>>;
   getAllAspects?: Resolver<Array<ResolversTypes['Aspect']>, ParentType, ContextType>;
   getAllQuestions?: Resolver<Array<ResolversTypes['Question']>, ParentType, ContextType>;
   getAllUsers?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType>;
@@ -762,7 +771,7 @@ export type UserWithLessDetailsResolvers<ContextType = any, ParentType extends R
 
 export type UserWithRoleResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserWithRole'] = ResolversParentTypes['UserWithRole']> = {
   role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
