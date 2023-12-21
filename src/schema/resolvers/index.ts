@@ -17,12 +17,14 @@ import {
 	getSingleCommunity,
 	createCommunity,
 	leaveCommunity,
+	removeUserFromCommunity,
 	acceptCommunityInvite,
 	declineCommunityInvite,
 	inviteUserToCommunity,
 	blockUserFromCommunity,
 	unBlockUserFromCommunity,
 	editCommunity,
+	addUserToCommunity,
 } from "./community";
 
 const resolvers: Resolvers = {
@@ -55,12 +57,14 @@ const resolvers: Resolvers = {
 		editTask,
 		createCommunity,
 		leaveCommunity,
+		removeUserFromCommunity,
 		acceptCommunityInvite,
 		declineCommunityInvite,
 		inviteUserToCommunity,
 		blockUserFromCommunity,
 		unBlockUserFromCommunity,
 		editCommunity,
+		addUserToCommunity,
 	},
 };
 

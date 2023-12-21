@@ -131,6 +131,25 @@ export const leaveCommunity: MutationResolvers["leaveCommunity"] = async (
 	return "Community left";
 };
 
+export const removeUserFromCommunity: MutationResolvers["removeUserFromCommunity"] = async (
+	_,
+	{ communityId, userId },
+) => {
+	// check if user is not in community
+	const userInCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
+
+	if (userInCommunityArr.length === 0) throw new Error("User is not in community");
+
+	await db
+		.delete(userCommunity)
+		.where(and(eq(userCommunity.communityId, communityId), eq(userCommunity.userId, userId)));
+
+	return "Community left";
+};
+
 export const inviteUserToCommunity: MutationResolvers["inviteUserToCommunity"] = async (
 	_,
 	{ communityId, userId },
@@ -220,4 +239,25 @@ export const editCommunity: MutationResolvers["editCommunity"] = async (
 		.where(eq(community.communityId, communityId));
 
 	return "Community edited";
+};
+
+export const addUserToCommunity: MutationResolvers["addUserToCommunity"] = async (
+	_,
+	{ communityId, userId },
+) => {
+	// check if user is already in community
+	const userInCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
+
+	if (userInCommunityArr.length !== 0) throw new Error("User is already in community");
+
+	await db.insert(userCommunity).values({
+		userId,
+		communityId,
+		role: "member",
+	});
+
+	return "User added to community";
 };

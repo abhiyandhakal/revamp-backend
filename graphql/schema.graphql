@@ -262,6 +262,8 @@ type Mutation {
 	leaveCommunity(communityId: Int!): String!
 	inviteUserToCommunity(communityId: Int!, userId: ID!): String!
 	blockUserFromCommunity(communityId: Int!, userId: ID!): String!
+	removeUserFromCommunity(communityId: Int!, userId: ID!): String!
 	unBlockUserFromCommunity(communityId: Int!, userId: ID!): String!
 	editCommunity(communityId: Int!, input: EditCommunityInput!): String!
+	addUserToCommunity(communityId: Int!, userId: ID!): String!
 }
