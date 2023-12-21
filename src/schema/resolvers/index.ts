@@ -12,7 +12,15 @@ import { deleteGoal, editGoal, getGoals, getSingleGoal, setGoal } from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
 import { getAllUsers, getSingleUser, setUser } from "./user";
-import { getAllCommunities, getSingleCommunity } from "./community";
+import {
+	getAllCommunities,
+	getSingleCommunity,
+	createCommunity,
+	leaveCommunity,
+	acceptCommunityInvite,
+	declineCommunityInvite,
+	inviteUserToCommunity,
+} from "./community";
 
 const resolvers: Resolvers = {
 	Query: {
@@ -42,6 +50,11 @@ const resolvers: Resolvers = {
 		deleteTodo,
 		editGoal,
 		editTask,
+		createCommunity,
+		leaveCommunity,
+		acceptCommunityInvite,
+		declineCommunityInvite,
+		inviteUserToCommunity,
 	},
 };
 
