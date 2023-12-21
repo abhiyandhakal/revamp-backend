@@ -1,8 +1,11 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import db from "../../db";
 import { community } from "../../db/schema/community";
 import { userCommunity } from "../../db/schema/relations/user-community";
-import { Community, QueryResolvers } from "../../generated/graphql";
+import { Community, MutationResolvers, QueryResolvers } from "../../generated/graphql";
+import { YogaInitialContext } from "graphql-yoga";
+import { getSession } from "../../middlewares/permissions";
+import clerkClient from "@clerk/clerk-sdk-node";
 
 export const getAllCommunities: QueryResolvers["communities"] = async () => {
 	const gqlCommunities: Community[] = [];
@@ -33,3 +36,61 @@ async function sqlToGqlCommunity(sqlCommunity: typeof community.$inferSelect): P
 
 	throw new Error("Not implemented");
 }
+
+export const createCommunity: MutationResolvers["createCommunity"] = async (
+	_,
+	args,
+	ctx: YogaInitialContext,
+) => {
+	const session = await getSession(ctx.request.headers);
+	const userFromClerk = await clerkClient.users.getUser(session.userId);
+	if (!userFromClerk) throw new Error("You are not in the database");
+
+	const communityId = await db
+		.insert(community)
+		.values({
+			community: args.input.name,
+			description: args.input.description,
+			nametag: args.input.nametag,
+			privacy: args.input?.privacy ?? "public",
+		})
+		.returning({ communityId: community.communityId });
+
+	// admin
+	await db.insert(userCommunity).values({
+		userId: userFromClerk.id,
+		communityId: communityId[0].communityId,
+		role: "admin",
+		invite: "accepted",
+	});
+
+	// members
+	for (const member of args.input.members) {
+		await db.insert(userCommunity).values({
+			userId: member,
+			communityId: communityId[0].communityId,
+			role: "member",
+			invite: "pending",
+		});
+	}
+
+	return "Community created with id " + communityId[0].communityId;
+};
+
+export const acceptCommunityInvite: MutationResolvers["acceptCommunityInvite"] = async (
+	_,
+	{ communityId },
+	ctx,
+) => {
+	const session = await getSession(ctx.request.headers);
+	const userFromClerk = await clerkClient.users.getUser(session.userId);
+	if (!userFromClerk) throw new Error("You are not in the database");
+
+	db.update(userCommunity)
+		.set({ invite: "accepted" })
+		.where(
+			and(eq(userCommunity.communityId, communityId), eq(userCommunity.userId, userFromClerk.id)),
+		);
+
+	return "Community invite accepted";
+};

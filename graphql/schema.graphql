@@ -179,6 +179,14 @@ type Community {
 	users: [UserWithRole]!
 }
 
+type CreateCommunityInput {
+	name: String!
+	nametag: String!
+	description: String!
+	privacy: String
+	members: [ID!]!
+}
+
 type Query {
 	getTodosOfTask(taskId: Int!): [Todo!]!
 	getTodosOfUser(userId: ID!): [Todo!]!
@@ -242,4 +250,6 @@ type Mutation {
 		streak: Int
 	): String!
 	editTodo(todoId: Int!, todo: String, isDone: Boolean, order: Int): String!
+	createCommunity(input: CreateCommunityInput!): String!
+	acceptCommunityInvite(communityId: Int!): String!
 }

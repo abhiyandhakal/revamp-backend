@@ -47,6 +47,15 @@ export type Community = {
   users: Array<Maybe<UserWithRole>>;
 };
 
+export type CreateCommunityInput = {
+  __typename?: 'CreateCommunityInput';
+  description: Scalars['String']['output'];
+  members: Array<Scalars['ID']['output']>;
+  name: Scalars['String']['output'];
+  nametag: Scalars['String']['output'];
+  privacy?: Maybe<Scalars['String']['output']>;
+};
+
 export type Goal = {
   __typename?: 'Goal';
   createdAt: Scalars['Timestamp']['output'];
@@ -107,6 +116,8 @@ export type Milestone = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  acceptCommunityInvite: Scalars['String']['output'];
+  createCommunity: Scalars['String']['output'];
   deleteGoal: Scalars['String']['output'];
   deleteTask: Scalars['String']['output'];
   deleteTodo: Scalars['String']['output'];
@@ -118,6 +129,16 @@ export type Mutation = {
   setTask: Scalars['String']['output'];
   setTodo: Scalars['String']['output'];
   setUser: Scalars['String']['output'];
+};
+
+
+export type MutationAcceptCommunityInviteArgs = {
+  communityId: Scalars['Int']['input'];
+};
+
+
+export type MutationCreateCommunityArgs = {
+  input: CreateCommunityInput;
 };
 
 
@@ -470,6 +491,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Comment: ResolverTypeWrapper<Comment>;
   Community: ResolverTypeWrapper<Community>;
+  CreateCommunityInput: ResolverTypeWrapper<CreateCommunityInput>;
   EmailAddress: ResolverTypeWrapper<Scalars['EmailAddress']['output']>;
   Goal: ResolverTypeWrapper<Goal>;
   GoalQna: ResolverTypeWrapper<GoalQna>;
@@ -504,6 +526,7 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   Comment: Comment;
   Community: Community;
+  CreateCommunityInput: CreateCommunityInput;
   EmailAddress: Scalars['EmailAddress']['output'];
   Goal: Goal;
   GoalQna: GoalQna;
@@ -557,6 +580,15 @@ export type CommunityResolvers<ContextType = any, ParentType extends ResolversPa
   privacy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   users?: Resolver<Array<Maybe<ResolversTypes['UserWithRole']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CreateCommunityInputResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateCommunityInput'] = ResolversParentTypes['CreateCommunityInput']> = {
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  members?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nametag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  privacy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -623,6 +655,8 @@ export type MilestoneResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  acceptCommunityInvite?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationAcceptCommunityInviteArgs, 'communityId'>>;
+  createCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationCreateCommunityArgs, 'input'>>;
   deleteGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteGoalArgs, 'goalId'>>;
   deleteTask?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'taskId'>>;
   deleteTodo?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'todoId'>>;
@@ -779,6 +813,7 @@ export type Resolvers<ContextType = any> = {
   Aspect?: AspectResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   Community?: CommunityResolvers<ContextType>;
+  CreateCommunityInput?: CreateCommunityInputResolvers<ContextType>;
   EmailAddress?: GraphQLScalarType;
   Goal?: GoalResolvers<ContextType>;
   GoalQna?: GoalQnaResolvers<ContextType>;

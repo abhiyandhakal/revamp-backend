@@ -8,7 +8,7 @@ import { goal } from "../db/schema/goal";
 import { eq } from "drizzle-orm";
 import { setUserFunc } from "../schema/resolvers/user";
 
-const getSession = async (headers: Headers): Promise<Session> => {
+export const getSession = async (headers: Headers): Promise<Session> => {
 	const sessionId = headers.get("authorization")?.split(" ")[1];
 	if (!sessionId) throw new GraphQLError("No session id provided");
 
