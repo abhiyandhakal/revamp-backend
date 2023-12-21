@@ -94,3 +94,76 @@ export const acceptCommunityInvite: MutationResolvers["acceptCommunityInvite"] =
 
 	return "Community invite accepted";
 };
+
+export const declineCommunityInvite: MutationResolvers["declineCommunityInvite"] = async (
+	_,
+	{ communityId },
+	ctx,
+) => {
+	const session = await getSession(ctx.request.headers);
+	const userFromClerk = await clerkClient.users.getUser(session.userId);
+	if (!userFromClerk) throw new Error("You are not in the database");
+
+	await db
+		.delete(userCommunity)
+		.where(
+			and(eq(userCommunity.communityId, communityId), eq(userCommunity.userId, userFromClerk.id)),
+		);
+
+	return "Community invite declined";
+};
+
+export const leaveCommunity: MutationResolvers["leaveCommunity"] = async (
+	_,
+	{ communityId },
+	ctx,
+) => {
+	const session = await getSession(ctx.request.headers);
+	const userFromClerk = await clerkClient.users.getUser(session.userId);
+	if (!userFromClerk) throw new Error("You are not in the database");
+
+	await db
+		.delete(userCommunity)
+		.where(
+			and(eq(userCommunity.communityId, communityId), eq(userCommunity.userId, userFromClerk.id)),
+		);
+
+	return "Community left";
+};
+
+export const inviteUserToCommunity: MutationResolvers["inviteUserToCommunity"] = async (
+	_,
+	{ communityId, userId },
+	ctx,
+) => {
+	const session = await getSession(ctx.request.headers);
+	const userFromClerk = await clerkClient.users.getUser(session.userId);
+	if (!userFromClerk) throw new Error("You are not in the database");
+
+	// check if user is admin
+	const userRoleArr = await db
+		.select({ role: userCommunity.role })
+		.from(userCommunity)
+		.where(
+			and(eq(userCommunity.userId, userFromClerk.id), eq(userCommunity.communityId, communityId)),
+		);
+
+	if (userRoleArr.length === 0) throw new Error("You are not in the database");
+	if (userRoleArr[0].role !== "admin") throw new Error("You are not an admin");
+
+	// check if user is already in community
+	const userInCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
+
+	if (userInCommunityArr.length !== 0) throw new Error("User is already in community");
+
+	await db.insert(userCommunity).values({
+		userId,
+		communityId,
+		role: "member",
+	});
+
+	return "User invited to community";
+};

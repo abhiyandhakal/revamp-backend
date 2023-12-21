@@ -252,4 +252,8 @@ type Mutation {
 	editTodo(todoId: Int!, todo: String, isDone: Boolean, order: Int): String!
 	createCommunity(input: CreateCommunityInput!): String!
 	acceptCommunityInvite(communityId: Int!): String!
+	declineCommunityInvite(communityId: Int!): String!
+	leaveCommunity(communityId: Int!): String!
+	inviteUserToCommunity(communityId: Int!, userId: ID!): String!
+	blockUserFromCommunity(communityId: Int!, userId: ID!): String!
 }

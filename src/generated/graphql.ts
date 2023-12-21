@@ -117,7 +117,9 @@ export type Milestone = {
 export type Mutation = {
   __typename?: 'Mutation';
   acceptCommunityInvite: Scalars['String']['output'];
+  blockUserFromCommunity: Scalars['String']['output'];
   createCommunity: Scalars['String']['output'];
+  declineCommunityInvite: Scalars['String']['output'];
   deleteGoal: Scalars['String']['output'];
   deleteTask: Scalars['String']['output'];
   deleteTodo: Scalars['String']['output'];
@@ -125,6 +127,8 @@ export type Mutation = {
   editGoal: Scalars['String']['output'];
   editTask: Scalars['String']['output'];
   editTodo: Scalars['String']['output'];
+  inviteUserToCommunity: Scalars['String']['output'];
+  leaveCommunity: Scalars['String']['output'];
   setGoal: Scalars['String']['output'];
   setTask: Scalars['String']['output'];
   setTodo: Scalars['String']['output'];
@@ -137,8 +141,19 @@ export type MutationAcceptCommunityInviteArgs = {
 };
 
 
+export type MutationBlockUserFromCommunityArgs = {
+  communityId: Scalars['Int']['input'];
+  userId: Scalars['ID']['input'];
+};
+
+
 export type MutationCreateCommunityArgs = {
   input: CreateCommunityInput;
+};
+
+
+export type MutationDeclineCommunityInviteArgs = {
+  communityId: Scalars['Int']['input'];
 };
 
 
@@ -192,6 +207,17 @@ export type MutationEditTodoArgs = {
   order?: InputMaybe<Scalars['Int']['input']>;
   todo?: InputMaybe<Scalars['String']['input']>;
   todoId: Scalars['Int']['input'];
+};
+
+
+export type MutationInviteUserToCommunityArgs = {
+  communityId: Scalars['Int']['input'];
+  userId: Scalars['ID']['input'];
+};
+
+
+export type MutationLeaveCommunityArgs = {
+  communityId: Scalars['Int']['input'];
 };
 
 
@@ -656,7 +682,9 @@ export type MilestoneResolvers<ContextType = any, ParentType extends ResolversPa
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   acceptCommunityInvite?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationAcceptCommunityInviteArgs, 'communityId'>>;
+  blockUserFromCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationBlockUserFromCommunityArgs, 'communityId' | 'userId'>>;
   createCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationCreateCommunityArgs, 'input'>>;
+  declineCommunityInvite?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeclineCommunityInviteArgs, 'communityId'>>;
   deleteGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteGoalArgs, 'goalId'>>;
   deleteTask?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'taskId'>>;
   deleteTodo?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'todoId'>>;
@@ -664,6 +692,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   editGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationEditGoalArgs, 'goalId'>>;
   editTask?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationEditTaskArgs, 'taskId'>>;
   editTodo?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationEditTodoArgs, 'todoId'>>;
+  inviteUserToCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationInviteUserToCommunityArgs, 'communityId' | 'userId'>>;
+  leaveCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLeaveCommunityArgs, 'communityId'>>;
   setGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetGoalArgs, 'title' | 'userId'>>;
   setTask?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetTaskArgs, 'goalId' | 'title'>>;
   setTodo?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetTodoArgs, 'taskId' | 'todo'>>;
