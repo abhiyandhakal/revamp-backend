@@ -21,6 +21,8 @@ import {
 	declineCommunityInvite,
 	inviteUserToCommunity,
 	blockUserFromCommunity,
+	unBlockUserFromCommunity,
+	editCommunity,
 } from "./community";
 
 const resolvers: Resolvers = {
@@ -57,6 +59,8 @@ const resolvers: Resolvers = {
 		declineCommunityInvite,
 		inviteUserToCommunity,
 		blockUserFromCommunity,
+		unBlockUserFromCommunity,
+		editCommunity,
 	},
 };
 

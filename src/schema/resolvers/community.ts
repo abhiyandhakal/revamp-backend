@@ -178,3 +178,46 @@ export const blockUserFromCommunity: MutationResolvers["blockUserFromCommunity"]
 
 	return "User invited to community";
 };
+
+export const unBlockUserFromCommunity: MutationResolvers["unBlockUserFromCommunity"] = async (
+	_,
+	{ communityId, userId },
+) => {
+	// check if user is already in community
+	const userInCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
+
+	if (userInCommunityArr.length === 0) throw new Error("User is not in community to unblock");
+
+	await db
+		.update(userCommunity)
+		.set({
+			invite: "accepted",
+		})
+		.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
+
+	return "User invited to community";
+};
+
+export const editCommunity: MutationResolvers["editCommunity"] = async (
+	_,
+	{ communityId, input },
+) => {
+	const communityArr = await db
+		.select()
+		.from(community)
+		.where(eq(community.communityId, communityId));
+
+	await db
+		.update(community)
+		.set({
+			community: input.name ?? communityArr[0].community,
+			description: input.description ?? communityArr[0].description,
+			privacy: input.privacy ?? communityArr[0].privacy,
+		})
+		.where(eq(community.communityId, communityId));
+
+	return "Community edited";
+};

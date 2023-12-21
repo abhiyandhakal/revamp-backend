@@ -187,6 +187,12 @@ type CreateCommunityInput {
 	members: [ID!]!
 }
 
+type EditCommunityInput {
+	name: String
+	description: String
+	privacy: String
+}
+
 type Query {
 	getTodosOfTask(taskId: Int!): [Todo!]!
 	getTodosOfUser(userId: ID!): [Todo!]!
@@ -256,4 +262,6 @@ type Mutation {
 	leaveCommunity(communityId: Int!): String!
 	inviteUserToCommunity(communityId: Int!, userId: ID!): String!
 	blockUserFromCommunity(communityId: Int!, userId: ID!): String!
+	unBlockUserFromCommunity(communityId: Int!, userId: ID!): String!
+	editCommunity(communityId: Int!, input: EditCommunityInput!): String!
 }
