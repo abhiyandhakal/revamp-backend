@@ -25,6 +25,7 @@ import {
 	unBlockUserFromCommunity,
 	editCommunity,
 	addUserToCommunity,
+	makeUserAdminOfCommunity,
 } from "./community";
 
 const resolvers: Resolvers = {
@@ -65,6 +66,7 @@ const resolvers: Resolvers = {
 		unBlockUserFromCommunity,
 		editCommunity,
 		addUserToCommunity,
+		makeUserAdminOfCommunity,
 	},
 };
 

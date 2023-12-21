@@ -266,4 +266,5 @@ type Mutation {
 	unBlockUserFromCommunity(communityId: Int!, userId: ID!): String!
 	editCommunity(communityId: Int!, input: EditCommunityInput!): String!
 	addUserToCommunity(communityId: Int!, userId: ID!): String!
+	makeUserAdminOfCommunity(communityId: Int!, userId: ID!): String!
 }

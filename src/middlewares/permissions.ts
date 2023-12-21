@@ -114,6 +114,11 @@ const permissions = shield(
 			deleteGoal: and(isAuthenticated, isGoalOfUser),
 			inviteUserToCommunity: and(isAuthenticated, isCommunityAdmin),
 			blockUserFromCommunity: and(isAuthenticated, isCommunityAdmin),
+			unBlockUserFromCommunity: and(isAuthenticated, isCommunityAdmin),
+			removeUserFromCommunity: and(isAuthenticated, isCommunityAdmin),
+			editCommunity: and(isAuthenticated, isCommunityAdmin),
+			addUserToCommunity: and(isAuthenticated, isCommunityAdmin),
+			makeUserAdminOfCommunity: and(isAuthenticated, isCommunityAdmin),
 		},
 	},
 	{

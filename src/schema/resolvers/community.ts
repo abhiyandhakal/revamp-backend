@@ -261,3 +261,23 @@ export const addUserToCommunity: MutationResolvers["addUserToCommunity"] = async
 
 	return "User added to community";
 };
+
+export const makeUserAdminOfCommunity: MutationResolvers["makeUserAdminOfCommunity"] = async (
+	_,
+	{ communityId, userId },
+) => {
+	// check if user is not in community
+	const userInCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
+
+	if (userInCommunityArr.length === 0) throw new Error("User is not in community");
+
+	await db
+		.update(userCommunity)
+		.set({ role: "admin" })
+		.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
+
+	return "User is now admin of community";
+};
