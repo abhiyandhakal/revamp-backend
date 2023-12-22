@@ -267,4 +267,5 @@ type Mutation {
 	editCommunity(communityId: Int!, input: EditCommunityInput!): String!
 	addUserToCommunity(communityId: Int!, userId: ID!): String!
 	makeUserAdminOfCommunity(communityId: Int!, userId: ID!): String!
+	enterInCommunity(communityId: Int!): String!
 }

@@ -61,7 +61,7 @@ export const createCommunity: MutationResolvers["createCommunity"] = async (
 		userId: userFromClerk.id,
 		communityId: communityId[0].communityId,
 		role: "admin",
-		invite: "accepted",
+		status: "accepted",
 	});
 
 	// members
@@ -70,7 +70,7 @@ export const createCommunity: MutationResolvers["createCommunity"] = async (
 			userId: member,
 			communityId: communityId[0].communityId,
 			role: "member",
-			invite: "pending",
+			status: "pending",
 		});
 	}
 
@@ -87,7 +87,7 @@ export const acceptCommunityInvite: MutationResolvers["acceptCommunityInvite"] =
 	if (!userFromClerk) throw new Error("You are not in the database");
 
 	db.update(userCommunity)
-		.set({ invite: "accepted" })
+		.set({ status: "accepted" })
 		.where(
 			and(eq(userCommunity.communityId, communityId), eq(userCommunity.userId, userFromClerk.id)),
 		);
@@ -184,7 +184,7 @@ export const blockUserFromCommunity: MutationResolvers["blockUserFromCommunity"]
 	if (userInCommunityArr.length !== 0) {
 		await db
 			.update(userCommunity)
-			.set({ invite: "blocked" })
+			.set({ status: "blocked" })
 			.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
 	}
 
@@ -192,7 +192,7 @@ export const blockUserFromCommunity: MutationResolvers["blockUserFromCommunity"]
 		userId,
 		communityId,
 		role: "member",
-		invite: "blocked",
+		status: "blocked",
 	});
 
 	return "User invited to community";
@@ -213,7 +213,7 @@ export const unBlockUserFromCommunity: MutationResolvers["unBlockUserFromCommuni
 	await db
 		.update(userCommunity)
 		.set({
-			invite: "accepted",
+			status: "accepted",
 		})
 		.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
 
@@ -280,4 +280,49 @@ export const makeUserAdminOfCommunity: MutationResolvers["makeUserAdminOfCommuni
 		.where(and(eq(userCommunity.userId, userId), eq(userCommunity.communityId, communityId)));
 
 	return "User is now admin of community";
+};
+
+export const enterInCommunity: MutationResolvers["enterInCommunity"] = async (
+	_,
+	{ communityId },
+	ctx,
+) => {
+	const session = await getSession(ctx.request.headers);
+	const userFromClerk = await clerkClient.users.getUser(session.userId);
+	if (!userFromClerk) throw new Error("You are not in the database");
+
+	// check if user is already in community
+	const userInCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.where(
+			and(eq(userCommunity.userId, userFromClerk.id), eq(userCommunity.communityId, communityId)),
+		);
+
+	if (userInCommunityArr.length !== 0) throw new Error("User is already in community");
+
+	const communityPrivacyArr = await db
+		.select({ privacy: community.privacy })
+		.from(community)
+		.where(eq(community.communityId, communityId));
+
+	if (communityPrivacyArr.length === 0) throw new Error("Community does not exist");
+
+	if (communityPrivacyArr[0].privacy === "open") {
+		await db.insert(userCommunity).values({
+			userId: userFromClerk.id,
+			communityId,
+			role: "member",
+			status: "accepted",
+		});
+	}
+
+	await db.insert(userCommunity).values({
+		userId: userFromClerk.id,
+		communityId,
+		role: "member",
+		status: "requested",
+	});
+
+	return "User requested to enter community";
 };

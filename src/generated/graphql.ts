@@ -136,6 +136,7 @@ export type Mutation = {
   editGoal: Scalars['String']['output'];
   editTask: Scalars['String']['output'];
   editTodo: Scalars['String']['output'];
+  enterInCommunity: Scalars['String']['output'];
   inviteUserToCommunity: Scalars['String']['output'];
   leaveCommunity: Scalars['String']['output'];
   makeUserAdminOfCommunity: Scalars['String']['output'];
@@ -231,6 +232,11 @@ export type MutationEditTodoArgs = {
   order?: InputMaybe<Scalars['Int']['input']>;
   todo?: InputMaybe<Scalars['String']['input']>;
   todoId: Scalars['Int']['input'];
+};
+
+
+export type MutationEnterInCommunityArgs = {
+  communityId: Scalars['Int']['input'];
 };
 
 
@@ -745,6 +751,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   editGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationEditGoalArgs, 'goalId'>>;
   editTask?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationEditTaskArgs, 'taskId'>>;
   editTodo?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationEditTodoArgs, 'todoId'>>;
+  enterInCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationEnterInCommunityArgs, 'communityId'>>;
   inviteUserToCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationInviteUserToCommunityArgs, 'communityId' | 'userId'>>;
   leaveCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLeaveCommunityArgs, 'communityId'>>;
   makeUserAdminOfCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationMakeUserAdminOfCommunityArgs, 'communityId' | 'userId'>>;

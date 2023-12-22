@@ -7,5 +7,5 @@ export const userCommunity = pgTable("user-community", {
 	userId: text("userId").references(() => user.userId),
 	communityId: integer("communityId").references(() => community.communityId),
 	role: text("role").notNull(),
-	invite: text("invite").default("pending").notNull(),
+	status: text("invite").default("pending").notNull(),
 });
