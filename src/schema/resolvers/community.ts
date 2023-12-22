@@ -9,7 +9,12 @@ import { getSession } from "../../middlewares/permissions";
 import clerkClient from "@clerk/clerk-sdk-node";
 
 export const getAllCommunities: QueryResolvers["communities"] = async () => {
-	const gqlCommunities: Community[] = [];
+	const sqlCommunities = await db.select().from(community);
+
+	const gqlCommunities = await Promise.all(
+		sqlCommunities.map(async sqlCommunity => await sqlToGqlCommunity(sqlCommunity)),
+	);
+
 	return gqlCommunities;
 };
 
