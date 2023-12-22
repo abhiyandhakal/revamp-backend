@@ -12,6 +12,23 @@ import { deleteGoal, editGoal, getGoals, getSingleGoal, setGoal } from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
 import { getAllUsers, getSingleUser, setUser } from "./user";
+import {
+	getAllCommunities,
+	getSingleCommunity,
+	searchCommunities,
+	createCommunity,
+	leaveCommunity,
+	removeUserFromCommunity,
+	acceptCommunityInvite,
+	declineCommunityInvite,
+	inviteUserToCommunity,
+	blockUserFromCommunity,
+	unBlockUserFromCommunity,
+	editCommunity,
+	addUserToCommunity,
+	makeUserAdminOfCommunity,
+	enterInCommunity,
+} from "./community";
 
 const resolvers: Resolvers = {
 	Query: {
@@ -27,6 +44,9 @@ const resolvers: Resolvers = {
 		getSingleTask,
 		getSingleTodo,
 		getSingleUser,
+		community: getSingleCommunity,
+		communities: getAllCommunities,
+		searchCommunities,
 	},
 
 	Mutation: {
@@ -39,6 +59,18 @@ const resolvers: Resolvers = {
 		deleteTodo,
 		editGoal,
 		editTask,
+		createCommunity,
+		leaveCommunity,
+		removeUserFromCommunity,
+		acceptCommunityInvite,
+		declineCommunityInvite,
+		inviteUserToCommunity,
+		blockUserFromCommunity,
+		unBlockUserFromCommunity,
+		editCommunity,
+		addUserToCommunity,
+		makeUserAdminOfCommunity,
+		enterInCommunity,
 	},
 };
 
