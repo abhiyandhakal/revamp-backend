@@ -179,7 +179,7 @@ type Community {
 	users: [UserWithRole]!
 }
 
-type CreateCommunityInput {
+input CreateCommunityInput {
 	name: String!
 	nametag: String!
 	description: String!
@@ -187,7 +187,7 @@ type CreateCommunityInput {
 	members: [ID!]!
 }
 
-type EditCommunityInput {
+input EditCommunityInput {
 	name: String
 	description: String
 	privacy: String
@@ -210,6 +210,7 @@ type Query {
 	getSingleJournal(journalId: Int!): Journal!
 	community(communityId: Int!): Community!
 	communities: [Community!]!
+	searchCommunities(searchString: String!): [Community!]!
 }
 
 type Mutation {

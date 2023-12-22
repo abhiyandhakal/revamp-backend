@@ -48,19 +48,17 @@ export type Community = {
 };
 
 export type CreateCommunityInput = {
-  __typename?: 'CreateCommunityInput';
-  description: Scalars['String']['output'];
-  members: Array<Scalars['ID']['output']>;
-  name: Scalars['String']['output'];
-  nametag: Scalars['String']['output'];
-  privacy?: Maybe<Scalars['String']['output']>;
+  description: Scalars['String']['input'];
+  members: Array<Scalars['ID']['input']>;
+  name: Scalars['String']['input'];
+  nametag: Scalars['String']['input'];
+  privacy?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type EditCommunityInput = {
-  __typename?: 'EditCommunityInput';
-  description?: Maybe<Scalars['String']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
-  privacy?: Maybe<Scalars['String']['output']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  privacy?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Goal = {
@@ -322,6 +320,7 @@ export type Query = {
   getTasksOfUser: Array<Task>;
   getTodosOfTask: Array<Todo>;
   getTodosOfUser: Array<Todo>;
+  searchCommunities: Array<Community>;
 };
 
 
@@ -382,6 +381,11 @@ export type QueryGetTodosOfTaskArgs = {
 
 export type QueryGetTodosOfUserArgs = {
   userId: Scalars['ID']['input'];
+};
+
+
+export type QuerySearchCommunitiesArgs = {
+  searchString: Scalars['String']['input'];
 };
 
 export type Question = {
@@ -565,8 +569,8 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Comment: ResolverTypeWrapper<Comment>;
   Community: ResolverTypeWrapper<Community>;
-  CreateCommunityInput: ResolverTypeWrapper<CreateCommunityInput>;
-  EditCommunityInput: ResolverTypeWrapper<EditCommunityInput>;
+  CreateCommunityInput: CreateCommunityInput;
+  EditCommunityInput: EditCommunityInput;
   EmailAddress: ResolverTypeWrapper<Scalars['EmailAddress']['output']>;
   Goal: ResolverTypeWrapper<Goal>;
   GoalQna: ResolverTypeWrapper<GoalQna>;
@@ -656,22 +660,6 @@ export type CommunityResolvers<ContextType = any, ParentType extends ResolversPa
   privacy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   users?: Resolver<Array<Maybe<ResolversTypes['UserWithRole']>>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CreateCommunityInputResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateCommunityInput'] = ResolversParentTypes['CreateCommunityInput']> = {
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  members?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  nametag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  privacy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EditCommunityInputResolvers<ContextType = any, ParentType extends ResolversParentTypes['EditCommunityInput'] = ResolversParentTypes['EditCommunityInput']> = {
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  privacy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -786,6 +774,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getTasksOfUser?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTasksOfUserArgs, 'userId'>>;
   getTodosOfTask?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosOfTaskArgs, 'taskId'>>;
   getTodosOfUser?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosOfUserArgs, 'userId'>>;
+  searchCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType, RequireFields<QuerySearchCommunitiesArgs, 'searchString'>>;
 };
 
 export type QuestionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Question'] = ResolversParentTypes['Question']> = {
@@ -906,8 +895,6 @@ export type Resolvers<ContextType = any> = {
   Aspect?: AspectResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   Community?: CommunityResolvers<ContextType>;
-  CreateCommunityInput?: CreateCommunityInputResolvers<ContextType>;
-  EditCommunityInput?: EditCommunityInputResolvers<ContextType>;
   EmailAddress?: GraphQLScalarType;
   Goal?: GoalResolvers<ContextType>;
   GoalQna?: GoalQnaResolvers<ContextType>;

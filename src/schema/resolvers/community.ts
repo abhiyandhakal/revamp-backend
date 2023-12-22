@@ -1,7 +1,8 @@
-import { and, eq } from "drizzle-orm";
+import { and, or, eq, like } from "drizzle-orm";
 import db from "../../db";
 import { community } from "../../db/schema/community";
 import { userCommunity } from "../../db/schema/relations/user-community";
+import { user } from "../../db/schema/user";
 import { Community, MutationResolvers, QueryResolvers } from "../../generated/graphql";
 import { YogaInitialContext } from "graphql-yoga";
 import { getSession } from "../../middlewares/permissions";
@@ -26,16 +27,45 @@ export const getSingleCommunity: QueryResolvers["community"] = async (_, { commu
 };
 
 async function sqlToGqlCommunity(sqlCommunity: typeof community.$inferSelect): Promise<Community> {
-	const communityWithUserArr = await db
+	const usersArr = await db
+		.select()
+		.from(userCommunity)
+		.innerJoin(user, eq(userCommunity.userId, user.userId))
+		.where(eq(userCommunity.communityId, sqlCommunity.communityId));
+
+	const gqlCommunity: Community = {
+		...sqlCommunity,
+		users: usersArr.map(user => ({
+			user: { id: user.account.userId, ...user.account },
+			role: user["user-community"].role,
+		})),
+	};
+	return gqlCommunity;
+}
+
+export const searchCommunities: QueryResolvers["searchCommunities"] = async (
+	_,
+	{ searchString },
+) => {
+	const sqlCommunities = await db
 		.select()
 		.from(community)
-		.innerJoin(userCommunity, eq(community.communityId, userCommunity.communityId))
-		.where(eq(community.communityId, sqlCommunity.communityId));
+		.where(
+			or(
+				like(community.community, searchString),
+				like(community.description, searchString),
+				like(community.communityId, searchString),
+				like(community.nametag, searchString),
+			),
+		)
+		.limit(10);
 
-	console.log(communityWithUserArr);
+	const gqlCommunities = await Promise.all(
+		sqlCommunities.map(async sqlCommunity => await sqlToGqlCommunity(sqlCommunity)),
+	);
 
-	throw new Error("Not implemented");
-}
+	return gqlCommunities;
+};
 
 export const createCommunity: MutationResolvers["createCommunity"] = async (
 	_,

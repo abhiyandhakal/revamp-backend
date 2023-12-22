@@ -15,6 +15,7 @@ import { getAllUsers, getSingleUser, setUser } from "./user";
 import {
 	getAllCommunities,
 	getSingleCommunity,
+	searchCommunities,
 	createCommunity,
 	leaveCommunity,
 	removeUserFromCommunity,
@@ -45,6 +46,7 @@ const resolvers: Resolvers = {
 		getSingleUser,
 		community: getSingleCommunity,
 		communities: getAllCommunities,
+		searchCommunities,
 	},
 
 	Mutation: {
