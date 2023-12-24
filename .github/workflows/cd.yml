@@ -13,17 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install pm2
-        run: npm install -g pnpm
-
       - name: Deploy using ssh
         uses: appleboy/ssh-action@master
         with:
@@ -32,11 +21,9 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            cd ~/revamp-backend
+            cd /root/revamp-backend
             git pull origin master
-            npm i -g pm2 # install pm2
             # stop the running instance
-            pm2 stop .
-            pnpm i
-            pnpm build
-            pm2 restart .
+            docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
+            docker build -t revamp-backend .
+            docker run -p 8000:8000 revamp-backend
