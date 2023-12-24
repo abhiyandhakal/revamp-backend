@@ -12,11 +12,13 @@ FROM base AS builder
 WORKDIR /app
 COPY . .
 
+# install required packages
 RUN npm install -g pnpm
+RUN npm install -g pm2
 
 RUN pnpm install
 RUN pnpm build
 
 EXPOSE 8000
 
-CMD ["pnpm", "start"]
+CMD ["pm2", "start"]
