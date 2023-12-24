@@ -29,6 +29,6 @@ jobs:
             # start docker daemon
             sudo systemctl enable docker --now
             # stop the running instance
-            docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
-            docker build -t revamp-backend .
-            docker run -p 8000:8000 revamp-backend
+            sudo docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
+            sudo docker build -t revamp-backend .
+            sudo docker run -p 8000:8000 revamp-backend
