@@ -25,6 +25,7 @@ jobs:
             git pull origin master
             # install docker
             sudo snap install docker
+            sudo apt install docker.io -y
             # start docker daemon
             sudo systemctl enable docker --now
             # stop the running instance
