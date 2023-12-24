@@ -23,6 +23,7 @@ jobs:
           script: |
             cd ~/revamp-backend
             git pull origin master
+            npm i -g pm2 # install pm2
             # stop the running instance
             pm2 stop .
             pnpm i
