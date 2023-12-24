@@ -7,6 +7,7 @@ import { deleteTimelapseOfTask, getTimelapse } from "./timelapse";
 import { goal } from "../../db/schema/goal";
 import { deleteTodoFunc, sqlToGqlTodo } from "./todo";
 import { todo } from "../../db/schema/todo";
+import { increaseGoalStreak } from "../../lib/streak";
 
 export const getSingleTask: QueryResolvers["getSingleTask"] = async function (_, { taskId }) {
 	const taskList = await db.select().from(task).where(eq(task.taskId, taskId));
@@ -110,6 +111,7 @@ export const deleteTask: MutationResolvers["deleteTask"] = async (_, { taskId })
 export const editTask: MutationResolvers["editTask"] = async function (_, input) {
 	const taskList = await db.select().from(task).where(eq(task.taskId, input.taskId));
 	const singleTask = taskList[0];
+	const previouslyDone = singleTask.isDone;
 
 	if (!singleTask) throw new Error("Task not found");
 
@@ -118,13 +120,17 @@ export const editTask: MutationResolvers["editTask"] = async function (_, input)
 		.set({
 			deadline: input.deadline || singleTask.deadline,
 			description: input.description || singleTask.description,
-			isDone: input.isDone || singleTask.isDone,
+			isDone: input.isDone != undefined ? input.isDone : singleTask.isDone,
 			order: input.order || singleTask.order,
 			priority: input.priority || singleTask.priority,
 			title: input.title || singleTask.title,
 			updatedAt: new Date(),
 		})
 		.where(eq(task.taskId, input.taskId));
+
+	if (input.isDone && !previouslyDone) {
+		increaseGoalStreak(singleTask.goalId);
+	}
 
 	return "Task edited successfully";
 };

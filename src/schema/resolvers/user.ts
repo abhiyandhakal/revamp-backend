@@ -72,6 +72,7 @@ export const setUserFunc = async (userId: string): Promise<string> => {
 		banned: userInClerk.banned,
 		createdAt: new Date(userInClerk.createdAt),
 		updatedAt: new Date(userInClerk.updatedAt),
+		timezone: "Asia/Kathmandu",
 	};
 	await db.insert(user).values(newUser);
 

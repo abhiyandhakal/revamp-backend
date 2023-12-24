@@ -1,4 +1,4 @@
-import { text, pgTable, boolean, timestamp } from "drizzle-orm/pg-core";
+import { text, pgTable, boolean, timestamp, integer } from "drizzle-orm/pg-core";
 
 export const user = pgTable("account", {
 	userId: text("userId").primaryKey().unique(),
@@ -9,6 +9,9 @@ export const user = pgTable("account", {
 	banned: boolean("banned").notNull(),
 	createdAt: timestamp("createdAt").notNull(),
 	updatedAt: timestamp("updatedAt").notNull(),
+	timezone: text("timezone").notNull(),
+	streak: integer("streak").notNull().default(0),
+	streakUpdatedAt: timestamp("streakUpdatedAt"),
 });
 
 export const userEmailAddress = pgTable("user-email", {
