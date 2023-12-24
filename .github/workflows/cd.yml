@@ -25,6 +25,8 @@ jobs:
             git pull origin master
             # install docker
             sudo snap install docker
+            # start docker daemon
+            sudo systemctl enable docker --now
             # stop the running instance
             docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
             docker build -t revamp-backend .
