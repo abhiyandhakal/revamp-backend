@@ -21,7 +21,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            cd /root/revamp-backend
+            cd ~/revamp-backend
             git pull origin master
             # stop the running instance
             docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
