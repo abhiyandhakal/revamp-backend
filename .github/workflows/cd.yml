@@ -21,6 +21,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
+            ls # for debugging
             cd /ubuntu/revamp-backend
             git pull origin master
             # stop the running instance
