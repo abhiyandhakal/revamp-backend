@@ -23,6 +23,8 @@ jobs:
           script: |
             cd ~/revamp-backend
             git pull origin master
+            # install docker
+            snap install docker
             # stop the running instance
             docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
             docker build -t revamp-backend .
