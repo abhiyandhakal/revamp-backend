@@ -13,22 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy using ssh
+      - name: Access Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
-          script: |
-            cd ~/revamp-backend
-            git pull origin master
-            # install docker
-            sudo snap install docker
-            sudo apt install docker.io -y
-            # start docker daemon
-            sudo systemctl enable docker --now
-            # stop the running instance
-            sudo docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
-            sudo docker build -t revamp-backend .
-            sudo docker run -p 8000:8000 revamp-backend
+
+      - name: Change directory
+        run: cd ~/revamp-backend
+
+      - name: Update repository
+        run: git pull origin master
+
+      - name: Install docker
+        run: sudo snap install docker && sudo apt install docker.io -y
+
+      - name: Start docker daemon
+        run: sudo systemctl enable docker --now
+
+      - name: Stop the running instance
+        run: sudo docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
+
+      - name: Build docker image
+        run: sudo docker build -t revamp-backend .
+
+      - name: Run the docker image
+        run: sudo docker run -p 8000:8000 revamp-backend
