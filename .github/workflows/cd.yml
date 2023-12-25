@@ -33,7 +33,10 @@ jobs:
         run: npm install -g pnpm pm2
 
       - name: Install dependencies
-        run: pnpm install
+        run: |
+          ls
+          cd ~/revamp-backend
+          pnpm install
 
       - name: Build
         run: pnpm run build
