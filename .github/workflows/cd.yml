@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd $WORKING_DIR
-          ls
+          tree
           pnpm install
 
       - name: Build
