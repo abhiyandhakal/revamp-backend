@@ -32,7 +32,7 @@ jobs:
       - name: Install Docker
         run: |
           sudo snap install docker
-          sudo apt install docker.io -y
+          sudo apt install docker -y
           sudo systemctl enable docker --now
 
       - name: Stop Running Instance
