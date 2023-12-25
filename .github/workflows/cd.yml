@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  prepare:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,11 +24,6 @@ jobs:
             cd ~/revamp-backend
             git pull origin master
 
-  deploy:
-    needs: prepare
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -38,9 +33,7 @@ jobs:
         run: npm install -g pnpm pm2
 
       - name: Install dependencies
-        run: |
-          cd ~/revamp-backend
-          pnpm install
+        run: pnpm install
 
       - name: Build
         run: pnpm run build
