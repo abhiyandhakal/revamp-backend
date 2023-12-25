@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  build:
+  prepare:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,12 +23,28 @@ jobs:
           script: |
             cd ~/revamp-backend
             git pull origin master
-            # install docker
-            sudo snap install docker
-            sudo apt install docker.io -y
-            # start docker daemon
-            sudo systemctl enable docker --now
-            # stop the running instance
-            sudo docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
-            sudo docker build -t revamp-backend .
-            sudo docker run -p 8000:8000 revamp-backend &
+
+  setup-docker:
+    needs: prepare
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Docker
+        run: |
+          sudo snap install docker
+          sudo apt install docker.io -y
+          sudo systemctl enable docker --now
+
+  deploy:
+    needs: setup-docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Stop Running Instance
+        run: |
+          sudo docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
+
+      - name: Build and Run Docker Container
+        run: |
+          sudo docker build -t revamp-backend .
+          sudo docker run -p 8000:8000 revamp-backend &
