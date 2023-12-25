@@ -34,14 +34,13 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install pm2
-        run: npm install -g pm2
+      - name: Install pnpm and pm2
+        run: npm install -g pnpm pm2
 
       - name: Install dependencies
-        run: pnpm install
+        run: |
+          cd ~/revamp-backend
+          pnpm install
 
       - name: Build
         run: pnpm run build
