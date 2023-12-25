@@ -24,19 +24,8 @@ jobs:
             cd ~/revamp-backend
             git pull origin master
 
-  setup-docker:
-    needs: prepare
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Install Docker
-        run: |
-          sudo snap install docker
-          sudo apt install docker.io -y
-          sudo systemctl enable docker --now
-
   deploy:
-    needs: setup-docker
+    needs: prepare
     runs-on: ubuntu-latest
 
     steps:
