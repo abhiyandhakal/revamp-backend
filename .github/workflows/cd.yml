@@ -23,6 +23,7 @@ jobs:
           script: |
             cd ~/revamp-backend
             git pull origin master
+            export WORKING_DIR=$(pwd)
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -34,8 +35,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd $WORKING_DIR
           ls
-          cd ~/revamp-backend
           pnpm install
 
       - name: Build
