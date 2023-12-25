@@ -24,7 +24,7 @@ jobs:
             cd ~/revamp-backend
             git pull origin master
 
-  setup-docker:
+  deploy:
     needs: prepare
     runs-on: ubuntu-latest
 
@@ -34,11 +34,6 @@ jobs:
           sudo snap install docker
           sudo systemctl enable docker --now
 
-  deploy:
-    needs: setup-docker
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Stop Running Instance
         run: |
           sudo docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
