@@ -23,12 +23,17 @@ jobs:
           script: |
             cd ~/revamp-backend
             git pull origin master
-            # install docker
-            sudo snap install docker
-            sudo apt install docker.io -y
-            # start docker daemon
-            sudo systemctl enable docker --now
-            # stop the running instance
-            sudo docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
-            sudo docker build -t revamp-backend .
-            sudo docker run -p 8000:8000 revamp-backend &
+            # install nodejs
+            sudo snap install node --classic
+            # install pnpm and pm2
+            sudo npm install -g pnpm pm2
+            # install dependencies
+            pnpm install
+            # build and verify
+            pnpm build
+            if [ $? -ne 0 ]; then
+              echo "Build failed"
+              exit 1
+            fi
+            # restart pm2 server
+            pm2 restart .
