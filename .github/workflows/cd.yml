@@ -9,11 +9,11 @@ on:
       - master
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Connect Using SSH
+      - name: Deploy using ssh
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -23,32 +23,12 @@ jobs:
           script: |
             cd ~/revamp-backend
             git pull origin master
-            export WORKING_DIR=$(pwd)
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install pnpm and pm2
-        run: npm install -g pnpm pm2
-
-      - name: Install dependencies
-        run: |
-          cd $WORKING_DIR
-          cd work/revamp-backend/revamp-backend
-          ls
-          pnpm install
-
-      - name: Build
-        run: pnpm run build
-
-      - name: Verify Build
-        run: |
-          if [ $? -ne 0 ]; then
-            echo "Build failed"
-            exit 1
-          fi
-
-      - name: Restart server
-        run: pm2 restart .
+            # install docker
+            sudo snap install docker
+            sudo apt install docker.io -y
+            # start docker daemon
+            sudo systemctl enable docker --now
+            # stop the running instance
+            sudo docker ps | grep revamp-backend | awk '{ command = "docker stop " $1; system(command) }'
+            sudo docker build -t revamp-backend .
+            sudo docker run -p 8000:8000 revamp-backend &
