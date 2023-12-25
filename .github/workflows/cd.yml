@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy using ssh
+      - name: Connect using ssh
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -24,8 +24,18 @@ jobs:
             cd ~/revamp-backend
             git pull origin master
 
-  deploy:
+  setup-docker:
     needs: prepare
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Docker
+        run: |
+          sudo snap install docker
+          sudo systemctl enable docker --now
+
+  deploy:
+    needs: setup-docker
     runs-on: ubuntu-latest
 
     steps:
