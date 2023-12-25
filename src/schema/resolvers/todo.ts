@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import db from "../../db";
 import { todo } from "../../db/schema/todo";
 import { MutationResolvers, QueryResolvers, Todo } from "../../generated/graphql";

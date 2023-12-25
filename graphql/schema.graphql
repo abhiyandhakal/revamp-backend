@@ -164,7 +164,7 @@ type UserWithLessDetails {
 }
 
 type UserWithRole {
-	user: User!
+	user: UserWithLessDetails!
 	role: String!
 }
 
@@ -177,6 +177,20 @@ type Community {
 	createdAt: Timestamp!
 	updatedAt: Timestamp!
 	users: [UserWithRole]!
+}
+
+input CreateCommunityInput {
+	name: String!
+	nametag: String!
+	description: String!
+	privacy: String
+	members: [ID!]!
+}
+
+input EditCommunityInput {
+	name: String
+	description: String
+	privacy: String
 }
 
 type Query {
@@ -194,6 +208,9 @@ type Query {
 	getSingleTodo(todoId: Int!): Todo!
 	getSingleUser(userId: ID!): User!
 	getSingleJournal(journalId: Int!): Journal!
+	community(communityId: Int!): Community!
+	communities: [Community!]!
+	searchCommunities(searchString: String!): [Community!]!
 }
 
 type Mutation {
@@ -240,4 +257,16 @@ type Mutation {
 		streak: Int
 	): String!
 	editTodo(todoId: Int!, todo: String, isDone: Boolean, order: Int): String!
+	createCommunity(input: CreateCommunityInput!): String!
+	acceptCommunityInvite(communityId: Int!): String!
+	declineCommunityInvite(communityId: Int!): String!
+	leaveCommunity(communityId: Int!): String!
+	inviteUserToCommunity(communityId: Int!, userId: ID!): String!
+	blockUserFromCommunity(communityId: Int!, userId: ID!): String!
+	removeUserFromCommunity(communityId: Int!, userId: ID!): String!
+	unBlockUserFromCommunity(communityId: Int!, userId: ID!): String!
+	editCommunity(communityId: Int!, input: EditCommunityInput!): String!
+	addUserToCommunity(communityId: Int!, userId: ID!): String!
+	makeUserAdminOfCommunity(communityId: Int!, userId: ID!): String!
+	enterInCommunity(communityId: Int!): String!
 }

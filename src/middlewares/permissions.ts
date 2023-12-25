@@ -5,7 +5,8 @@ import { YogaInitialContext } from "graphql-yoga";
 import db from "../db";
 import { user } from "../db/schema/user";
 import { goal } from "../db/schema/goal";
-import { eq } from "drizzle-orm";
+import { userCommunity } from "../db/schema/relations/user-community";
+import { eq, and as drizzleAnd } from "drizzle-orm";
 import { setUserFunc } from "../schema/resolvers/user";
 
 export const getSession = async (headers: Headers): Promise<Session> => {
@@ -72,6 +73,35 @@ const isGoalOfUser = rule()(async (_, args, context: YogaInitialContext) => {
 	}
 });
 
+const isCommunityAdmin = rule()(async (_, args, context: YogaInitialContext) => {
+	try {
+		const session = await getSession(context.request.headers);
+		const userFromClerk = await clerkClient.users.getUser(session.userId);
+		if (!userFromClerk) throw new Error("You are not in the database");
+
+		const userCommunityArr = await db
+			.select()
+			.from(userCommunity)
+			.where(
+				drizzleAnd(
+					eq(userCommunity.communityId, args.communityId),
+					eq(userCommunity.userId, userFromClerk.id),
+					eq(userCommunity.role, "admin"),
+				),
+			);
+
+		if (userCommunityArr.length === 0)
+			return new GraphQLError("User is not an admin of the community");
+
+		return true;
+	} catch (error) {
+		if (error instanceof Error) {
+			return new GraphQLError(error.message);
+		}
+		return new GraphQLError("Authorization Error");
+	}
+});
+
 const permissions = shield(
 	{
 		Query: {
@@ -82,6 +112,13 @@ const permissions = shield(
 			"*": isAuthenticated,
 			editGoal: and(isAuthenticated, isGoalOfUser),
 			deleteGoal: and(isAuthenticated, isGoalOfUser),
+			inviteUserToCommunity: and(isAuthenticated, isCommunityAdmin),
+			blockUserFromCommunity: and(isAuthenticated, isCommunityAdmin),
+			unBlockUserFromCommunity: and(isAuthenticated, isCommunityAdmin),
+			removeUserFromCommunity: and(isAuthenticated, isCommunityAdmin),
+			editCommunity: and(isAuthenticated, isCommunityAdmin),
+			addUserToCommunity: and(isAuthenticated, isCommunityAdmin),
+			makeUserAdminOfCommunity: and(isAuthenticated, isCommunityAdmin),
 		},
 	},
 	{
