@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd $WORKING_DIR
-          cd work/revamp-backend
+          cd work/revamp-backend/revamp-backend
           ls
           pnpm install
 
