@@ -37,7 +37,7 @@ jobs:
         run: |
           cd $WORKING_DIR
           ls work
-          cd work
+          cd work/revamp-backend
           pnpm install
 
       - name: Build
