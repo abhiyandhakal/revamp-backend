@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Connect using ssh
+      - name: Connect Using SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -29,11 +29,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Docker
+      - name: Remove Conflicting Docker Deps
         run: |
-          sudo apt install docker -y
-          sudo apt install docker.io -y
-          sudo systemctl enable docker --now
+          sudo apt-get remove docker docker-engine docker.io containerd runc
+          sudo apt-get purge docker-ce docker-ce-cli containerd.io
+          sudo rm -rf /var/lib/docker
+
+      - name: Resolve Unmet Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get upgrade
+          sudo apt-get dist-upgrade
+          sudo apt-get autoremove
+          sudo apt-get autoclean
+
+      - name: Install docker using Docker's Official Script
+        run: |
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+
+      - name: Install docker compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Stop Running Instance
         run: |
