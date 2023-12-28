@@ -41,6 +41,8 @@ export type Community = {
   communityId: Scalars['Int']['output'];
   createdAt: Scalars['Timestamp']['output'];
   description: Scalars['String']['output'];
+  goals: Array<Goal>;
+  journals: Array<Journal>;
   nametag: Scalars['String']['output'];
   privacy: Scalars['String']['output'];
   updatedAt: Scalars['Timestamp']['output'];
@@ -669,6 +671,8 @@ export type CommunityResolvers<ContextType = any, ParentType extends ResolversPa
   communityId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  goals?: Resolver<Array<ResolversTypes['Goal']>, ParentType, ContextType>;
+  journals?: Resolver<Array<ResolversTypes['Journal']>, ParentType, ContextType>;
   nametag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   privacy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
