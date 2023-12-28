@@ -119,3 +119,14 @@ export const shareGoal: MutationResolvers["shareGoal"] = async function (_, args
 
 	return "Goal shared successfully in community with id " + communityId;
 };
+
+export const publishGoal: MutationResolvers["publishGoal"] = async function (_, { goalId }) {
+	await db
+		.update(goal)
+		.set({
+			access: "public",
+		})
+		.where(eq(goal.goalId, goalId));
+
+	return "Goal published successfully";
+};
