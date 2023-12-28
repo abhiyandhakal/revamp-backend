@@ -6,6 +6,8 @@ import { deleteTaskFunc, getTasksOfGoalFunc } from "./task";
 import { goalQuestion } from "../../db/schema/goal-question";
 import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
 import { task } from "../../db/schema/task";
+import { goalShared } from "../../db/schema/relations/goal-share";
+import { getSession } from "../../middlewares/permissions";
 
 export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function (_, { goalId }) {
 	const goals = await db.select().from(goal).where(eq(goal.goalId, goalId));
@@ -102,4 +104,17 @@ export const editGoal: MutationResolvers["editGoal"] = async function (_, args) 
 		.where(eq(goal.goalId, args.goalId));
 
 	return "Goal edited successfully";
+};
+
+export const shareGoal: MutationResolvers["shareGoal"] = async function (_, args, ctx) {
+	const { goalId, communityId } = args;
+	const session = await getSession(ctx.request.headers);
+
+	await db.insert(goalShared).values({
+		goalId,
+		communityId,
+		userId: session.userId,
+	});
+
+	throw new Error("Not implemented");
 };
