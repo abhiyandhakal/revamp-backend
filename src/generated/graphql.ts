@@ -345,6 +345,7 @@ export type Query = {
   getTodosOfUser: Array<Todo>;
   myCommunities: Array<Community>;
   searchCommunities: Array<Community>;
+  todayJournalDaily: Journal;
 };
 
 
@@ -805,6 +806,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getTodosOfUser?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosOfUserArgs, 'userId'>>;
   myCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   searchCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType, RequireFields<QuerySearchCommunitiesArgs, 'searchString'>>;
+  todayJournalDaily?: Resolver<ResolversTypes['Journal'], ParentType, ContextType>;
 };
 
 export type QuestionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Question'] = ResolversParentTypes['Question']> = {

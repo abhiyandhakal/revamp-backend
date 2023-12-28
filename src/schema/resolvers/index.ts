@@ -15,7 +15,12 @@ import {
 	getTasksOfUser,
 	setTask,
 } from "./task";
-import { getJournalsOfUser, getSingleJournal, updateJournal } from "./journal";
+import {
+	getJournalsOfUser,
+	getSingleJournal,
+	updateJournal,
+	getTodayJournalDaily,
+} from "./journal";
 import {
 	deleteGoal,
 	shareGoal,
@@ -58,6 +63,7 @@ const resolvers: Resolvers = {
 		getAllAspects,
 		getAllUsers,
 		getJournalsOfUser,
+		todayJournalDaily: getTodayJournalDaily,
 		getSingleGoal,
 		getSingleTask,
 		getSingleTodo,

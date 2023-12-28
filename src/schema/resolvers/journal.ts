@@ -85,6 +85,17 @@ export const getSingleJournal: QueryResolvers["getSingleJournal"] = async (
 	return sqlToGqlJournal(journalFromDb[0]);
 };
 
+export const getTodayJournalDaily: QueryResolvers["todayJournalDaily"] = async (_, __, ctx) => {
+	const session = await getSession(ctx.request.headers);
+	const journalFromDb = (await db.execute(sql`
+		SELECT * FROM journal WHERE ${journal.userId} = ${session.userId} AND DATE(${journal.date}) = CURRENT_DATE AND ${journal.type} = 'daily';
+	`)) as (typeof journal.$inferSelect)[];
+
+	if (journalFromDb.length === 0) throw new Error("Journal not created for today");
+
+	return sqlToGqlJournal(journalFromDb[0]);
+};
+
 export const getJournalsOfUser: QueryResolvers["getJournalsOfUser"] = async (_, { userId }) => {
 	const journalsFromDb = await db.select().from(journal).where(eq(journal.userId, userId));
 	if (journalsFromDb.length === 0) throw new Error("No journals found");
@@ -127,7 +138,7 @@ export const createOrUpdateJournalAutomated = async (userId: string, goalId: num
 		const journalText = await dailyJournal(userId, workedOnYesterday.length, workedOnToday.length);
 
 		const todayJournal = (await db.execute(
-			sql`SELECT * FROM journal WHERE ${journal.userId} = ${userId} AND ${journal.date} = CURRENT_DATE;`,
+			sql`SELECT * FROM journal WHERE ${journal.userId} = ${userId} AND DATE(${journal.date}) = CURRENT_DATE;`,
 		)) as (typeof journal.$inferSelect)[];
 
 		if (todayJournal.length === 0) {
