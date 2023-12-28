@@ -91,28 +91,34 @@ export const getJournalsOfUser: QueryResolvers["getJournalsOfUser"] = async (_, 
 };
 
 export const createOrUpdateJournalAutomated = async (userId: string, goalId: number) => {
-	const workedOns = await db.select().from(workedOnLog).where(eq(workedOnLog.goalId, goalId));
+	try {
+		const workedOns = await db.select().from(workedOnLog).where(eq(workedOnLog.goalId, goalId));
 
-	const workedOnToday = workedOns.filter(workedOn => checkIfToday(workedOn.date));
-	const workedOnYesterday = workedOns.filter(workedOn => checkIfYesterday(workedOn.date));
+		const workedOnToday = workedOns.filter(workedOn => checkIfToday(workedOn.date));
+		const workedOnYesterday = workedOns.filter(workedOn => checkIfYesterday(workedOn.date));
 
-	const journalText = await dailyJournal(userId, workedOnYesterday.length, workedOnToday.length);
+		const journalText = await dailyJournal(userId, workedOnYesterday.length, workedOnToday.length);
 
-	const todayJournal = (await db.execute(
-		sql`SELECT * FROM journal WHERE userId = 'your_user_id' AND date = CURRENT_DATE;`,
-	)) as (typeof journal.$inferSelect)[];
+		const todayJournal = (await db.execute(
+			sql`SELECT * FROM journal WHERE ${journal.userId} = ${userId} AND ${journal.date} = CURRENT_DATE;`,
+		)) as (typeof journal.$inferSelect)[];
 
-	if (todayJournal.length === 0) {
-		await db.insert(journal).values({
-			title: `Journal for ${new Date().toLocaleDateString()}`,
-			userId,
-			date: new Date(),
-			type: "daily",
-			content: journalText,
-		});
-	} else if (!todayJournal[0].isUpdated) {
-		await db.update(journal).set({
-			content: journalText,
-		});
+		if (todayJournal.length === 0) {
+			await db.insert(journal).values({
+				title: `Journal for ${new Date().toLocaleDateString()}`,
+				userId,
+				date: new Date(),
+				type: "daily",
+				content: journalText,
+			});
+		} else if (!todayJournal[0].isUpdated) {
+			await db.update(journal).set({
+				content: journalText,
+			});
+		}
+	} catch (error) {
+		if (error instanceof Error) {
+			console.log(error.message);
+		}
 	}
 };
