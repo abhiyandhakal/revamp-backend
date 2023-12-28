@@ -8,6 +8,7 @@ import { deleteTimelapseOfTodo, getTimelapse } from "./timelapse";
 import { task } from "../../db/schema/task";
 import { goal } from "../../db/schema/goal";
 import { increaseGoalStreak } from "../../lib/streak";
+import { workedOnLog } from "../../db/schema/worked-on-log";
 
 export const getSingleTodo: QueryResolvers["getSingleTodo"] = async function (_, { todoId }) {
 	const todos = await db.select().from(todo).where(eq(todo.todoId, todoId));
@@ -122,7 +123,7 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 		updatedAt: new Date(),
 	});
 
-	if (args.isDone && !isPreviousDone) {
+	if (args?.isDone && !isPreviousDone) {
 		const goalIdArr = await db
 			.select({ goalId: task.goalId })
 			.from(todo)
@@ -130,6 +131,16 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 			.where(eq(todo.todoId, args.todoId));
 		const goalId = goalIdArr[0]?.goalId;
 		if (!goalId) throw new Error("Todo doesn't belong to any goal");
+
+		const statement = sql`SELECT * FROM ${workedOnLog} WHERE DATE(${workedOnLog.date}) = CURRENT_DATE AND ${workedOnLog.taskId} = ${singleTodo.taskId}`;
+		const workedOnTasks = (await db.execute(statement)) as (typeof workedOnLog.$inferSelect)[];
+
+		if (workedOnTasks.length === 0) {
+			await db.insert(workedOnLog).values({
+				taskId: singleTodo.taskId,
+				goalId,
+			});
+		}
 
 		increaseGoalStreak(goalId);
 	}
