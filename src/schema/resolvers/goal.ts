@@ -8,7 +8,6 @@ import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
 import { task } from "../../db/schema/task";
 import { goalShared } from "../../db/schema/relations/goal-share";
 import { getSession } from "../../middlewares/permissions";
-import { community } from "../../db/schema/community";
 
 export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function (_, { goalId }) {
 	const goals = await db.select().from(goal).where(eq(goal.goalId, goalId));

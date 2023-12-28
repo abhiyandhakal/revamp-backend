@@ -34,7 +34,9 @@ export const getSingleCommunity: QueryResolvers["community"] = async (_, { commu
 	return gqlCommunity;
 };
 
-async function sqlToGqlCommunity(sqlCommunity: typeof community.$inferSelect): Promise<Community> {
+export async function sqlToGqlCommunity(
+	sqlCommunity: typeof community.$inferSelect,
+): Promise<Community> {
 	const usersArr = await db
 		.select()
 		.from(userCommunity)
