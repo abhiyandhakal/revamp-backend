@@ -16,12 +16,21 @@ import {
 	setTask,
 } from "./task";
 import { getJournalsOfUser, getSingleJournal } from "./journal";
-import { deleteGoal, editGoal, getGoals, getSingleGoal, setGoal } from "./goal";
+import {
+	deleteGoal,
+	shareGoal,
+	publishGoal,
+	editGoal,
+	getGoals,
+	getSingleGoal,
+	setGoal,
+} from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
 import { getAllUsers, getSingleUser, setUser } from "./user";
 import {
 	getAllCommunities,
+	getMyCommunities,
 	getSingleCommunity,
 	searchCommunities,
 	createCommunity,
@@ -55,6 +64,7 @@ const resolvers: Resolvers = {
 		getSingleUser,
 		getSingleJournal,
 		community: getSingleCommunity,
+		myCommunities: getMyCommunities,
 		communities: getAllCommunities,
 		searchCommunities,
 	},
@@ -68,6 +78,8 @@ const resolvers: Resolvers = {
 		deleteTask,
 		deleteTodo,
 		editGoal,
+		shareGoal,
+		publishGoal,
 		editTask,
 		editTodo,
 		createCommunity,
