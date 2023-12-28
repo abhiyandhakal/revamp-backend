@@ -177,6 +177,8 @@ type Community {
 	createdAt: Timestamp!
 	updatedAt: Timestamp!
 	users: [UserWithRole]!
+	# goals: [Goal!]!
+	# journals: [Journal!]!
 }
 
 input CreateCommunityInput {

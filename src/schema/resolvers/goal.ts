@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
 import { Goal, MutationResolvers, QueryResolvers } from "../../generated/graphql";
@@ -120,13 +120,15 @@ export const shareGoal: MutationResolvers["shareGoal"] = async function (_, args
 	return "Goal shared successfully in community with id " + communityId;
 };
 
-export const publishGoal: MutationResolvers["publishGoal"] = async function (_, { goalId }) {
+export const publishGoal: MutationResolvers["publishGoal"] = async function (_, { goalId }, ctx) {
+	const session = await getSession(ctx.request.headers);
+
 	await db
 		.update(goal)
 		.set({
 			access: "public",
 		})
-		.where(eq(goal.goalId, goalId));
+		.where(and(eq(goal.goalId, goalId), eq(goal.userId, session.userId)));
 
 	return "Goal published successfully";
 };
