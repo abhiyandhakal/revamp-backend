@@ -3,7 +3,7 @@ import { goal } from "./goal";
 import { task } from "./task";
 
 export const workedOnLog = pgTable("worked-on-log", {
-	date: timestamp("date").defaultNow(),
+	date: timestamp("date").defaultNow().notNull(),
 	taskId: integer("taskId")
 		.notNull()
 		.references(() => task.taskId),

@@ -15,6 +15,13 @@
       "when": 1703793140583,
       "tag": "0001_public_zombie",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1703793988692,
+      "tag": "0002_empty_living_mummy",
+      "breakpoints": true
     }
   ]
 }
