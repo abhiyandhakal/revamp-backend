@@ -34,7 +34,7 @@ const schemaWithMiddleware = applyMiddleware(schema, permissions, errorHandler);
 const yoga = createYoga({
 	schema: schemaWithMiddleware,
 	plugins: [...protection.plugins],
-	graphiql: process.env.NODE_ENV === "development",
+	graphiql: true,
 	landingPage: false,
 });
 
