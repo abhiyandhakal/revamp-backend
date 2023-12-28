@@ -1,5 +1,9 @@
-import { Goal, Task } from "../generated/graphql";
+import db from "../db";
+import { Goal } from "../generated/graphql";
 import { checkIfToday } from "../lib/check-date";
+import { getGoalsFunc } from "../schema/resolvers/goal";
+import { user } from "../db/schema/user";
+import { eq } from "drizzle-orm";
 
 const yesterdayStatusChoices = [
 	"just like",
@@ -10,7 +14,8 @@ const yesterdayStatusChoices = [
 	"worse than",
 	"slightly worse than",
 ];
-export function dailyGreetings(firstName: string) {
+
+function dailyGreetings(firstName: string) {
 	const greetings = [
 		`Greetings , ${firstName} here, ready to share insights.`,
 		`Warm salutations! ${firstName} checking in for another entry.`,
@@ -74,7 +79,7 @@ function setYesterdayStatus(
 	return comparisionWithYesterdayStatus;
 }
 
-function setTodayStatus(tasksCompletedToday: number, totalTasksToday: number, goals: string[]) {
+function setTodayStatus(tasksCompletedToday: number, totalTasksToday: number) {
 	const percentCompleted = (tasksCompletedToday / totalTasksToday) * 100;
 	let statusIndex = 0;
 
@@ -110,17 +115,46 @@ function setTodayStatus(tasksCompletedToday: number, totalTasksToday: number, go
 	return todayStatus;
 }
 
-function dailyJournal(
-	firstName: string,
-	goals: Goal[],
-	todayStatus: string,
-	comparisionWithYesterdayStatus: string,
-	tasksCompletedToday: number,
-	totalTasksToday: number,
+export async function dailyJournal(
+	userId: string,
+	tasksCompletedYesterday: number,
+	yesterdaytotalTasks: number,
 ) {
-	const overallPercentCompleted: number = (tasksCompletedToday / totalTasksToday) * 100;
+	const goals: Goal[] = await getGoalsFunc(userId);
+	const userArr = await db
+		.select({ firstName: user.firstName })
+		.from(user)
+		.where(eq(user.userId, userId));
+
+	if (!userArr[0]) throw new Error("User not found");
+
+	const firstName = userArr[0].firstName;
+
+	const totalTasksToday: number = goals
+		.map(singleGoal => {
+			return singleGoal.tasks.filter(singleTask => checkIfToday(singleTask.updatedAt)).length;
+		})
+		.reduce((acc, curr) => acc + curr, 0);
+
+	const tasksCompletedToday: number = goals
+		.map(singleGoal => {
+			return singleGoal.tasks.filter(
+				singleTask => checkIfToday(singleTask.updatedAt) && singleTask.isDone,
+			).length;
+		})
+		.reduce((acc, curr) => acc + curr, 0);
+
+	const overallPercentCompleted: number = 19.2;
 	const greetings = dailyGreetings(firstName);
-	//@ts-ignore ts bahulayo string | undefined error.
+	const todayStatus: string = setTodayStatus(tasksCompletedToday, totalTasksToday);
+	const comparisionWithYesterdayStatus: string = setYesterdayStatus(
+		tasksCompletedToday,
+		totalTasksToday,
+		tasksCompletedYesterday,
+		yesterdaytotalTasks,
+	);
+
+	//@ts-expect-error ts bahulayo string | undefined error.
 	const goalWithTaskList: { goal: string; tasks: { task: string; workedOn: boolean }[] }[] = goals
 		.map(singleGoal => {
 			const tasks = singleGoal.tasks
@@ -179,17 +213,19 @@ function dailyJournal(
 		comparisionWithYesterdayStatus === "worse than" ||
 		comparisionWithYesterdayStatus === "slightly worse than"
 	) {
-		concludingParagraph = `But it was ${comparisionWithYesterdayStatus} than yesterday`;
+		concludingParagraph = `But it was ${comparisionWithYesterdayStatus} than yesterday.`;
 	} else if (yesterdayStatusChoices.includes(comparisionWithYesterdayStatus)) {
-		concludingParagraph = `And it was ${comparisionWithYesterdayStatus} than yesterday`;
+		concludingParagraph = `And it was ${comparisionWithYesterdayStatus} than yesterday.`;
 	}
 	const dailyJournal = `
-		${greetings}\n
-		Today, I had planned to do the taks with title ${goalWithTaskString}. I completed 
-		${completedTasks} for ${goalWithCompletedTaskList}. Overall, I managed to 
-		achieve ${overallPercentCompleted} of my target. My performance today was ${todayStatus} in general.
-		${concludingParagraph}.
-	`;
+${greetings}
+
+Today, I had planned to do the tasks with title ${goalWithTaskString}. I completed ${completedTasks}. Overall, I managed to achieve ${overallPercentCompleted}% of my goal. My performance today was ${todayStatus} in general.
+
+${concludingParagraph}
+`;
+
+	return textToDelta(dailyJournal);
 }
 
 function generateTaskAndGoalInfo(
@@ -207,16 +243,16 @@ function generateTaskAndGoalInfo(
 
 		goalWithTask.tasks.forEach((task, index) => {
 			if (index === goalWithTask.tasks.length - 1 && goalWithTask.tasks.length > 1) {
-				tasksString += ` and ${task}`;
+				tasksString += ` and ${task.task}`;
 				return;
 			}
 
 			if (index === 0) {
-				tasksString += task;
+				tasksString += task.task;
 				return;
 			}
 
-			tasksString += `, ${task}`;
+			tasksString += `, ${task.task}`;
 		});
 
 		if (index === goalWithTaskList.length && goalWithTaskList.length > 1) {
@@ -239,4 +275,14 @@ function generateTaskAndGoalInfo(
 function getRandom(array: string[]) {
 	const randomIndex = Math.floor(Math.random() * array.length);
 	return array[randomIndex];
+}
+
+function textToDelta(text: string) {
+	const paragraphs = text.split("\n\n");
+
+	const ops = paragraphs.map((paragraph, index) => {
+		return { insert: paragraph + (index < paragraphs.length - 1 ? "\n\n" : "") };
+	});
+
+	return JSON.stringify({ ops });
 }

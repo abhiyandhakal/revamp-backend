@@ -1,4 +1,4 @@
-import { timestamp, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { timestamp, pgTable, serial, text, boolean } from "drizzle-orm/pg-core";
 import { user } from "./user";
 
 export const journal = pgTable("journal", {
@@ -8,7 +8,7 @@ export const journal = pgTable("journal", {
 	type: text("type").notNull(),
 	access: text("access").default("private").notNull(),
 	date: timestamp("date", { withTimezone: true }).notNull(),
-	isUpdated: text("isUpdated").default("false"),
+	isUpdated: boolean("isUpdated").default(false),
 	userId: text("userId")
 		.notNull()
 		.references(() => user.userId),

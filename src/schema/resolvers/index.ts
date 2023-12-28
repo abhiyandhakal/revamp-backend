@@ -1,5 +1,12 @@
 import { Resolvers } from "../../generated/graphql";
-import { deleteTodo, getSingleTodo, getTodosOfTask, getTodosOfUser, setTodo } from "./todo";
+import {
+	deleteTodo,
+	getSingleTodo,
+	getTodosOfTask,
+	getTodosOfUser,
+	setTodo,
+	editTodo,
+} from "./todo";
 import {
 	deleteTask,
 	editTask,
@@ -8,6 +15,12 @@ import {
 	getTasksOfUser,
 	setTask,
 } from "./task";
+import {
+	getJournalsOfUser,
+	getSingleJournal,
+	updateJournal,
+	getTodayJournalDaily,
+} from "./journal";
 import {
 	deleteGoal,
 	shareGoal,
@@ -49,10 +62,13 @@ const resolvers: Resolvers = {
 		getAllQuestions,
 		getAllAspects,
 		getAllUsers,
+		getJournalsOfUser,
+		todayJournalDaily: getTodayJournalDaily,
 		getSingleGoal,
 		getSingleTask,
 		getSingleTodo,
 		getSingleUser,
+		getSingleJournal,
 		community: getSingleCommunity,
 		myCommunities: getMyCommunities,
 		communities: getAllCommunities,
@@ -71,6 +87,7 @@ const resolvers: Resolvers = {
 		shareGoal,
 		publishGoal,
 		editTask,
+		editTodo,
 		createCommunity,
 		leaveCommunity,
 		removeUserFromCommunity,
@@ -83,6 +100,7 @@ const resolvers: Resolvers = {
 		addUserToCommunity,
 		makeUserAdminOfCommunity,
 		enterInCommunity,
+		updateJournal,
 	},
 };
 

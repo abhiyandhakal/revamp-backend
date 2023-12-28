@@ -115,12 +115,12 @@ type Comment {
 }
 
 type JournalLike {
-	likedBy: User!
+	likedBy: UserWithLessDetails!
 	likedAt: Timestamp!
 }
 
 type JournalShare {
-	sharedBy: User!
+	sharedBy: UserWithLessDetails!
 	sharedAt: Timestamp!
 	sharedIn: Community!
 }
@@ -205,6 +205,7 @@ type Query {
 	getAllQuestions: [Question!]!
 	getAllAspects: [Aspect!]!
 	getJournalsOfUser(userId: ID!): [Journal!]!
+	todayJournalDaily: Journal!
 	getSingleGoal(goalId: Int!): Goal!
 	getSingleTask(taskId: Int!): Task!
 	getSingleTodo(todoId: Int!): Todo!
@@ -274,4 +275,5 @@ type Mutation {
 	addUserToCommunity(communityId: Int!, userId: ID!): String!
 	makeUserAdminOfCommunity(communityId: Int!, userId: ID!): String!
 	enterInCommunity(communityId: Int!): String!
+	updateJournal(journalId: Int!, title: String, content: String): String!
 }

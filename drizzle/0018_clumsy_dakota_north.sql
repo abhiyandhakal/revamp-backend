@@ -1,1 +1,0 @@
-ALTER TABLE "journal" ADD COLUMN "isUpdated" text DEFAULT 'false';

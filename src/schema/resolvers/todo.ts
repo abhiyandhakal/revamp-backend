@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import db from "../../db";
 import { todo } from "../../db/schema/todo";
 import { MutationResolvers, QueryResolvers, Todo } from "../../generated/graphql";
@@ -8,6 +8,9 @@ import { deleteTimelapseOfTodo, getTimelapse } from "./timelapse";
 import { task } from "../../db/schema/task";
 import { goal } from "../../db/schema/goal";
 import { increaseGoalStreak } from "../../lib/streak";
+import { workedOnLog } from "../../db/schema/worked-on-log";
+import { createOrUpdateJournalAutomated } from "./journal";
+import { getSession } from "../../middlewares/permissions";
 
 export const getSingleTodo: QueryResolvers["getSingleTodo"] = async function (_, { todoId }) {
 	const todos = await db.select().from(todo).where(eq(todo.todoId, todoId));
@@ -107,7 +110,8 @@ export const deleteTodo: MutationResolvers["deleteTodo"] = async function (_, { 
 	return await deleteTodoFunc(todoId);
 };
 
-export const editTodo: MutationResolvers["editTodo"] = async function (_, args) {
+export const editTodo: MutationResolvers["editTodo"] = async function (_, args, ctx) {
+	const session = await getSession(ctx.request.headers);
 	const todoArr = await db.select().from(todo).where(eq(todo.todoId, args.todoId));
 	const singleTodo = todoArr[0];
 
@@ -122,7 +126,7 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 		updatedAt: new Date(),
 	});
 
-	if (args.isDone && !isPreviousDone) {
+	if (args?.isDone && !isPreviousDone) {
 		const goalIdArr = await db
 			.select({ goalId: task.goalId })
 			.from(todo)
@@ -130,6 +134,17 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 			.where(eq(todo.todoId, args.todoId));
 		const goalId = goalIdArr[0]?.goalId;
 		if (!goalId) throw new Error("Todo doesn't belong to any goal");
+
+		const statement = sql`SELECT * FROM ${workedOnLog} WHERE DATE(${workedOnLog.date}) = CURRENT_DATE AND ${workedOnLog.taskId} = ${singleTodo.taskId}`;
+		const workedOnTasks = (await db.execute(statement)) as (typeof workedOnLog.$inferSelect)[];
+
+		if (workedOnTasks.length === 0) {
+			await db.insert(workedOnLog).values({
+				taskId: singleTodo.taskId,
+				goalId,
+			});
+		}
+		createOrUpdateJournalAutomated(session.userId, goalId);
 
 		increaseGoalStreak(goalId);
 	}

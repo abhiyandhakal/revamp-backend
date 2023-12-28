@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import db from "../../db";
 import { milestone, task } from "../../db/schema/task";
 import { MutationResolvers, QueryResolvers, Task } from "../../generated/graphql";
@@ -8,6 +8,10 @@ import { goal } from "../../db/schema/goal";
 import { deleteTodoFunc, sqlToGqlTodo } from "./todo";
 import { todo } from "../../db/schema/todo";
 import { increaseGoalStreak } from "../../lib/streak";
+import { workedOnLog } from "../../db/schema/worked-on-log";
+import { getSession } from "../../middlewares/permissions";
+import { dailyJournal } from "../../template/daily-journal";
+import { createOrUpdateJournalAutomated } from "./journal";
 
 export const getSingleTask: QueryResolvers["getSingleTask"] = async function (_, { taskId }) {
 	const taskList = await db.select().from(task).where(eq(task.taskId, taskId));
@@ -108,10 +112,11 @@ export const deleteTaskFunc = async function (taskId: number): Promise<string> {
 export const deleteTask: MutationResolvers["deleteTask"] = async (_, { taskId }) =>
 	await deleteTaskFunc(taskId);
 
-export const editTask: MutationResolvers["editTask"] = async function (_, input) {
+export const editTask: MutationResolvers["editTask"] = async function (_, input, ctx) {
 	const taskList = await db.select().from(task).where(eq(task.taskId, input.taskId));
 	const singleTask = taskList[0];
 	const previouslyDone = singleTask.isDone;
+	const session = await getSession(ctx.request.headers);
 
 	if (!singleTask) throw new Error("Task not found");
 
@@ -128,7 +133,19 @@ export const editTask: MutationResolvers["editTask"] = async function (_, input)
 		})
 		.where(eq(task.taskId, input.taskId));
 
-	if (input.isDone && !previouslyDone) {
+	if (input?.isDone && !previouslyDone) {
+		const statement = sql`SELECT * FROM ${workedOnLog} WHERE DATE(${workedOnLog.date}) = CURRENT_DATE AND ${workedOnLog.taskId} = ${input.taskId}`;
+		const workedOnTasks = (await db.execute(statement)) as (typeof workedOnLog.$inferSelect)[];
+
+		if (workedOnTasks.length === 0) {
+			await db.insert(workedOnLog).values({
+				taskId: input.taskId,
+				goalId: singleTask.goalId,
+			});
+		}
+
+		createOrUpdateJournalAutomated(session.userId, singleTask.goalId);
+
 		increaseGoalStreak(singleTask.goalId);
 	}
 

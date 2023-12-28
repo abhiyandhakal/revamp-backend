@@ -1,0 +1,1 @@
+ALTER TABLE "worked-on-log" ALTER COLUMN "date" SET NOT NULL;

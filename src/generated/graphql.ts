@@ -104,13 +104,13 @@ export type Journal = {
 export type JournalLike = {
   __typename?: 'JournalLike';
   likedAt: Scalars['Timestamp']['output'];
-  likedBy: User;
+  likedBy: UserWithLessDetails;
 };
 
 export type JournalShare = {
   __typename?: 'JournalShare';
   sharedAt: Scalars['Timestamp']['output'];
-  sharedBy: User;
+  sharedBy: UserWithLessDetails;
   sharedIn: Community;
 };
 
@@ -148,6 +148,7 @@ export type Mutation = {
   setUser: Scalars['String']['output'];
   shareGoal: Scalars['String']['output'];
   unBlockUserFromCommunity: Scalars['String']['output'];
+  updateJournal: Scalars['String']['output'];
 };
 
 
@@ -311,6 +312,13 @@ export type MutationUnBlockUserFromCommunityArgs = {
   userId: Scalars['ID']['input'];
 };
 
+
+export type MutationUpdateJournalArgs = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  journalId: Scalars['Int']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Pausetime = {
   __typename?: 'Pausetime';
   pauseTime: Scalars['Timestamp']['output'];
@@ -337,6 +345,7 @@ export type Query = {
   getTodosOfUser: Array<Todo>;
   myCommunities: Array<Community>;
   searchCommunities: Array<Community>;
+  todayJournalDaily: Journal;
 };
 
 
@@ -725,13 +734,13 @@ export type JournalResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type JournalLikeResolvers<ContextType = any, ParentType extends ResolversParentTypes['JournalLike'] = ResolversParentTypes['JournalLike']> = {
   likedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  likedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  likedBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type JournalShareResolvers<ContextType = any, ParentType extends ResolversParentTypes['JournalShare'] = ResolversParentTypes['JournalShare']> = {
   sharedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  sharedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  sharedBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
   sharedIn?: Resolver<ResolversTypes['Community'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -769,6 +778,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   setUser?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetUserArgs, 'userId'>>;
   shareGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationShareGoalArgs, 'communityId' | 'goalId'>>;
   unBlockUserFromCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationUnBlockUserFromCommunityArgs, 'communityId' | 'userId'>>;
+  updateJournal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationUpdateJournalArgs, 'journalId'>>;
 };
 
 export type PausetimeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Pausetime'] = ResolversParentTypes['Pausetime']> = {
@@ -796,6 +806,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getTodosOfUser?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosOfUserArgs, 'userId'>>;
   myCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   searchCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType, RequireFields<QuerySearchCommunitiesArgs, 'searchString'>>;
+  todayJournalDaily?: Resolver<ResolversTypes['Journal'], ParentType, ContextType>;
 };
 
 export type QuestionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Question'] = ResolversParentTypes['Question']> = {

@@ -1,1 +1,0 @@
-ALTER TABLE "todo" ADD COLUMN "updateAt" timestamp with time zone;
