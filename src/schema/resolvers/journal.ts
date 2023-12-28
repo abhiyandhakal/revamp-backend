@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import db from "../../db";
 import { comment } from "../../db/schema/comment";
 import { journal } from "../../db/schema/journal";
@@ -7,6 +7,9 @@ import { user } from "../../db/schema/user";
 import { userLikesJournal } from "../../db/schema/relations/user-likes-journal";
 import { YogaInitialContext } from "graphql-yoga";
 import { getSession } from "../../middlewares/permissions";
+import { workedOnLog } from "../../db/schema/worked-on-log";
+import { checkIfToday, checkIfYesterday } from "../../lib/check-date";
+import { dailyJournal } from "../../template/daily-journal";
 
 const getCommentsOfJournal = async (journalId: number): Promise<Comment[]> => {
 	const commentsFromDb = await db.select().from(comment).where(eq(comment.journalId, journalId));
@@ -85,4 +88,28 @@ export const getJournalsOfUser: QueryResolvers["getJournalsOfUser"] = async (_, 
 	);
 
 	return journals;
+};
+
+export const createOrUpdateJournalAutomated = async (userId: string, goalId: number) => {
+	const workedOns = await db.select().from(workedOnLog).where(eq(workedOnLog.goalId, goalId));
+
+	const workedOnToday = workedOns.filter(workedOn => checkIfToday(workedOn.date));
+	const workedOnYesterday = workedOns.filter(workedOn => checkIfYesterday(workedOn.date));
+
+	const journalText = await dailyJournal(userId, workedOnYesterday.length, workedOnToday.length);
+
+	const todayJournal = await db
+		.select()
+		.from(journal)
+		.where(and(eq(journal.userId, userId), eq(journal.date, new Date())));
+
+	if (todayJournal.length === 0) {
+		await db.insert(journal).values({
+			title: `Journal for ${new Date().toLocaleDateString()}`,
+			userId,
+			date: new Date(),
+			type: "daily",
+			content: journalText,
+		});
+	}
 };

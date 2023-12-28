@@ -218,14 +218,14 @@ export async function dailyJournal(
 		concludingParagraph = `And it was ${comparisionWithYesterdayStatus} than yesterday.`;
 	}
 	const dailyJournal = `
-		${greetings}
+${greetings}
 
-		Today, I had planned to do the taks with title ${goalWithTaskString}. I completed ${completedTasks}. Overall, I managed to achieve ${overallPercentCompleted}% of my goal. My performance today was ${todayStatus} in general.
+Today, I had planned to do the tasks with title ${goalWithTaskString}. I completed ${completedTasks}. Overall, I managed to achieve ${overallPercentCompleted}% of my goal. My performance today was ${todayStatus} in general.
 
-		${concludingParagraph}
-	`;
+${concludingParagraph}
+`;
 
-	return dailyJournal;
+	return textToDelta(dailyJournal);
 }
 
 function generateTaskAndGoalInfo(
@@ -243,16 +243,16 @@ function generateTaskAndGoalInfo(
 
 		goalWithTask.tasks.forEach((task, index) => {
 			if (index === goalWithTask.tasks.length - 1 && goalWithTask.tasks.length > 1) {
-				tasksString += ` and ${task}`;
+				tasksString += ` and ${task.task}`;
 				return;
 			}
 
 			if (index === 0) {
-				tasksString += task;
+				tasksString += task.task;
 				return;
 			}
 
-			tasksString += `, ${task}`;
+			tasksString += `, ${task.task}`;
 		});
 
 		if (index === goalWithTaskList.length && goalWithTaskList.length > 1) {
@@ -275,4 +275,14 @@ function generateTaskAndGoalInfo(
 function getRandom(array: string[]) {
 	const randomIndex = Math.floor(Math.random() * array.length);
 	return array[randomIndex];
+}
+
+function textToDelta(text: string) {
+	const paragraphs = text.split("\n\n");
+
+	const ops = paragraphs.map((paragraph, index) => {
+		return { insert: paragraph + (index < paragraphs.length - 1 ? "\n\n" : "") };
+	});
+
+	return JSON.stringify({ ops });
 }
