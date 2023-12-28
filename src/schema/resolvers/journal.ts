@@ -2,7 +2,13 @@ import { sql, eq } from "drizzle-orm";
 import db from "../../db";
 import { comment } from "../../db/schema/comment";
 import { journal } from "../../db/schema/journal";
-import { Journal, Comment, JournalLike, QueryResolvers } from "../../generated/graphql";
+import {
+	Journal,
+	Comment,
+	JournalLike,
+	QueryResolvers,
+	MutationResolvers,
+} from "../../generated/graphql";
 import { user } from "../../db/schema/user";
 import { userLikesJournal } from "../../db/schema/relations/user-likes-journal";
 import { YogaInitialContext } from "graphql-yoga";
@@ -88,6 +94,27 @@ export const getJournalsOfUser: QueryResolvers["getJournalsOfUser"] = async (_, 
 	);
 
 	return journals;
+};
+
+export const updateJournal: MutationResolvers["updateJournal"] = async (_, args, ctx) => {
+	const session = await getSession(ctx.request.headers);
+
+	const journalFromDb = await db
+		.select()
+		.from(journal)
+		.where(eq(journal.journalId, args.journalId));
+
+	if (journalFromDb.length === 0) throw new Error("Journal not found");
+
+	if (journalFromDb[0].userId !== session.userId) throw new Error("Journal not found");
+
+	await db.update(journal).set({
+		title: args.title || journalFromDb[0].title,
+		content: args.content || journalFromDb[0].content,
+		isUpdated: true,
+	});
+
+	return "Journal updated successfully";
 };
 
 export const createOrUpdateJournalAutomated = async (userId: string, goalId: number) => {

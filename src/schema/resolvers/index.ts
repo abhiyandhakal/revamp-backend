@@ -15,7 +15,7 @@ import {
 	getTasksOfUser,
 	setTask,
 } from "./task";
-import { getJournalsOfUser, getSingleJournal } from "./journal";
+import { getJournalsOfUser, getSingleJournal, updateJournal } from "./journal";
 import {
 	deleteGoal,
 	shareGoal,
@@ -94,6 +94,7 @@ const resolvers: Resolvers = {
 		addUserToCommunity,
 		makeUserAdminOfCommunity,
 		enterInCommunity,
+		updateJournal,
 	},
 };
 

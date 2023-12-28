@@ -148,6 +148,7 @@ export type Mutation = {
   setUser: Scalars['String']['output'];
   shareGoal: Scalars['String']['output'];
   unBlockUserFromCommunity: Scalars['String']['output'];
+  updateJournal: Scalars['String']['output'];
 };
 
 
@@ -309,6 +310,13 @@ export type MutationShareGoalArgs = {
 export type MutationUnBlockUserFromCommunityArgs = {
   communityId: Scalars['Int']['input'];
   userId: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdateJournalArgs = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  journalId: Scalars['Int']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Pausetime = {
@@ -769,6 +777,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   setUser?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetUserArgs, 'userId'>>;
   shareGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationShareGoalArgs, 'communityId' | 'goalId'>>;
   unBlockUserFromCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationUnBlockUserFromCommunityArgs, 'communityId' | 'userId'>>;
+  updateJournal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationUpdateJournalArgs, 'journalId'>>;
 };
 
 export type PausetimeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Pausetime'] = ResolversParentTypes['Pausetime']> = {
