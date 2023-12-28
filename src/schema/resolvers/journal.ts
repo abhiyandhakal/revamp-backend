@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import db from "../../db";
 import { comment } from "../../db/schema/comment";
 import { journal } from "../../db/schema/journal";
@@ -98,10 +98,9 @@ export const createOrUpdateJournalAutomated = async (userId: string, goalId: num
 
 	const journalText = await dailyJournal(userId, workedOnYesterday.length, workedOnToday.length);
 
-	const todayJournal = await db
-		.select()
-		.from(journal)
-		.where(and(eq(journal.userId, userId), eq(journal.date, new Date())));
+	const todayJournal = (await db.execute(
+		sql`SELECT * FROM journal WHERE userId = 'your_user_id' AND date = CURRENT_DATE;`,
+	)) as (typeof journal.$inferSelect)[];
 
 	if (todayJournal.length === 0) {
 		await db.insert(journal).values({
@@ -109,6 +108,10 @@ export const createOrUpdateJournalAutomated = async (userId: string, goalId: num
 			userId,
 			date: new Date(),
 			type: "daily",
+			content: journalText,
+		});
+	} else if (!todayJournal[0].isUpdated) {
+		await db.update(journal).set({
 			content: journalText,
 		});
 	}
