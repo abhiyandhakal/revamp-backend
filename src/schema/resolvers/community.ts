@@ -18,6 +18,21 @@ export const getAllCommunities: QueryResolvers["communities"] = async () => {
 	return gqlCommunities;
 };
 
+export const getMyCommunities: QueryResolvers["myCommunities"] = async (_, __, ctx) => {
+	const session = await getSession(ctx.request.headers);
+	const sqlCommunities = await db
+		.select()
+		.from(userCommunity)
+		.innerJoin(community, eq(userCommunity.communityId, community.communityId))
+		.where(eq(userCommunity.userId, session.userId));
+
+	const gqlCommunities = await Promise.all(
+		sqlCommunities.map(async sqlCommunity => await sqlToGqlCommunity(sqlCommunity.community)),
+	);
+
+	return gqlCommunities;
+};
+
 export const getSingleCommunity: QueryResolvers["community"] = async (_, { communityId }) => {
 	const sqlCommunity = await db
 		.select()

@@ -210,6 +210,7 @@ type Query {
 	getSingleJournal(journalId: Int!): Journal!
 	community(communityId: Int!): Community!
 	communities: [Community!]!
+	myCommunities: [Community!]!
 	searchCommunities(searchString: String!): [Community!]!
 }
 
