@@ -177,6 +177,8 @@ type Community {
 	createdAt: Timestamp!
 	updatedAt: Timestamp!
 	users: [UserWithRole]!
+	goals: [Goal!]!
+	journals: [Journal!]!
 }
 
 input CreateCommunityInput {
@@ -246,6 +248,8 @@ type Mutation {
 		isDone: Boolean
 		isActive: Boolean
 	): String!
+	shareGoal(goalId: Int!, communityId: Int!): String!
+	publishGoal(goalId: Int!): String!
 	editTask(
 		taskId: Int!
 		title: String

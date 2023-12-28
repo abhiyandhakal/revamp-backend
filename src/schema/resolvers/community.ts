@@ -1,12 +1,15 @@
 import { and, or, eq, like } from "drizzle-orm";
 import db from "../../db";
 import { community } from "../../db/schema/community";
+import { goal } from "../../db/schema/goal";
 import { userCommunity } from "../../db/schema/relations/user-community";
 import { user } from "../../db/schema/user";
 import { Community, MutationResolvers, QueryResolvers } from "../../generated/graphql";
 import { YogaInitialContext } from "graphql-yoga";
 import { getSession } from "../../middlewares/permissions";
 import clerkClient from "@clerk/clerk-sdk-node";
+import { goalShared } from "../../db/schema/relations/goal-share";
+import { sqlToGqlGoal } from "./goal";
 
 export const getAllCommunities: QueryResolvers["communities"] = async () => {
 	const sqlCommunities = await db.select().from(community);
@@ -31,12 +34,27 @@ export const getSingleCommunity: QueryResolvers["community"] = async (_, { commu
 	return gqlCommunity;
 };
 
-async function sqlToGqlCommunity(sqlCommunity: typeof community.$inferSelect): Promise<Community> {
+export async function sqlToGqlCommunity(
+	sqlCommunity: typeof community.$inferSelect,
+): Promise<Community> {
 	const usersArr = await db
 		.select()
 		.from(userCommunity)
 		.innerJoin(user, eq(userCommunity.userId, user.userId))
 		.where(eq(userCommunity.communityId, sqlCommunity.communityId));
+
+	const goals = await db
+		.select()
+		.from(goalShared)
+		.innerJoin(goal, eq(goalShared.goalId, goal.goalId))
+		.where(eq(goalShared.communityId, sqlCommunity.communityId));
+
+	const goalsGql = await Promise.all(
+		goals.map(async goal => {
+			const goalGql = await sqlToGqlGoal(goal.goal);
+			return goalGql;
+		}),
+	);
 
 	const gqlCommunity: Community = {
 		...sqlCommunity,
@@ -44,6 +62,8 @@ async function sqlToGqlCommunity(sqlCommunity: typeof community.$inferSelect): P
 			user: { id: user.account.userId, ...user.account },
 			role: user["user-community"].role,
 		})),
+		goals: goalsGql,
+		journals: [],
 	};
 	return gqlCommunity;
 }

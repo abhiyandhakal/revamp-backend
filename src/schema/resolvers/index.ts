@@ -8,7 +8,15 @@ import {
 	getTasksOfUser,
 	setTask,
 } from "./task";
-import { deleteGoal, editGoal, getGoals, getSingleGoal, setGoal } from "./goal";
+import {
+	deleteGoal,
+	shareGoal,
+	publishGoal,
+	editGoal,
+	getGoals,
+	getSingleGoal,
+	setGoal,
+} from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
 import { getAllUsers, getSingleUser, setUser } from "./user";
@@ -58,6 +66,8 @@ const resolvers: Resolvers = {
 		deleteTask,
 		deleteTodo,
 		editGoal,
+		shareGoal,
+		publishGoal,
 		editTask,
 		createCommunity,
 		leaveCommunity,

@@ -9,6 +9,7 @@ export const goal = pgTable("goal", {
 	relatedArea: text("relatedArea"),
 	isDone: boolean("isDone").notNull().default(false),
 	streak: integer("streak").notNull().default(0),
+	access: text("access").default("private").notNull(),
 	isActive: boolean("isActive").notNull().default(true),
 	deadline: timestamp("deadline", { withTimezone: true }),
 	createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
