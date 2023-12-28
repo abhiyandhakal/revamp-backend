@@ -129,12 +129,12 @@ export const editTask: MutationResolvers["editTask"] = async function (_, input)
 		})
 		.where(eq(task.taskId, input.taskId));
 
-	if (input.isDone && !previouslyDone) {
+	if (input?.isDone && !previouslyDone) {
 		const statement = sql`SELECT * FROM ${workedOnLog} WHERE DATE(${workedOnLog.date}) = CURRENT_DATE AND ${workedOnLog.taskId} = ${input.taskId}`;
 		const workedOnTasks = (await db.execute(statement)) as (typeof workedOnLog.$inferSelect)[];
 
 		if (workedOnTasks.length === 0) {
-			db.insert(workedOnLog).values({
+			await db.insert(workedOnLog).values({
 				taskId: input.taskId,
 				goalId: singleTask.goalId,
 			});
