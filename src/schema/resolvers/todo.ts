@@ -9,6 +9,8 @@ import { task } from "../../db/schema/task";
 import { goal } from "../../db/schema/goal";
 import { increaseGoalStreak } from "../../lib/streak";
 import { workedOnLog } from "../../db/schema/worked-on-log";
+import { createOrUpdateJournalAutomated } from "./journal";
+import { getSession } from "../../middlewares/permissions";
 
 export const getSingleTodo: QueryResolvers["getSingleTodo"] = async function (_, { todoId }) {
 	const todos = await db.select().from(todo).where(eq(todo.todoId, todoId));
@@ -108,7 +110,8 @@ export const deleteTodo: MutationResolvers["deleteTodo"] = async function (_, { 
 	return await deleteTodoFunc(todoId);
 };
 
-export const editTodo: MutationResolvers["editTodo"] = async function (_, args) {
+export const editTodo: MutationResolvers["editTodo"] = async function (_, args, ctx) {
+	const session = await getSession(ctx.request.headers);
 	const todoArr = await db.select().from(todo).where(eq(todo.todoId, args.todoId));
 	const singleTodo = todoArr[0];
 
@@ -141,6 +144,7 @@ export const editTodo: MutationResolvers["editTodo"] = async function (_, args) 
 				goalId,
 			});
 		}
+		createOrUpdateJournalAutomated(session.userId, goalId);
 
 		increaseGoalStreak(goalId);
 	}
