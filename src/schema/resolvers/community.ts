@@ -10,6 +10,9 @@ import { getSession } from "../../middlewares/permissions";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { goalShared } from "../../db/schema/relations/goal-share";
 import { sqlToGqlGoal } from "./goal";
+import { journalShared } from "../../db/schema/relations/journal-share";
+import { journal } from "../../db/schema/journal";
+import { sqlToGqlJournal } from "./journal";
 
 export const getAllCommunities: QueryResolvers["communities"] = async () => {
 	const sqlCommunities = await db.select().from(community);
@@ -71,6 +74,19 @@ export async function sqlToGqlCommunity(
 		}),
 	);
 
+	const journalsFromDb = await db
+		.select()
+		.from(journalShared)
+		.innerJoin(journal, eq(journalShared.journalId, journal.journalId))
+		.where(eq(journalShared.communityId, sqlCommunity.communityId));
+
+	const journals = await Promise.all(
+		journalsFromDb.map(async journal => {
+			const journalGql = await sqlToGqlJournal(journal.journal);
+			return journalGql;
+		}),
+	);
+
 	const gqlCommunity: Community = {
 		...sqlCommunity,
 		users: usersArr.map(user => ({
@@ -78,7 +94,7 @@ export async function sqlToGqlCommunity(
 			role: user["user-community"].role,
 		})),
 		goals: goalsGql,
-		journals: [],
+		journals,
 	};
 	return gqlCommunity;
 }
