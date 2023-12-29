@@ -2,6 +2,7 @@ import { sql, eq, and } from "drizzle-orm";
 import db from "../../db";
 import { comment } from "../../db/schema/comment";
 import { journal } from "../../db/schema/journal";
+import { goal } from "../../db/schema/goal";
 import {
 	Journal,
 	Comment,
@@ -132,12 +133,33 @@ export const updateJournal: MutationResolvers["updateJournal"] = async (_, args,
 
 export const createOrUpdateJournalAutomated = async (userId: string, goalId: number) => {
 	try {
-		const workedOns = await db.select().from(workedOnLog).where(eq(workedOnLog.goalId, goalId));
+		const workedOns = await db
+			.select()
+			.from(workedOnLog)
+			.innerJoin(goal, eq(workedOnLog.goalId, goal.goalId))
+			.where(and(eq(workedOnLog.goalId, goalId), eq(goal.userId, userId)));
 
-		const workedOnToday = workedOns.filter(workedOn => checkIfToday(workedOn.date));
-		const workedOnYesterday = workedOns.filter(workedOn => checkIfYesterday(workedOn.date));
+		const workedOnToday = workedOns.filter(workedOn =>
+			checkIfToday(workedOn["worked-on-log"].date),
+		);
+		const workedOnYesterday = workedOns.filter(workedOn =>
+			checkIfYesterday(workedOn["worked-on-log"].date),
+		);
 
-		const journalText = await dailyJournal(userId, workedOnYesterday.length, workedOnToday.length);
+		const completedTasks = await db
+			.select()
+			.from(goal)
+			.where(and(eq(goal.userId, userId), eq(goal.isDone, true)));
+		const completedTasksToday = completedTasks.filter(task => checkIfToday(task.updatedAt));
+		const completedTasksYesterday = completedTasks.filter(task => checkIfYesterday(task.updatedAt));
+
+		const journalText = await dailyJournal({
+			userId,
+			tasksCompletedToday: completedTasksToday.length,
+			tasksCompletedYesterday: completedTasksYesterday.length,
+			totalTasksToday: workedOnYesterday.length,
+			yesterdayTotalTasks: workedOnToday.length,
+		});
 
 		const todayJournal = (await db.execute(
 			sql`SELECT * FROM journal WHERE ${journal.userId} = ${userId} AND DATE(${journal.date}) = CURRENT_DATE;`,
