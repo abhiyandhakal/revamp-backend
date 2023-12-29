@@ -276,4 +276,6 @@ type Mutation {
 	makeUserAdminOfCommunity(communityId: Int!, userId: ID!): String!
 	enterInCommunity(communityId: Int!): String!
 	updateJournal(journalId: Int!, title: String, content: String): String!
+	shareJournal(journalId: Int!, communityId: Int!): String!
+	publishJournal(journalId: Int!): String!
 }

@@ -1,4 +1,4 @@
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, and } from "drizzle-orm";
 import db from "../../db";
 import { comment } from "../../db/schema/comment";
 import { journal } from "../../db/schema/journal";
@@ -16,6 +16,7 @@ import { getSession } from "../../middlewares/permissions";
 import { workedOnLog } from "../../db/schema/worked-on-log";
 import { checkIfToday, checkIfYesterday } from "../../lib/check-date";
 import { dailyJournal } from "../../template/daily-journal";
+import { journalShared } from "../../db/schema/relations/journal-share";
 
 const getCommentsOfJournal = async (journalId: number): Promise<Comment[]> => {
 	const commentsFromDb = await db.select().from(comment).where(eq(comment.journalId, journalId));
@@ -159,4 +160,34 @@ export const createOrUpdateJournalAutomated = async (userId: string, goalId: num
 			console.log(error.message);
 		}
 	}
+};
+
+export const shareJournal: MutationResolvers["shareJournal"] = async (_, args, ctx) => {
+	const { journalId, communityId } = args;
+	const session = await getSession(ctx.request.headers);
+
+	await db.insert(journalShared).values({
+		journalId,
+		communityId,
+		userId: session.userId,
+	});
+
+	return "Journal shared successfully in community with id " + communityId;
+};
+
+export const publishJournal: MutationResolvers["publishJournal"] = async (
+	_,
+	{ journalId },
+	ctx,
+) => {
+	const session = await getSession(ctx.request.headers);
+
+	await db
+		.update(journal)
+		.set({
+			access: "public",
+		})
+		.where(and(eq(journal.journalId, journalId), eq(journal.userId, session.userId)));
+
+	return "Journal published successfully";
 };
