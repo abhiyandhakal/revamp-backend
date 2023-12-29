@@ -20,6 +20,8 @@ import {
 	getSingleJournal,
 	updateJournal,
 	getTodayJournalDaily,
+	shareJournal,
+	publishJournal,
 } from "./journal";
 import {
 	deleteGoal,
@@ -101,6 +103,8 @@ const resolvers: Resolvers = {
 		makeUserAdminOfCommunity,
 		enterInCommunity,
 		updateJournal,
+		shareJournal,
+		publishJournal,
 	},
 };
 
