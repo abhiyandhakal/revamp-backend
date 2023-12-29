@@ -141,12 +141,14 @@ export type Mutation = {
   leaveCommunity: Scalars['String']['output'];
   makeUserAdminOfCommunity: Scalars['String']['output'];
   publishGoal: Scalars['String']['output'];
+  publishJournal: Scalars['String']['output'];
   removeUserFromCommunity: Scalars['String']['output'];
   setGoal: Scalars['String']['output'];
   setTask: Scalars['String']['output'];
   setTodo: Scalars['String']['output'];
   setUser: Scalars['String']['output'];
   shareGoal: Scalars['String']['output'];
+  shareJournal: Scalars['String']['output'];
   unBlockUserFromCommunity: Scalars['String']['output'];
   updateJournal: Scalars['String']['output'];
 };
@@ -265,6 +267,11 @@ export type MutationPublishGoalArgs = {
 };
 
 
+export type MutationPublishJournalArgs = {
+  journalId: Scalars['Int']['input'];
+};
+
+
 export type MutationRemoveUserFromCommunityArgs = {
   communityId: Scalars['Int']['input'];
   userId: Scalars['ID']['input'];
@@ -304,6 +311,12 @@ export type MutationSetUserArgs = {
 export type MutationShareGoalArgs = {
   communityId: Scalars['Int']['input'];
   goalId: Scalars['Int']['input'];
+};
+
+
+export type MutationShareJournalArgs = {
+  communityId: Scalars['Int']['input'];
+  journalId: Scalars['Int']['input'];
 };
 
 
@@ -771,12 +784,14 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   leaveCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLeaveCommunityArgs, 'communityId'>>;
   makeUserAdminOfCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationMakeUserAdminOfCommunityArgs, 'communityId' | 'userId'>>;
   publishGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationPublishGoalArgs, 'goalId'>>;
+  publishJournal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationPublishJournalArgs, 'journalId'>>;
   removeUserFromCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationRemoveUserFromCommunityArgs, 'communityId' | 'userId'>>;
   setGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetGoalArgs, 'title' | 'userId'>>;
   setTask?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetTaskArgs, 'goalId' | 'title'>>;
   setTodo?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetTodoArgs, 'taskId' | 'todo'>>;
   setUser?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationSetUserArgs, 'userId'>>;
   shareGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationShareGoalArgs, 'communityId' | 'goalId'>>;
+  shareJournal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationShareJournalArgs, 'communityId' | 'journalId'>>;
   unBlockUserFromCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationUnBlockUserFromCommunityArgs, 'communityId' | 'userId'>>;
   updateJournal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationUpdateJournalArgs, 'journalId'>>;
 };

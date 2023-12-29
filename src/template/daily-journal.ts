@@ -115,11 +115,19 @@ function setTodayStatus(tasksCompletedToday: number, totalTasksToday: number) {
 	return todayStatus;
 }
 
-export async function dailyJournal(
-	userId: string,
-	tasksCompletedYesterday: number,
-	yesterdaytotalTasks: number,
-) {
+export async function dailyJournal({
+	userId,
+	tasksCompletedYesterday,
+	yesterdayTotalTasks,
+	totalTasksToday,
+	tasksCompletedToday,
+}: {
+	userId: string;
+	tasksCompletedYesterday: number;
+	yesterdayTotalTasks: number;
+	tasksCompletedToday: number;
+	totalTasksToday: number;
+}) {
 	const goals: Goal[] = await getGoalsFunc(userId);
 	const userArr = await db
 		.select({ firstName: user.firstName })
@@ -130,28 +138,19 @@ export async function dailyJournal(
 
 	const firstName = userArr[0].firstName;
 
-	const totalTasksToday: number = goals
-		.map(singleGoal => {
-			return singleGoal.tasks.filter(singleTask => checkIfToday(singleTask.updatedAt)).length;
-		})
-		.reduce((acc, curr) => acc + curr, 0);
+	let totalTasks = 0;
+	for (let i = 0; i < goals.length; i++) {
+		totalTasks += goals[i].tasks.length;
+	}
 
-	const tasksCompletedToday: number = goals
-		.map(singleGoal => {
-			return singleGoal.tasks.filter(
-				singleTask => checkIfToday(singleTask.updatedAt) && singleTask.isDone,
-			).length;
-		})
-		.reduce((acc, curr) => acc + curr, 0);
-
-	const overallPercentCompleted: number = 19.2;
+	const overallPercentCompleted: number = (tasksCompletedToday / totalTasks) * 100;
 	const greetings = dailyGreetings(firstName);
 	const todayStatus: string = setTodayStatus(tasksCompletedToday, totalTasksToday);
 	const comparisionWithYesterdayStatus: string = setYesterdayStatus(
 		tasksCompletedToday,
 		totalTasksToday,
 		tasksCompletedYesterday,
-		yesterdaytotalTasks,
+		yesterdayTotalTasks,
 	);
 
 	//@ts-expect-error ts bahulayo string | undefined error.

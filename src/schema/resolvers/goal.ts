@@ -8,8 +8,9 @@ import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
 import { task } from "../../db/schema/task";
 import { goalShared } from "../../db/schema/relations/goal-share";
 import { getSession } from "../../middlewares/permissions";
+import { userCommunity } from "../../db/schema/relations/user-community";
 
-export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function(_, { goalId }) {
+export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function (_, { goalId }) {
 	const goals = await db.select().from(goal).where(eq(goal.goalId, goalId));
 	const singleGoal = goals[0];
 
@@ -44,7 +45,7 @@ export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promis
 	};
 }
 
-export const getGoalsFunc = async function(userId: string): Promise<Goal[]> {
+export const getGoalsFunc = async function (userId: string): Promise<Goal[]> {
 	const goals = await db.select().from(goal).where(eq(goal.userId, userId));
 
 	const goalsWithTasks: Goal[] = await Promise.all(
@@ -55,7 +56,7 @@ export const getGoalsFunc = async function(userId: string): Promise<Goal[]> {
 };
 export const getGoals: QueryResolvers["getGoals"] = (_, { userId }) => getGoalsFunc(userId);
 
-export const setGoal: MutationResolvers["setGoal"] = async function(_, input) {
+export const setGoal: MutationResolvers["setGoal"] = async function (_, input) {
 	const newGoal = {
 		...input,
 	};
@@ -65,7 +66,7 @@ export const setGoal: MutationResolvers["setGoal"] = async function(_, input) {
 	return `Goal with title ${input.title} has been successfully created`;
 };
 
-export const deleteGoal: MutationResolvers["deleteGoal"] = async function(_, { goalId }) {
+export const deleteGoal: MutationResolvers["deleteGoal"] = async function (_, { goalId }) {
 	// get goal
 	const goalArr = await db.select().from(goal).where(eq(goal.goalId, goalId));
 
@@ -83,7 +84,7 @@ export const deleteGoal: MutationResolvers["deleteGoal"] = async function(_, { g
 	return `Goal with id ${goalId} has been successfully deleted`;
 };
 
-export const editGoal: MutationResolvers["editGoal"] = async function(_, args) {
+export const editGoal: MutationResolvers["editGoal"] = async function (_, args) {
 	const goalArr = await db.select().from(goal).where(eq(goal.goalId, args.goalId));
 	const singleGoal = goalArr[0];
 	if (!singleGoal) throw new Error("No such goal found");
@@ -111,6 +112,20 @@ export const editGoal: MutationResolvers["editGoal"] = async function(_, args) {
 export const shareGoal: MutationResolvers["shareGoal"] = async function (_, args, ctx) {
 	const { goalId, communityId } = args;
 	const session = await getSession(ctx.request.headers);
+
+	// check if user is in the community
+	const userInCommunity = await db
+		.select()
+		.from(userCommunity)
+		.where(
+			and(eq(userCommunity.communityId, communityId), eq(userCommunity.userId, session.userId)),
+		);
+
+	if (userInCommunity.length === 0) throw new Error("User not in community");
+
+	if (userInCommunity[0].status !== "accepted") {
+		throw new Error("User is not yet accepted in community");
+	}
 
 	await db.insert(goalShared).values({
 		goalId,

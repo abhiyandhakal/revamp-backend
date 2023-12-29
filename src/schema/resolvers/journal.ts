@@ -1,7 +1,8 @@
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, and } from "drizzle-orm";
 import db from "../../db";
 import { comment } from "../../db/schema/comment";
 import { journal } from "../../db/schema/journal";
+import { goal } from "../../db/schema/goal";
 import {
 	Journal,
 	Comment,
@@ -16,6 +17,8 @@ import { getSession } from "../../middlewares/permissions";
 import { workedOnLog } from "../../db/schema/worked-on-log";
 import { checkIfToday, checkIfYesterday } from "../../lib/check-date";
 import { dailyJournal } from "../../template/daily-journal";
+import { journalShared } from "../../db/schema/relations/journal-share";
+import { userCommunity } from "../../db/schema/relations/user-community";
 
 const getCommentsOfJournal = async (journalId: number): Promise<Comment[]> => {
 	const commentsFromDb = await db.select().from(comment).where(eq(comment.journalId, journalId));
@@ -130,12 +133,33 @@ export const updateJournal: MutationResolvers["updateJournal"] = async (_, args,
 
 export const createOrUpdateJournalAutomated = async (userId: string, goalId: number) => {
 	try {
-		const workedOns = await db.select().from(workedOnLog).where(eq(workedOnLog.goalId, goalId));
+		const workedOns = await db
+			.select()
+			.from(workedOnLog)
+			.innerJoin(goal, eq(workedOnLog.goalId, goal.goalId))
+			.where(and(eq(workedOnLog.goalId, goalId), eq(goal.userId, userId)));
 
-		const workedOnToday = workedOns.filter(workedOn => checkIfToday(workedOn.date));
-		const workedOnYesterday = workedOns.filter(workedOn => checkIfYesterday(workedOn.date));
+		const workedOnToday = workedOns.filter(workedOn =>
+			checkIfToday(workedOn["worked-on-log"].date),
+		);
+		const workedOnYesterday = workedOns.filter(workedOn =>
+			checkIfYesterday(workedOn["worked-on-log"].date),
+		);
 
-		const journalText = await dailyJournal(userId, workedOnYesterday.length, workedOnToday.length);
+		const completedTasks = await db
+			.select()
+			.from(goal)
+			.where(and(eq(goal.userId, userId), eq(goal.isDone, true)));
+		const completedTasksToday = completedTasks.filter(task => checkIfToday(task.updatedAt));
+		const completedTasksYesterday = completedTasks.filter(task => checkIfYesterday(task.updatedAt));
+
+		const journalText = await dailyJournal({
+			userId,
+			tasksCompletedToday: completedTasksToday.length,
+			tasksCompletedYesterday: completedTasksYesterday.length,
+			totalTasksToday: workedOnYesterday.length,
+			yesterdayTotalTasks: workedOnToday.length,
+		});
 
 		const todayJournal = (await db.execute(
 			sql`SELECT * FROM journal WHERE ${journal.userId} = ${userId} AND DATE(${journal.date}) = CURRENT_DATE;`,
@@ -159,4 +183,48 @@ export const createOrUpdateJournalAutomated = async (userId: string, goalId: num
 			console.log(error.message);
 		}
 	}
+};
+
+export const shareJournal: MutationResolvers["shareJournal"] = async (_, args, ctx) => {
+	const { journalId, communityId } = args;
+	const session = await getSession(ctx.request.headers);
+
+	// check if user is in the community
+	const userInCommunity = await db
+		.select()
+		.from(userCommunity)
+		.where(
+			and(eq(userCommunity.communityId, communityId), eq(userCommunity.userId, session.userId)),
+		);
+
+	if (userInCommunity.length === 0) throw new Error("User not in community");
+
+	if (userInCommunity[0].status !== "accepted") {
+		throw new Error("User is not yet accepted in community");
+	}
+
+	await db.insert(journalShared).values({
+		journalId,
+		communityId,
+		userId: session.userId,
+	});
+
+	return "Journal shared successfully in community with id " + communityId;
+};
+
+export const publishJournal: MutationResolvers["publishJournal"] = async (
+	_,
+	{ journalId },
+	ctx,
+) => {
+	const session = await getSession(ctx.request.headers);
+
+	await db
+		.update(journal)
+		.set({
+			access: "public",
+		})
+		.where(and(eq(journal.journalId, journalId), eq(journal.userId, session.userId)));
+
+	return "Journal published successfully";
 };
