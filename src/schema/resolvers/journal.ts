@@ -17,6 +17,7 @@ import { workedOnLog } from "../../db/schema/worked-on-log";
 import { checkIfToday, checkIfYesterday } from "../../lib/check-date";
 import { dailyJournal } from "../../template/daily-journal";
 import { journalShared } from "../../db/schema/relations/journal-share";
+import { userCommunity } from "../../db/schema/relations/user-community";
 
 const getCommentsOfJournal = async (journalId: number): Promise<Comment[]> => {
 	const commentsFromDb = await db.select().from(comment).where(eq(comment.journalId, journalId));
@@ -165,6 +166,20 @@ export const createOrUpdateJournalAutomated = async (userId: string, goalId: num
 export const shareJournal: MutationResolvers["shareJournal"] = async (_, args, ctx) => {
 	const { journalId, communityId } = args;
 	const session = await getSession(ctx.request.headers);
+
+	// check if user is in the community
+	const userInCommunity = await db
+		.select()
+		.from(userCommunity)
+		.where(
+			and(eq(userCommunity.communityId, communityId), eq(userCommunity.userId, session.userId)),
+		);
+
+	if (userInCommunity.length === 0) throw new Error("User not in community");
+
+	if (userInCommunity[0].status !== "accepted") {
+		throw new Error("User is not yet accepted in community");
+	}
 
 	await db.insert(journalShared).values({
 		journalId,
