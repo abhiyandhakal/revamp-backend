@@ -267,13 +267,13 @@ type Mutation {
 	acceptCommunityInvite(communityId: Int!): String!
 	declineCommunityInvite(communityId: Int!): String!
 	leaveCommunity(communityId: Int!): String!
-	inviteUserToCommunity(communityId: Int!, userId: ID!): String!
-	blockUserFromCommunity(communityId: Int!, userId: ID!): String!
-	removeUserFromCommunity(communityId: Int!, userId: ID!): String!
-	unBlockUserFromCommunity(communityId: Int!, userId: ID!): String!
+	inviteUserToCommunity(communityId: Int!, username: String!): String!
+	blockUserFromCommunity(communityId: Int!, username: String!): String!
+	removeUserFromCommunity(communityId: Int!, username: String!): String!
+	unBlockUserFromCommunity(communityId: Int!, username: String!): String!
 	editCommunity(communityId: Int!, input: EditCommunityInput!): String!
-	addUserToCommunity(communityId: Int!, userId: ID!): String!
-	makeUserAdminOfCommunity(communityId: Int!, userId: ID!): String!
+	addUserToCommunity(communityId: Int!, username: String!): String!
+	makeUserAdminOfCommunity(communityId: Int!, username: String!): String!
 	enterInCommunity(communityId: Int!): String!
 	updateJournal(journalId: Int!, title: String, content: String): String!
 	shareJournal(journalId: Int!, communityId: Int!): String!

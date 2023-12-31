@@ -219,8 +219,16 @@ export const leaveCommunity: MutationResolvers["leaveCommunity"] = async (
 
 export const removeUserFromCommunity: MutationResolvers["removeUserFromCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is not in community
 	const userInCommunityArr = await db
 		.select()
@@ -238,8 +246,16 @@ export const removeUserFromCommunity: MutationResolvers["removeUserFromCommunity
 
 export const inviteUserToCommunity: MutationResolvers["inviteUserToCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is already in community
 	const userInCommunityArr = await db
 		.select()
@@ -259,8 +275,16 @@ export const inviteUserToCommunity: MutationResolvers["inviteUserToCommunity"] =
 
 export const blockUserFromCommunity: MutationResolvers["blockUserFromCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is already in community
 	const userInCommunityArr = await db
 		.select()
@@ -286,8 +310,16 @@ export const blockUserFromCommunity: MutationResolvers["blockUserFromCommunity"]
 
 export const unBlockUserFromCommunity: MutationResolvers["unBlockUserFromCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is already in community
 	const userInCommunityArr = await db
 		.select()
@@ -329,8 +361,16 @@ export const editCommunity: MutationResolvers["editCommunity"] = async (
 
 export const addUserToCommunity: MutationResolvers["addUserToCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+
+	const userId = userFromDb[0].userId;
 	// check if user is already in community
 	const userInCommunityArr = await db
 		.select()
@@ -350,8 +390,16 @@ export const addUserToCommunity: MutationResolvers["addUserToCommunity"] = async
 
 export const makeUserAdminOfCommunity: MutationResolvers["makeUserAdminOfCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is not in community
 	const userInCommunityArr = await db
 		.select()
