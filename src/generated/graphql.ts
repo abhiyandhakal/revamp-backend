@@ -66,6 +66,7 @@ export type EditCommunityInput = {
 export type Goal = {
   __typename?: 'Goal';
   createdAt: Scalars['Timestamp']['output'];
+  createdBy: Array<UserWithLessDetails>;
   deadline?: Maybe<Scalars['Timestamp']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   goalId: Scalars['Int']['output'];
@@ -75,6 +76,7 @@ export type Goal = {
   order: Scalars['Int']['output'];
   priority?: Maybe<Scalars['String']['output']>;
   relatedArea?: Maybe<Scalars['String']['output']>;
+  sharedBy: Array<Share>;
   streak: Scalars['Int']['output'];
   tasks: Array<Task>;
   title: Scalars['String']['output'];
@@ -93,25 +95,19 @@ export type Journal = {
   access: Scalars['String']['output'];
   comments: Array<Comment>;
   content: Scalars['String']['output'];
+  createdBy: UserWithLessDetails;
   date: Scalars['Timestamp']['output'];
   journalId: Scalars['Int']['output'];
-  likedBy: Array<JournalLike>;
-  sharedBy: Array<JournalShare>;
+  likedBy: Array<Like>;
+  sharedBy: Array<Share>;
   title: Scalars['String']['output'];
   type: Scalars['String']['output'];
 };
 
-export type JournalLike = {
-  __typename?: 'JournalLike';
+export type Like = {
+  __typename?: 'Like';
   likedAt: Scalars['Timestamp']['output'];
   likedBy: UserWithLessDetails;
-};
-
-export type JournalShare = {
-  __typename?: 'JournalShare';
-  sharedAt: Scalars['Timestamp']['output'];
-  sharedBy: UserWithLessDetails;
-  sharedIn: Community;
 };
 
 export type Milestone = {
@@ -459,6 +455,13 @@ export type Resumetime = {
   resumetimeId: Scalars['Int']['output'];
 };
 
+export type Share = {
+  __typename?: 'Share';
+  sharedAt: Scalars['Timestamp']['output'];
+  sharedBy: UserWithLessDetails;
+  sharedIn: Community;
+};
+
 export type Tag = {
   __typename?: 'Tag';
   tag: Scalars['String']['output'];
@@ -635,14 +638,14 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Journal: ResolverTypeWrapper<Journal>;
-  JournalLike: ResolverTypeWrapper<JournalLike>;
-  JournalShare: ResolverTypeWrapper<JournalShare>;
+  Like: ResolverTypeWrapper<Like>;
   Milestone: ResolverTypeWrapper<Milestone>;
   Mutation: ResolverTypeWrapper<{}>;
   Pausetime: ResolverTypeWrapper<Pausetime>;
   Query: ResolverTypeWrapper<{}>;
   Question: ResolverTypeWrapper<Question>;
   Resumetime: ResolverTypeWrapper<Resumetime>;
+  Share: ResolverTypeWrapper<Share>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Tag: ResolverTypeWrapper<Tag>;
   Task: ResolverTypeWrapper<Task>;
@@ -671,14 +674,14 @@ export type ResolversParentTypes = {
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Journal: Journal;
-  JournalLike: JournalLike;
-  JournalShare: JournalShare;
+  Like: Like;
   Milestone: Milestone;
   Mutation: {};
   Pausetime: Pausetime;
   Query: {};
   Question: Question;
   Resumetime: Resumetime;
+  Share: Share;
   String: Scalars['String']['output'];
   Tag: Tag;
   Task: Task;
@@ -729,6 +732,7 @@ export interface EmailAddressScalarConfig extends GraphQLScalarTypeConfig<Resolv
 
 export type GoalResolvers<ContextType = any, ParentType extends ResolversParentTypes['Goal'] = ResolversParentTypes['Goal']> = {
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
+  createdBy?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType>;
   deadline?: Resolver<Maybe<ResolversTypes['Timestamp']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   goalId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -738,6 +742,7 @@ export type GoalResolvers<ContextType = any, ParentType extends ResolversParentT
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   priority?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   relatedArea?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  sharedBy?: Resolver<Array<ResolversTypes['Share']>, ParentType, ContextType>;
   streak?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   tasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -756,25 +761,19 @@ export type JournalResolvers<ContextType = any, ParentType extends ResolversPare
   access?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   comments?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   journalId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  likedBy?: Resolver<Array<ResolversTypes['JournalLike']>, ParentType, ContextType>;
-  sharedBy?: Resolver<Array<ResolversTypes['JournalShare']>, ParentType, ContextType>;
+  likedBy?: Resolver<Array<ResolversTypes['Like']>, ParentType, ContextType>;
+  sharedBy?: Resolver<Array<ResolversTypes['Share']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type JournalLikeResolvers<ContextType = any, ParentType extends ResolversParentTypes['JournalLike'] = ResolversParentTypes['JournalLike']> = {
+export type LikeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Like'] = ResolversParentTypes['Like']> = {
   likedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   likedBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type JournalShareResolvers<ContextType = any, ParentType extends ResolversParentTypes['JournalShare'] = ResolversParentTypes['JournalShare']> = {
-  sharedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  sharedBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
-  sharedIn?: Resolver<ResolversTypes['Community'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -859,6 +858,13 @@ export type QuestionResolvers<ContextType = any, ParentType extends ResolversPar
 export type ResumetimeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Resumetime'] = ResolversParentTypes['Resumetime']> = {
   resumeTime?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   resumetimeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ShareResolvers<ContextType = any, ParentType extends ResolversParentTypes['Share'] = ResolversParentTypes['Share']> = {
+  sharedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
+  sharedBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
+  sharedIn?: Resolver<ResolversTypes['Community'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -971,14 +977,14 @@ export type Resolvers<ContextType = any> = {
   Goal?: GoalResolvers<ContextType>;
   GoalQna?: GoalQnaResolvers<ContextType>;
   Journal?: JournalResolvers<ContextType>;
-  JournalLike?: JournalLikeResolvers<ContextType>;
-  JournalShare?: JournalShareResolvers<ContextType>;
+  Like?: LikeResolvers<ContextType>;
   Milestone?: MilestoneResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Pausetime?: PausetimeResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Question?: QuestionResolvers<ContextType>;
   Resumetime?: ResumetimeResolvers<ContextType>;
+  Share?: ShareResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   Task?: TaskResolvers<ContextType>;
   TimeDuration?: TimeDurationResolvers<ContextType>;

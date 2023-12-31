@@ -81,6 +81,8 @@ type Goal {
 	updatedAt: Timestamp
 	tasks: [Task!]!
 	goalQnas: [GoalQna]
+	createdBy: [UserWithLessDetails!]!
+	sharedBy: [Share!]!
 }
 
 type Tag {
@@ -114,12 +116,12 @@ type Comment {
 	author: UserWithLessDetails!
 }
 
-type JournalLike {
+type Like {
 	likedBy: UserWithLessDetails!
 	likedAt: Timestamp!
 }
 
-type JournalShare {
+type Share {
 	sharedBy: UserWithLessDetails!
 	sharedAt: Timestamp!
 	sharedIn: Community!
@@ -133,8 +135,9 @@ type Journal {
 	access: String!
 	date: Timestamp!
 	comments: [Comment!]!
-	likedBy: [JournalLike!]!
-	sharedBy: [JournalShare!]!
+	likedBy: [Like!]!
+	sharedBy: [Share!]!
+	createdBy: UserWithLessDetails!
 }
 
 type User {

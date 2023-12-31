@@ -3,13 +3,7 @@ import db from "../../db";
 import { comment } from "../../db/schema/comment";
 import { journal } from "../../db/schema/journal";
 import { goal } from "../../db/schema/goal";
-import {
-	Journal,
-	Comment,
-	JournalLike,
-	QueryResolvers,
-	MutationResolvers,
-} from "../../generated/graphql";
+import { Journal, Comment, Like, QueryResolvers, MutationResolvers } from "../../generated/graphql";
 import { user } from "../../db/schema/user";
 import { userLikesJournal } from "../../db/schema/relations/user-likes-journal";
 import { YogaInitialContext } from "graphql-yoga";
@@ -38,13 +32,13 @@ const getCommentsOfJournal = async (journalId: number): Promise<Comment[]> => {
 	return comments;
 };
 
-const getJournalLikes = async (journalId: number): Promise<JournalLike[]> => {
+const getJournalLikes = async (journalId: number): Promise<Like[]> => {
 	const likesFromDb = await db
 		.select()
 		.from(userLikesJournal)
 		.where(eq(userLikesJournal.journalId, journalId));
 
-	const likes: JournalLike[] = await Promise.all(
+	const likes: Like[] = await Promise.all(
 		likesFromDb.map(async singleLike => {
 			const userFromDb = await db.select().from(user).where(eq(user.userId, singleLike.userId));
 			if (userFromDb.length === 0) throw new Error("User not found");
@@ -64,6 +58,7 @@ export const sqlToGqlJournal = async (
 ): Promise<Journal> => {
 	const comments = await getCommentsOfJournal(singleJournal.journalId);
 	const likes = await getJournalLikes(singleJournal.journalId);
+	const createdByArr = await db.select().from(user).where(eq(user.userId, singleJournal.userId));
 
 	return {
 		...singleJournal,
@@ -71,6 +66,7 @@ export const sqlToGqlJournal = async (
 		comments,
 		likedBy: likes,
 		sharedBy: [],
+		createdBy: { ...createdByArr[0], id: createdByArr[0].userId },
 	};
 };
 
