@@ -134,7 +134,7 @@ export const createCommunity: MutationResolvers["createCommunity"] = async (
 	ctx: YogaInitialContext,
 ) => {
 	const session = await getSession(ctx.request.headers);
-	const userFromClerk = await clerkClient.users.getUser(session.userId);
+	const userFromClerk = { id: session.userId };
 	if (!userFromClerk) throw new Error("You are not in the database");
 
 	const communityId = await db
@@ -479,8 +479,7 @@ export const invitedUsersInCommunity: QueryResolvers["invitedUsersInCommunity"] 
 
 	// check if admin
 	const session = await getSession(ctx.request.headers);
-	const userFromClerk = await clerkClient.users.getUser(session.userId);
-	if (!userFromClerk) throw new Error("You are not in the database");
+	const userFromClerk = { id: session.userId };
 
 	const userInCommunityArr = await db
 		.select()
@@ -521,7 +520,7 @@ export const blockedUsersInCommunity: QueryResolvers["blockedUsersInCommunity"] 
 
 	// check if admin
 	const session = await getSession(ctx.request.headers);
-	const userFromClerk = await clerkClient.users.getUser(session.userId);
+	const userFromClerk = { id: session.userId };
 	if (!userFromClerk) throw new Error("You are not in the database");
 
 	const userInCommunityArr = await db
@@ -547,4 +546,23 @@ export const blockedUsersInCommunity: QueryResolvers["blockedUsersInCommunity"] 
 	}));
 
 	return invitedUsersGql;
+};
+
+export const communityInvitations: QueryResolvers["communityInvitations"] = async (_, __, ctx) => {
+	const session = await getSession(ctx.request.headers);
+
+	const userCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.innerJoin(community, eq(userCommunity.communityId, community.communityId))
+		.where(and(eq(userCommunity.userId, session.userId)));
+
+	const communities = await Promise.all(
+		userCommunityArr.map(async community => {
+			const communityGql = await sqlToGqlCommunity(community.community);
+			return communityGql;
+		}),
+	);
+
+	return communities;
 };
