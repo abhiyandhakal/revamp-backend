@@ -59,7 +59,12 @@ export async function sqlToGqlCommunity(
 		.select()
 		.from(userCommunity)
 		.innerJoin(user, eq(userCommunity.userId, user.userId))
-		.where(eq(userCommunity.communityId, sqlCommunity.communityId));
+		.where(
+			and(
+				eq(userCommunity.communityId, sqlCommunity.communityId),
+				eq(userCommunity.status, "accepted"),
+			),
+		);
 
 	const goals = await db
 		.select()
