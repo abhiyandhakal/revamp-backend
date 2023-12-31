@@ -37,6 +37,7 @@ import { getAllAspects } from "./aspect";
 import { getAllUsers, getSingleUser, setUser } from "./user";
 import {
 	requestedCommunities,
+	communityRequests,
 	getAllCommunities,
 	getMyCommunities,
 	getSingleCommunity,
@@ -82,6 +83,7 @@ const resolvers: Resolvers = {
 		invitedUsersInCommunity,
 		communityInvitations,
 		requestedCommunities,
+		communityRequests,
 		searchCommunities,
 	},
 

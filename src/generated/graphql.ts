@@ -344,6 +344,7 @@ export type Query = {
   communities: Array<Community>;
   community: Community;
   communityInvitations: Array<Community>;
+  communityRequests: Array<UserWithLessDetails>;
   getAllAspects: Array<Aspect>;
   getAllQuestions: Array<Question>;
   getAllUsers: Array<UserWithLessDetails>;
@@ -373,6 +374,11 @@ export type QueryBlockedUsersInCommunityArgs = {
 
 export type QueryCommunityArgs = {
   communityId: Scalars['Int']['input'];
+};
+
+
+export type QueryCommunityRequestsArgs = {
+  communityNametag: Scalars['String']['input'];
 };
 
 
@@ -821,6 +827,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   communities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   community?: Resolver<ResolversTypes['Community'], ParentType, ContextType, RequireFields<QueryCommunityArgs, 'communityId'>>;
   communityInvitations?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
+  communityRequests?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType, RequireFields<QueryCommunityRequestsArgs, 'communityNametag'>>;
   getAllAspects?: Resolver<Array<ResolversTypes['Aspect']>, ParentType, ContextType>;
   getAllQuestions?: Resolver<Array<ResolversTypes['Question']>, ParentType, ContextType>;
   getAllUsers?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType>;
