@@ -1,6 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
+import { user } from "../../db/schema/user";
 import { Goal, MutationResolvers, QueryResolvers } from "../../generated/graphql";
 import { deleteTaskFunc, getTasksOfGoalFunc } from "./task";
 import { goalQuestion } from "../../db/schema/goal-question";
@@ -9,6 +10,8 @@ import { task } from "../../db/schema/task";
 import { goalShared } from "../../db/schema/relations/goal-share";
 import { getSession } from "../../middlewares/permissions";
 import { userCommunity } from "../../db/schema/relations/user-community";
+import { sqlToGqlCommunity } from "./community";
+import { community } from "../../db/schema/community";
 
 export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function (_, { goalId }) {
 	const goals = await db.select().from(goal).where(eq(goal.goalId, goalId));
@@ -34,6 +37,32 @@ export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promis
 		)
 		.where(eq(goalQuestionRelation.goalId, singleGoal.goalId));
 
+	const goalCreatorArr = await db.select().from(user).where(eq(user.userId, singleGoal.userId));
+	if (goalCreatorArr.length === 0) throw new Error("Goal creator not found");
+
+	const sharers = await db
+		.select()
+		.from(goalShared)
+		.innerJoin(user, eq(user.userId, goalShared.userId))
+		.where(eq(goalShared.goalId, singleGoal.goalId));
+
+	const sharedBy = await Promise.all(
+		sharers.map(async sharer => {
+			const communityIdArr = await db
+				.select()
+				.from(community)
+				.where(eq(community.communityId, sharer["goal-shared"].communityId));
+
+			const communityGql = await sqlToGqlCommunity(communityIdArr[0]);
+
+			return {
+				sharedBy: { ...sharer.account, id: sharer.account.userId },
+				sharedAt: sharer["goal-shared"].sharedAt,
+				sharedIn: communityGql,
+			};
+		}),
+	);
+
 	return {
 		...singleGoal,
 		tasks,
@@ -42,6 +71,8 @@ export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promis
 			question: gq["goal-question"].question,
 			answer: gq["goal-question-relation"].answer,
 		})),
+		createdBy: { ...goalCreatorArr[0], id: goalCreatorArr[0].userId },
+		sharedBy,
 	};
 }
 

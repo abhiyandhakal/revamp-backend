@@ -66,7 +66,7 @@ export type EditCommunityInput = {
 export type Goal = {
   __typename?: 'Goal';
   createdAt: Scalars['Timestamp']['output'];
-  createdBy: Array<UserWithLessDetails>;
+  createdBy: UserWithLessDetails;
   deadline?: Maybe<Scalars['Timestamp']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   goalId: Scalars['Int']['output'];
@@ -732,7 +732,7 @@ export interface EmailAddressScalarConfig extends GraphQLScalarTypeConfig<Resolv
 
 export type GoalResolvers<ContextType = any, ParentType extends ResolversParentTypes['Goal'] = ResolversParentTypes['Goal']> = {
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  createdBy?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType>;
+  createdBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
   deadline?: Resolver<Maybe<ResolversTypes['Timestamp']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   goalId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;

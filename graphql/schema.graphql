@@ -81,7 +81,7 @@ type Goal {
 	updatedAt: Timestamp
 	tasks: [Task!]!
 	goalQnas: [GoalQna]
-	createdBy: [UserWithLessDetails!]!
+	createdBy: UserWithLessDetails!
 	sharedBy: [Share!]!
 }
 

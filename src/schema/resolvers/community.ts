@@ -39,7 +39,7 @@ export const getMyCommunities: QueryResolvers["myCommunities"] = async (_, __, c
 	return gqlCommunities;
 };
 
-export const getSingleCommunity: QueryResolvers["community"] = async (_, { communityId }) => {
+export const getSingleCommunityFunc = async (communityId: number): Promise<Community> => {
 	const sqlCommunity = await db
 		.select()
 		.from(community)
@@ -51,6 +51,9 @@ export const getSingleCommunity: QueryResolvers["community"] = async (_, { commu
 
 	return gqlCommunity;
 };
+
+export const getSingleCommunity: QueryResolvers["community"] = async (_, { communityId }) =>
+	getSingleCommunityFunc(communityId);
 
 export async function sqlToGqlCommunity(
 	sqlCommunity: typeof community.$inferSelect,
