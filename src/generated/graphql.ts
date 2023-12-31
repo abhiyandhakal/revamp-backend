@@ -360,6 +360,7 @@ export type Query = {
   getTodosOfUser: Array<Todo>;
   invitedUsersInCommunity: Array<UserWithLessDetails>;
   myCommunities: Array<Community>;
+  requestedCommunities: Array<Community>;
   searchCommunities: Array<Community>;
   todayJournalDaily: Journal;
 };
@@ -836,6 +837,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getTodosOfUser?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosOfUserArgs, 'userId'>>;
   invitedUsersInCommunity?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType, RequireFields<QueryInvitedUsersInCommunityArgs, 'communityNametag'>>;
   myCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
+  requestedCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   searchCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType, RequireFields<QuerySearchCommunitiesArgs, 'searchString'>>;
   todayJournalDaily?: Resolver<ResolversTypes['Journal'], ParentType, ContextType>;
 };

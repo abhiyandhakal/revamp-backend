@@ -555,7 +555,26 @@ export const communityInvitations: QueryResolvers["communityInvitations"] = asyn
 		.select()
 		.from(userCommunity)
 		.innerJoin(community, eq(userCommunity.communityId, community.communityId))
-		.where(and(eq(userCommunity.userId, session.userId)));
+		.where(and(eq(userCommunity.userId, session.userId), eq(userCommunity.status, "pending")));
+
+	const communities = await Promise.all(
+		userCommunityArr.map(async community => {
+			const communityGql = await sqlToGqlCommunity(community.community);
+			return communityGql;
+		}),
+	);
+
+	return communities;
+};
+
+export const requestedCommunities: QueryResolvers["requestedCommunities"] = async (_, __, ctx) => {
+	const session = await getSession(ctx.request.headers);
+
+	const userCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.innerJoin(community, eq(userCommunity.communityId, community.communityId))
+		.where(and(eq(userCommunity.userId, session.userId), eq(userCommunity.status, "requested")));
 
 	const communities = await Promise.all(
 		userCommunityArr.map(async community => {
