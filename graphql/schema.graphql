@@ -214,6 +214,9 @@ type Query {
 	community(communityId: Int!): Community!
 	communities: [Community!]!
 	myCommunities: [Community!]!
+	invitedUsersInCommunity(communityNametag: String!): [UserWithLessDetails!]!
+	blockedUsersInCommunity(communityNametag: String!): [UserWithLessDetails!]!
+	communityInvitations: [Community!]!
 	searchCommunities(searchString: String!): [Community!]!
 }
 

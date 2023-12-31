@@ -340,8 +340,10 @@ export type Pausetime = {
 
 export type Query = {
   __typename?: 'Query';
+  blockedUsersInCommunity: Array<UserWithLessDetails>;
   communities: Array<Community>;
   community: Community;
+  communityInvitations: Array<Community>;
   getAllAspects: Array<Aspect>;
   getAllQuestions: Array<Question>;
   getAllUsers: Array<UserWithLessDetails>;
@@ -356,9 +358,15 @@ export type Query = {
   getTasksOfUser: Array<Task>;
   getTodosOfTask: Array<Todo>;
   getTodosOfUser: Array<Todo>;
+  invitedUsersInCommunity: Array<UserWithLessDetails>;
   myCommunities: Array<Community>;
   searchCommunities: Array<Community>;
   todayJournalDaily: Journal;
+};
+
+
+export type QueryBlockedUsersInCommunityArgs = {
+  communityNametag: Scalars['String']['input'];
 };
 
 
@@ -419,6 +427,11 @@ export type QueryGetTodosOfTaskArgs = {
 
 export type QueryGetTodosOfUserArgs = {
   userId: Scalars['ID']['input'];
+};
+
+
+export type QueryInvitedUsersInCommunityArgs = {
+  communityNametag: Scalars['String']['input'];
 };
 
 
@@ -803,8 +816,10 @@ export type PausetimeResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  blockedUsersInCommunity?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType, RequireFields<QueryBlockedUsersInCommunityArgs, 'communityNametag'>>;
   communities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   community?: Resolver<ResolversTypes['Community'], ParentType, ContextType, RequireFields<QueryCommunityArgs, 'communityId'>>;
+  communityInvitations?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   getAllAspects?: Resolver<Array<ResolversTypes['Aspect']>, ParentType, ContextType>;
   getAllQuestions?: Resolver<Array<ResolversTypes['Question']>, ParentType, ContextType>;
   getAllUsers?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType>;
@@ -819,6 +834,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getTasksOfUser?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryGetTasksOfUserArgs, 'userId'>>;
   getTodosOfTask?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosOfTaskArgs, 'taskId'>>;
   getTodosOfUser?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodosOfUserArgs, 'userId'>>;
+  invitedUsersInCommunity?: Resolver<Array<ResolversTypes['UserWithLessDetails']>, ParentType, ContextType, RequireFields<QueryInvitedUsersInCommunityArgs, 'communityNametag'>>;
   myCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   searchCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType, RequireFields<QuerySearchCommunitiesArgs, 'searchString'>>;
   todayJournalDaily?: Resolver<ResolversTypes['Journal'], ParentType, ContextType>;

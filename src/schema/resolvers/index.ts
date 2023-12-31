@@ -52,6 +52,8 @@ import {
 	addUserToCommunity,
 	makeUserAdminOfCommunity,
 	enterInCommunity,
+	blockedUsersInCommunity,
+	invitedUsersInCommunity,
 } from "./community";
 
 const resolvers: Resolvers = {
@@ -74,6 +76,8 @@ const resolvers: Resolvers = {
 		community: getSingleCommunity,
 		myCommunities: getMyCommunities,
 		communities: getAllCommunities,
+		blockedUsersInCommunity,
+		invitedUsersInCommunity,
 		searchCommunities,
 	},
 
