@@ -124,7 +124,7 @@ type Like {
 type Share {
 	sharedBy: UserWithLessDetails!
 	sharedAt: Timestamp!
-	sharedIn: Community!
+	sharedIn: CommunityWithLessDetails!
 }
 
 type Journal {
@@ -154,7 +154,7 @@ type User {
 	goals: [Goal!]!
 	questions: [Question]
 	emailAddresses: [UserEmailAddress!]!
-	communities: [Community!]!
+	communities: [CommunityWithLessDetails!]!
 }
 
 type UserWithLessDetails {
@@ -182,6 +182,16 @@ type Community {
 	users: [UserWithRole]!
 	goals: [Goal!]!
 	journals: [Journal!]!
+}
+
+type CommunityWithLessDetails {
+	communityId: Int!
+	community: String!
+	description: String!
+	nametag: String!
+	privacy: String!
+	createdAt: Timestamp!
+	updatedAt: Timestamp!
 }
 
 input CreateCommunityInput {

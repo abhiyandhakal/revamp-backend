@@ -49,6 +49,17 @@ export type Community = {
   users: Array<Maybe<UserWithRole>>;
 };
 
+export type CommunityWithLessDetails = {
+  __typename?: 'CommunityWithLessDetails';
+  community: Scalars['String']['output'];
+  communityId: Scalars['Int']['output'];
+  createdAt: Scalars['Timestamp']['output'];
+  description: Scalars['String']['output'];
+  nametag: Scalars['String']['output'];
+  privacy: Scalars['String']['output'];
+  updatedAt: Scalars['Timestamp']['output'];
+};
+
 export type CreateCommunityInput = {
   description: Scalars['String']['input'];
   members: Array<Scalars['ID']['input']>;
@@ -459,7 +470,7 @@ export type Share = {
   __typename?: 'Share';
   sharedAt: Scalars['Timestamp']['output'];
   sharedBy: UserWithLessDetails;
-  sharedIn: Community;
+  sharedIn: CommunityWithLessDetails;
 };
 
 export type Tag = {
@@ -518,7 +529,7 @@ export type User = {
   __typename?: 'User';
   aspects: Array<Aspect>;
   banned: Scalars['Boolean']['output'];
-  communities: Array<Community>;
+  communities: Array<CommunityWithLessDetails>;
   createdAt: Scalars['Timestamp']['output'];
   emailAddresses: Array<UserEmailAddress>;
   firstName: Scalars['String']['output'];
@@ -630,6 +641,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Comment: ResolverTypeWrapper<Comment>;
   Community: ResolverTypeWrapper<Community>;
+  CommunityWithLessDetails: ResolverTypeWrapper<CommunityWithLessDetails>;
   CreateCommunityInput: CreateCommunityInput;
   EditCommunityInput: EditCommunityInput;
   EmailAddress: ResolverTypeWrapper<Scalars['EmailAddress']['output']>;
@@ -666,6 +678,7 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   Comment: Comment;
   Community: Community;
+  CommunityWithLessDetails: CommunityWithLessDetails;
   CreateCommunityInput: CreateCommunityInput;
   EditCommunityInput: EditCommunityInput;
   EmailAddress: Scalars['EmailAddress']['output'];
@@ -723,6 +736,17 @@ export type CommunityResolvers<ContextType = any, ParentType extends ResolversPa
   privacy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   users?: Resolver<Array<Maybe<ResolversTypes['UserWithRole']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CommunityWithLessDetailsResolvers<ContextType = any, ParentType extends ResolversParentTypes['CommunityWithLessDetails'] = ResolversParentTypes['CommunityWithLessDetails']> = {
+  community?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  communityId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nametag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  privacy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -864,7 +888,7 @@ export type ResumetimeResolvers<ContextType = any, ParentType extends ResolversP
 export type ShareResolvers<ContextType = any, ParentType extends ResolversParentTypes['Share'] = ResolversParentTypes['Share']> = {
   sharedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   sharedBy?: Resolver<ResolversTypes['UserWithLessDetails'], ParentType, ContextType>;
-  sharedIn?: Resolver<ResolversTypes['Community'], ParentType, ContextType>;
+  sharedIn?: Resolver<ResolversTypes['CommunityWithLessDetails'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -931,7 +955,7 @@ export interface UrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes[
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   aspects?: Resolver<Array<ResolversTypes['Aspect']>, ParentType, ContextType>;
   banned?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  communities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
+  communities?: Resolver<Array<ResolversTypes['CommunityWithLessDetails']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   emailAddresses?: Resolver<Array<ResolversTypes['UserEmailAddress']>, ParentType, ContextType>;
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -973,6 +997,7 @@ export type Resolvers<ContextType = any> = {
   Aspect?: AspectResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   Community?: CommunityResolvers<ContextType>;
+  CommunityWithLessDetails?: CommunityWithLessDetailsResolvers<ContextType>;
   EmailAddress?: GraphQLScalarType;
   Goal?: GoalResolvers<ContextType>;
   GoalQna?: GoalQnaResolvers<ContextType>;

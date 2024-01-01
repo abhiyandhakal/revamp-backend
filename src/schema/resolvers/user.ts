@@ -7,7 +7,6 @@ import { getGoalsFunc } from "./goal";
 import clerkClient from "@clerk/clerk-sdk-node";
 import { community } from "../../db/schema/community";
 import { userCommunity } from "../../db/schema/relations/user-community";
-import { sqlToGqlCommunity } from "./community";
 
 const getUserEmailAddresses = async (userId: string): Promise<UserEmailAddress[]> => {
 	const userEmailAddresses = await db
@@ -39,20 +38,13 @@ const sqlToGqlUser = async (singleUser: typeof user.$inferSelect): Promise<User>
 		.innerJoin(community, eq(userCommunity.communityId, community.communityId))
 		.where(eq(userCommunity.userId, userId));
 
-	const communities = await Promise.all(
-		communitiesSql.map(async singleCommunity => {
-			const community = sqlToGqlCommunity(singleCommunity["community"]);
-			return community;
-		}),
-	);
-
 	return {
 		...singleUser,
 		aspects,
 		journals: [],
 		goals,
 		emailAddresses,
-		communities,
+		communities: communitiesSql.map(community => ({ ...community.community })),
 	};
 };
 
