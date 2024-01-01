@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import db from "../../db";
 import { goal } from "../../db/schema/goal";
 import { user } from "../../db/schema/user";
-import { Goal, MutationResolvers, QueryResolvers } from "../../generated/graphql";
+import { Goal, Like, MutationResolvers, QueryResolvers } from "../../generated/graphql";
 import { deleteTaskFunc, getTasksOfGoalFunc } from "./task";
 import { goalQuestion } from "../../db/schema/goal-question";
 import { goalQuestionRelation } from "../../db/schema/relations/goal-question";
@@ -21,6 +21,24 @@ export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function(_, 
 
 	const singleGoalSql = await sqlToGqlGoal(singleGoal);
 	return singleGoalSql;
+};
+
+const getGoalLikes = async (goalId: number): Promise<Like[]> => {
+	const likesFromDb = await db.select().from(userLikesGoal).where(eq(userLikesGoal.goalId, goalId));
+
+	const likes: Like[] = await Promise.all(
+		likesFromDb.map(async singleLike => {
+			const userFromDb = await db.select().from(user).where(eq(user.userId, singleLike.userId));
+			if (userFromDb.length === 0) throw new Error("User not found");
+
+			return {
+				likedBy: { ...userFromDb[0], id: userFromDb[0].userId },
+				likedAt: singleLike.likedAt,
+			};
+		}),
+	);
+
+	return likes;
 };
 
 export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promise<Goal> {
@@ -61,6 +79,8 @@ export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promis
 		}),
 	);
 
+	const likedBy = await getGoalLikes(singleGoal.goalId);
+
 	return {
 		...singleGoal,
 		tasks,
@@ -71,6 +91,7 @@ export async function sqlToGqlGoal(singleGoal: typeof goal.$inferSelect): Promis
 		})),
 		createdBy: { ...goalCreatorArr[0], id: goalCreatorArr[0].userId },
 		sharedBy,
+		likedBy,
 	};
 }
 
