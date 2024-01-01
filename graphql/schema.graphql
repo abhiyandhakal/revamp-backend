@@ -298,5 +298,5 @@ type Mutation {
 	updateJournal(journalId: Int!, title: String, content: String): String!
 	shareJournal(journalId: Int!, communityId: Int!): String!
 	publishJournal(journalId: Int!): String!
-	likeJournal(journalId: Int!): String!
+	likeJournal(journalId: Int!): Boolean!
 }

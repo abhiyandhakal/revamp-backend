@@ -243,6 +243,8 @@ export const likeJournal: MutationResolvers["likeJournal"] = async (_, { journal
 		await db
 			.delete(userLikesJournal)
 			.where(eq(userLikesJournal.likeId, userLikesJournalFromDb[0].likeId));
+
+		return false;
 	}
 
 	await db.insert(userLikesJournal).values({
@@ -251,5 +253,5 @@ export const likeJournal: MutationResolvers["likeJournal"] = async (_, { journal
 		likedAt: new Date(),
 	});
 
-	return "Journal liked successfully";
+	return true;
 };
