@@ -83,6 +83,7 @@ type Goal {
 	goalQnas: [GoalQna]
 	createdBy: UserWithLessDetails!
 	sharedBy: [Share!]!
+	likedBy: [Like!]!
 }
 
 type Tag {
@@ -270,6 +271,7 @@ type Mutation {
 	): String!
 	shareGoal(goalId: Int!, communityId: Int!): String!
 	publishGoal(goalId: Int!): String!
+	likeGoal(goalId: Int!): String!
 	editTask(
 		taskId: Int!
 		title: String
@@ -296,4 +298,5 @@ type Mutation {
 	updateJournal(journalId: Int!, title: String, content: String): String!
 	shareJournal(journalId: Int!, communityId: Int!): String!
 	publishJournal(journalId: Int!): String!
+	likeJournal(journalId: Int!): String!
 }

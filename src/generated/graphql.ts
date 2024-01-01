@@ -84,6 +84,7 @@ export type Goal = {
   goalQnas?: Maybe<Array<Maybe<GoalQna>>>;
   isActive: Scalars['Boolean']['output'];
   isDone: Scalars['Boolean']['output'];
+  likedBy: Array<Like>;
   order: Scalars['Int']['output'];
   priority?: Maybe<Scalars['String']['output']>;
   relatedArea?: Maybe<Scalars['String']['output']>;
@@ -146,6 +147,8 @@ export type Mutation = {
   enterInCommunity: Scalars['String']['output'];
   inviteUserToCommunity: Scalars['String']['output'];
   leaveCommunity: Scalars['String']['output'];
+  likeGoal: Scalars['String']['output'];
+  likeJournal: Scalars['String']['output'];
   makeUserAdminOfCommunity: Scalars['String']['output'];
   publishGoal: Scalars['String']['output'];
   publishJournal: Scalars['String']['output'];
@@ -260,6 +263,16 @@ export type MutationInviteUserToCommunityArgs = {
 
 export type MutationLeaveCommunityArgs = {
   communityId: Scalars['Int']['input'];
+};
+
+
+export type MutationLikeGoalArgs = {
+  goalId: Scalars['Int']['input'];
+};
+
+
+export type MutationLikeJournalArgs = {
+  journalId: Scalars['Int']['input'];
 };
 
 
@@ -763,6 +776,7 @@ export type GoalResolvers<ContextType = any, ParentType extends ResolversParentT
   goalQnas?: Resolver<Maybe<Array<Maybe<ResolversTypes['GoalQna']>>>, ParentType, ContextType>;
   isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isDone?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  likedBy?: Resolver<Array<ResolversTypes['Like']>, ParentType, ContextType>;
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   priority?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   relatedArea?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -825,6 +839,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   enterInCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationEnterInCommunityArgs, 'communityId'>>;
   inviteUserToCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationInviteUserToCommunityArgs, 'communityId' | 'username'>>;
   leaveCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLeaveCommunityArgs, 'communityId'>>;
+  likeGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLikeGoalArgs, 'goalId'>>;
+  likeJournal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLikeJournalArgs, 'journalId'>>;
   makeUserAdminOfCommunity?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationMakeUserAdminOfCommunityArgs, 'communityId' | 'username'>>;
   publishGoal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationPublishGoalArgs, 'goalId'>>;
   publishJournal?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationPublishJournalArgs, 'journalId'>>;
