@@ -22,6 +22,7 @@ import {
 	getTodayJournalDaily,
 	shareJournal,
 	publishJournal,
+	likeJournal,
 } from "./journal";
 import {
 	deleteGoal,
@@ -115,6 +116,7 @@ const resolvers: Resolvers = {
 		updateJournal,
 		shareJournal,
 		publishJournal,
+		likeJournal,
 	},
 };
 

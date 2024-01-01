@@ -224,3 +224,32 @@ export const publishJournal: MutationResolvers["publishJournal"] = async (
 
 	return "Journal published successfully";
 };
+
+export const likeJournal: MutationResolvers["likeJournal"] = async (_, { journalId }, ctx) => {
+	const session = await getSession(ctx.request.headers);
+
+	const journalFromDb = await db.select().from(journal).where(eq(journal.journalId, journalId));
+
+	if (journalFromDb.length === 0) throw new Error("Journal not found");
+
+	const userLikesJournalFromDb = await db
+		.select()
+		.from(userLikesJournal)
+		.where(
+			and(eq(userLikesJournal.journalId, journalId), eq(userLikesJournal.userId, session.userId)),
+		);
+
+	if (userLikesJournalFromDb.length !== 0) {
+		await db
+			.delete(userLikesJournal)
+			.where(eq(userLikesJournal.likeId, userLikesJournalFromDb[0].likeId));
+	}
+
+	await db.insert(userLikesJournal).values({
+		journalId,
+		userId: session.userId,
+		likedAt: new Date(),
+	});
+
+	return "Journal liked successfully";
+};
