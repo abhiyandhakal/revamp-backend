@@ -32,6 +32,7 @@ import {
 	getGoals,
 	getSingleGoal,
 	setGoal,
+	likeGoal,
 } from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
@@ -99,6 +100,7 @@ const resolvers: Resolvers = {
 		editGoal,
 		shareGoal,
 		publishGoal,
+		likeGoal,
 		editTask,
 		editTodo,
 		createCommunity,

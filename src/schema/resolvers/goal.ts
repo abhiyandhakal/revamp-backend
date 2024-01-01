@@ -11,6 +11,7 @@ import { goalShared } from "../../db/schema/relations/goal-share";
 import { getSession } from "../../middlewares/permissions";
 import { userCommunity } from "../../db/schema/relations/user-community";
 import { community } from "../../db/schema/community";
+import { userLikesGoal } from "../../db/schema/relations/user-likes-goal";
 
 export const getSingleGoal: QueryResolvers["getSingleGoal"] = async function(_, { goalId }) {
 	const goals = await db.select().from(goal).where(eq(goal.goalId, goalId));
@@ -175,4 +176,31 @@ export const publishGoal: MutationResolvers["publishGoal"] = async function(_, {
 		.where(and(eq(goal.goalId, goalId), eq(goal.userId, session.userId)));
 
 	return "Goal published successfully";
+};
+
+export const likeGoal: MutationResolvers["likeGoal"] = async (_, { goalId }, ctx) => {
+	const session = await getSession(ctx.request.headers);
+
+	const goalFromDb = await db.select().from(goal).where(eq(goal.goalId, goalId));
+
+	if (goalFromDb.length === 0) throw new Error("goal not found");
+
+	const userLikesGoalFromDb = await db
+		.select()
+		.from(userLikesGoal)
+		.where(and(eq(userLikesGoal.goalId, goalId), eq(userLikesGoal.userId, session.userId)));
+
+	if (userLikesGoalFromDb.length !== 0) {
+		await db.delete(userLikesGoal).where(eq(userLikesGoal.likeId, userLikesGoalFromDb[0].likeId));
+
+		return false;
+	}
+
+	await db.insert(userLikesGoal).values({
+		goalId,
+		userId: session.userId,
+		likedAt: new Date(),
+	});
+
+	return true;
 };

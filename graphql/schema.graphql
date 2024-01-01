@@ -271,7 +271,7 @@ type Mutation {
 	): String!
 	shareGoal(goalId: Int!, communityId: Int!): String!
 	publishGoal(goalId: Int!): String!
-	likeGoal(goalId: Int!): String!
+	likeGoal(goalId: Int!): Boolean!
 	editTask(
 		taskId: Int!
 		title: String
