@@ -60,6 +60,12 @@ export type CommunityWithLessDetails = {
   updatedAt: Scalars['Timestamp']['output'];
 };
 
+export type CountResult = {
+  __typename?: 'CountResult';
+  count: Scalars['Float']['output'];
+  date: Scalars['Timestamp']['output'];
+};
+
 export type CreateCommunityInput = {
   description: Scalars['String']['input'];
   members: Array<Scalars['ID']['input']>;
@@ -383,6 +389,10 @@ export type Query = {
   myCommunities: Array<Community>;
   requestedCommunities: Array<Community>;
   searchCommunities: Array<Community>;
+  tasksCompletedAnalyticsEachDayOfGoal: Array<CountResult>;
+  tasksCompletedAnalyticsEachDayOfUser: Array<CountResult>;
+  tasksWorkedOnAnalyticsEachDayOfGoal: Array<CountResult>;
+  tasksWorkedOnAnalyticsEachDayOfUser: Array<CountResult>;
   todayJournalDaily: Journal;
 };
 
@@ -464,6 +474,16 @@ export type QueryInvitedUsersInCommunityArgs = {
 
 export type QuerySearchCommunitiesArgs = {
   searchString: Scalars['String']['input'];
+};
+
+
+export type QueryTasksCompletedAnalyticsEachDayOfGoalArgs = {
+  goalId: Scalars['Int']['input'];
+};
+
+
+export type QueryTasksWorkedOnAnalyticsEachDayOfGoalArgs = {
+  goalId: Scalars['Int']['input'];
 };
 
 export type Question = {
@@ -655,9 +675,11 @@ export type ResolversTypes = {
   Comment: ResolverTypeWrapper<Comment>;
   Community: ResolverTypeWrapper<Community>;
   CommunityWithLessDetails: ResolverTypeWrapper<CommunityWithLessDetails>;
+  CountResult: ResolverTypeWrapper<CountResult>;
   CreateCommunityInput: CreateCommunityInput;
   EditCommunityInput: EditCommunityInput;
   EmailAddress: ResolverTypeWrapper<Scalars['EmailAddress']['output']>;
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Goal: ResolverTypeWrapper<Goal>;
   GoalQna: ResolverTypeWrapper<GoalQna>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
@@ -692,9 +714,11 @@ export type ResolversParentTypes = {
   Comment: Comment;
   Community: Community;
   CommunityWithLessDetails: CommunityWithLessDetails;
+  CountResult: CountResult;
   CreateCommunityInput: CreateCommunityInput;
   EditCommunityInput: EditCommunityInput;
   EmailAddress: Scalars['EmailAddress']['output'];
+  Float: Scalars['Float']['output'];
   Goal: Goal;
   GoalQna: GoalQna;
   ID: Scalars['ID']['output'];
@@ -760,6 +784,12 @@ export type CommunityWithLessDetailsResolvers<ContextType = any, ParentType exte
   nametag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   privacy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CountResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CountResult'] = ResolversParentTypes['CountResult']> = {
+  count?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -885,6 +915,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   myCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   requestedCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType>;
   searchCommunities?: Resolver<Array<ResolversTypes['Community']>, ParentType, ContextType, RequireFields<QuerySearchCommunitiesArgs, 'searchString'>>;
+  tasksCompletedAnalyticsEachDayOfGoal?: Resolver<Array<ResolversTypes['CountResult']>, ParentType, ContextType, RequireFields<QueryTasksCompletedAnalyticsEachDayOfGoalArgs, 'goalId'>>;
+  tasksCompletedAnalyticsEachDayOfUser?: Resolver<Array<ResolversTypes['CountResult']>, ParentType, ContextType>;
+  tasksWorkedOnAnalyticsEachDayOfGoal?: Resolver<Array<ResolversTypes['CountResult']>, ParentType, ContextType, RequireFields<QueryTasksWorkedOnAnalyticsEachDayOfGoalArgs, 'goalId'>>;
+  tasksWorkedOnAnalyticsEachDayOfUser?: Resolver<Array<ResolversTypes['CountResult']>, ParentType, ContextType>;
   todayJournalDaily?: Resolver<ResolversTypes['Journal'], ParentType, ContextType>;
 };
 
@@ -1014,6 +1048,7 @@ export type Resolvers<ContextType = any> = {
   Comment?: CommentResolvers<ContextType>;
   Community?: CommunityResolvers<ContextType>;
   CommunityWithLessDetails?: CommunityWithLessDetailsResolvers<ContextType>;
+  CountResult?: CountResultResolvers<ContextType>;
   EmailAddress?: GraphQLScalarType;
   Goal?: GoalResolvers<ContextType>;
   GoalQna?: GoalQnaResolvers<ContextType>;
