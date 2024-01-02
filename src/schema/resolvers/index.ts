@@ -60,7 +60,10 @@ import {
 	invitedUsersInCommunity,
 	communityInvitations,
 } from "./community";
-import { tasksCompletedAnalyticsEachDayOfGoal } from "./analytics";
+import {
+	tasksCompletedAnalyticsEachDayOfGoal,
+	tasksCompletedAnalyticsEachDayOfUser,
+} from "./analytics";
 
 const resolvers: Resolvers = {
 	Query: {
@@ -89,6 +92,7 @@ const resolvers: Resolvers = {
 		communityRequests,
 		searchCommunities,
 		tasksCompletedAnalyticsEachDayOfGoal,
+		tasksCompletedAnalyticsEachDayOfUser,
 	},
 
 	Mutation: {
