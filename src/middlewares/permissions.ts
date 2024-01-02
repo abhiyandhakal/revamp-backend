@@ -22,6 +22,7 @@ export const getSession = async (headers: Headers): Promise<Session> => {
 const isAuthenticated = rule()(async (_, args, context: YogaInitialContext) => {
 	try {
 		const session = await getSession(context.request.headers);
+		const userFromClerk = await clerkClient.users.getUser(session.userId);
 
 		const userFromDbArr = await db.select().from(user).where(eq(user.userId, session.userId));
 
@@ -30,7 +31,7 @@ const isAuthenticated = rule()(async (_, args, context: YogaInitialContext) => {
 		}
 
 		if (args.userId) {
-			if (session.id !== args.userId) {
+			if (userFromClerk.id !== args.userId) {
 				return new GraphQLError("User id does not match with the session user id");
 			}
 		}
