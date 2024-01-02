@@ -1,6 +1,7 @@
 scalar Timestamp
 scalar EmailAddress
 scalar URL
+scalar Float
 
 type Pausetime {
 	pausetimeId: Int!
@@ -195,6 +196,11 @@ type CommunityWithLessDetails {
 	updatedAt: Timestamp!
 }
 
+type CountResult {
+	date: Timestamp!
+	count: Float!
+}
+
 input CreateCommunityInput {
 	name: String!
 	nametag: String!
@@ -234,6 +240,10 @@ type Query {
 	communityInvitations: [Community!]!
 	requestedCommunities: [Community!]!
 	searchCommunities(searchString: String!): [Community!]!
+	tasksCompletedAnalyticsEachDayOfGoal(goalId: Int!): [CountResult!]!
+	tasksWorkedOnAnalyticsEachDayOfGoal(goalId: Int!): [CountResult!]!
+	tasksCompletedAnalyticsEachDayOfUser: [CountResult!]!
+	tasksWorkedOnAnalyticsEachDayOfUser: [CountResult!]!
 }
 
 type Mutation {
