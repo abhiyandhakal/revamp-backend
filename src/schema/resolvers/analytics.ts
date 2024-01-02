@@ -35,3 +35,13 @@ export const tasksWorkedOnAnalyticsEachDayOfGoal: QueryResolvers["tasksWorkedOnA
 
 		return workedOnTasksCountFromDb;
 	};
+
+export const tasksWorkedOnAnalyticsEachDayOfUser: QueryResolvers["tasksWorkedOnAnalyticsEachDayOfUser"] =
+	async function(_, __, ctx) {
+		const session = await getSession(ctx.request.headers);
+		const workedOnTasksCountFromDb = (await db.execute(
+			sql`SELECT COUNT(*), DATE(${workedOnLog.date}) FROM ${workedOnLog} INNER JOIN ${goal} ON ${goal.goalId} = ${workedOnLog.goalId} WHERE ${goal.userId} = ${session.userId} GROUP BY DATE(${workedOnLog.date})`,
+		)) as { count: number; date: typeof workedOnLog.$inferSelect.date }[];
+
+		return workedOnTasksCountFromDb;
+	};

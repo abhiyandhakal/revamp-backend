@@ -64,6 +64,7 @@ import {
 	tasksCompletedAnalyticsEachDayOfGoal,
 	tasksCompletedAnalyticsEachDayOfUser,
 	tasksWorkedOnAnalyticsEachDayOfGoal,
+	tasksWorkedOnAnalyticsEachDayOfUser,
 } from "./analytics";
 
 const resolvers: Resolvers = {
@@ -95,6 +96,7 @@ const resolvers: Resolvers = {
 		tasksCompletedAnalyticsEachDayOfGoal,
 		tasksCompletedAnalyticsEachDayOfUser,
 		tasksWorkedOnAnalyticsEachDayOfGoal,
+		tasksWorkedOnAnalyticsEachDayOfUser,
 	},
 
 	Mutation: {
