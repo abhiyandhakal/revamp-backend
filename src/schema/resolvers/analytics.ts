@@ -4,6 +4,7 @@ import { task } from "../../db/schema/task";
 import { goal } from "../../db/schema/goal";
 import { QueryResolvers } from "../../generated/graphql";
 import { getSession } from "../../middlewares/permissions";
+import { workedOnLog } from "../../db/schema/worked-on-log";
 
 export const tasksCompletedAnalyticsEachDayOfGoal: QueryResolvers["tasksCompletedAnalyticsEachDayOfGoal"] =
 	async function(_, { goalId }) {
@@ -24,4 +25,13 @@ export const tasksCompletedAnalyticsEachDayOfUser: QueryResolvers["tasksComplete
 		console.log(completedTasksCountFromDb);
 
 		throw new Error("Not implemented");
+	};
+
+export const tasksWorkedOnAnalyticsEachDayOfGoal: QueryResolvers["tasksWorkedOnAnalyticsEachDayOfGoal"] =
+	async function(_, { goalId }) {
+		const workedOnTasksCountFromDb = (await db.execute(
+			sql`SELECT COUNT(*), DATE(${workedOnLog.date}) FROM ${workedOnLog} WHERE ${workedOnLog.goalId} = ${goalId} GROUP BY DATE(${workedOnLog.date})`,
+		)) as { count: number; date: typeof workedOnLog.$inferSelect.date }[];
+
+		return workedOnTasksCountFromDb;
 	};

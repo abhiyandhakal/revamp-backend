@@ -63,6 +63,7 @@ import {
 import {
 	tasksCompletedAnalyticsEachDayOfGoal,
 	tasksCompletedAnalyticsEachDayOfUser,
+	tasksWorkedOnAnalyticsEachDayOfGoal,
 } from "./analytics";
 
 const resolvers: Resolvers = {
@@ -93,6 +94,7 @@ const resolvers: Resolvers = {
 		searchCommunities,
 		tasksCompletedAnalyticsEachDayOfGoal,
 		tasksCompletedAnalyticsEachDayOfUser,
+		tasksWorkedOnAnalyticsEachDayOfGoal,
 	},
 
 	Mutation: {
