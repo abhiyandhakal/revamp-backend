@@ -18,13 +18,11 @@ export const tasksCompletedAnalyticsEachDayOfGoal: QueryResolvers["tasksComplete
 export const tasksCompletedAnalyticsEachDayOfUser: QueryResolvers["tasksCompletedAnalyticsEachDayOfUser"] =
 	async function(_, __, ctx) {
 		const session = await getSession(ctx.request.headers);
-		const completedTasksCountFromDb = await db.execute(
+		const completedTasksCountFromDb = (await db.execute(
 			sql`SELECT COUNT(*), DATE(${task.updatedAt}) as date FROM ${task} INNER JOIN ${goal} ON ${goal.goalId} = ${task.goalId} WHERE ${goal.userId} = ${session.userId} AND ${task.isDone} = TRUE GROUP BY DATE(${task.updatedAt})`,
-		);
+		)) as { count: number; date: typeof task.$inferSelect.updatedAt }[];
 
-		console.log(completedTasksCountFromDb);
-
-		throw new Error("Not implemented");
+		return completedTasksCountFromDb;
 	};
 
 export const tasksWorkedOnAnalyticsEachDayOfGoal: QueryResolvers["tasksWorkedOnAnalyticsEachDayOfGoal"] =
