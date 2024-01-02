@@ -81,6 +81,9 @@ type Goal {
 	updatedAt: Timestamp
 	tasks: [Task!]!
 	goalQnas: [GoalQna]
+	createdBy: UserWithLessDetails!
+	sharedBy: [Share!]!
+	likedBy: [Like!]!
 }
 
 type Tag {
@@ -114,15 +117,15 @@ type Comment {
 	author: UserWithLessDetails!
 }
 
-type JournalLike {
+type Like {
 	likedBy: UserWithLessDetails!
 	likedAt: Timestamp!
 }
 
-type JournalShare {
+type Share {
 	sharedBy: UserWithLessDetails!
 	sharedAt: Timestamp!
-	sharedIn: Community!
+	sharedIn: CommunityWithLessDetails!
 }
 
 type Journal {
@@ -133,8 +136,9 @@ type Journal {
 	access: String!
 	date: Timestamp!
 	comments: [Comment!]!
-	likedBy: [JournalLike!]!
-	sharedBy: [JournalShare!]!
+	likedBy: [Like!]!
+	sharedBy: [Share!]!
+	createdBy: UserWithLessDetails!
 }
 
 type User {
@@ -151,7 +155,7 @@ type User {
 	goals: [Goal!]!
 	questions: [Question]
 	emailAddresses: [UserEmailAddress!]!
-	communities: [Community!]!
+	communities: [CommunityWithLessDetails!]!
 }
 
 type UserWithLessDetails {
@@ -179,6 +183,16 @@ type Community {
 	users: [UserWithRole]!
 	goals: [Goal!]!
 	journals: [Journal!]!
+}
+
+type CommunityWithLessDetails {
+	communityId: Int!
+	community: String!
+	description: String!
+	nametag: String!
+	privacy: String!
+	createdAt: Timestamp!
+	updatedAt: Timestamp!
 }
 
 input CreateCommunityInput {
@@ -214,6 +228,11 @@ type Query {
 	community(communityId: Int!): Community!
 	communities: [Community!]!
 	myCommunities: [Community!]!
+	invitedUsersInCommunity(communityNametag: String!): [UserWithLessDetails!]!
+	blockedUsersInCommunity(communityNametag: String!): [UserWithLessDetails!]!
+	communityRequests(communityNametag: String!): [UserWithLessDetails!]!
+	communityInvitations: [Community!]!
+	requestedCommunities: [Community!]!
 	searchCommunities(searchString: String!): [Community!]!
 }
 
@@ -252,6 +271,7 @@ type Mutation {
 	): String!
 	shareGoal(goalId: Int!, communityId: Int!): String!
 	publishGoal(goalId: Int!): String!
+	likeGoal(goalId: Int!): Boolean!
 	editTask(
 		taskId: Int!
 		title: String
@@ -267,15 +287,16 @@ type Mutation {
 	acceptCommunityInvite(communityId: Int!): String!
 	declineCommunityInvite(communityId: Int!): String!
 	leaveCommunity(communityId: Int!): String!
-	inviteUserToCommunity(communityId: Int!, userId: ID!): String!
-	blockUserFromCommunity(communityId: Int!, userId: ID!): String!
-	removeUserFromCommunity(communityId: Int!, userId: ID!): String!
-	unBlockUserFromCommunity(communityId: Int!, userId: ID!): String!
+	inviteUserToCommunity(communityId: Int!, username: String!): String!
+	blockUserFromCommunity(communityId: Int!, username: String!): String!
+	removeUserFromCommunity(communityId: Int!, username: String!): String!
+	unBlockUserFromCommunity(communityId: Int!, username: String!): String!
 	editCommunity(communityId: Int!, input: EditCommunityInput!): String!
-	addUserToCommunity(communityId: Int!, userId: ID!): String!
-	makeUserAdminOfCommunity(communityId: Int!, userId: ID!): String!
+	addUserToCommunity(communityId: Int!, username: String!): String!
+	makeUserAdminOfCommunity(communityId: Int!, username: String!): String!
 	enterInCommunity(communityId: Int!): String!
 	updateJournal(journalId: Int!, title: String, content: String): String!
 	shareJournal(journalId: Int!, communityId: Int!): String!
 	publishJournal(journalId: Int!): String!
+	likeJournal(journalId: Int!): Boolean!
 }

@@ -22,6 +22,7 @@ import {
 	getTodayJournalDaily,
 	shareJournal,
 	publishJournal,
+	likeJournal,
 } from "./journal";
 import {
 	deleteGoal,
@@ -31,11 +32,14 @@ import {
 	getGoals,
 	getSingleGoal,
 	setGoal,
+	likeGoal,
 } from "./goal";
 import { getAllQuestions } from "./question";
 import { getAllAspects } from "./aspect";
 import { getAllUsers, getSingleUser, setUser } from "./user";
 import {
+	requestedCommunities,
+	communityRequests,
 	getAllCommunities,
 	getMyCommunities,
 	getSingleCommunity,
@@ -52,6 +56,9 @@ import {
 	addUserToCommunity,
 	makeUserAdminOfCommunity,
 	enterInCommunity,
+	blockedUsersInCommunity,
+	invitedUsersInCommunity,
+	communityInvitations,
 } from "./community";
 
 const resolvers: Resolvers = {
@@ -74,6 +81,11 @@ const resolvers: Resolvers = {
 		community: getSingleCommunity,
 		myCommunities: getMyCommunities,
 		communities: getAllCommunities,
+		blockedUsersInCommunity,
+		invitedUsersInCommunity,
+		communityInvitations,
+		requestedCommunities,
+		communityRequests,
 		searchCommunities,
 	},
 
@@ -88,6 +100,7 @@ const resolvers: Resolvers = {
 		editGoal,
 		shareGoal,
 		publishGoal,
+		likeGoal,
 		editTask,
 		editTodo,
 		createCommunity,
@@ -105,6 +118,7 @@ const resolvers: Resolvers = {
 		updateJournal,
 		shareJournal,
 		publishJournal,
+		likeJournal,
 	},
 };
 

@@ -39,7 +39,7 @@ export const getMyCommunities: QueryResolvers["myCommunities"] = async (_, __, c
 	return gqlCommunities;
 };
 
-export const getSingleCommunity: QueryResolvers["community"] = async (_, { communityId }) => {
+export const getSingleCommunityFunc = async (communityId: number): Promise<Community> => {
 	const sqlCommunity = await db
 		.select()
 		.from(community)
@@ -52,6 +52,9 @@ export const getSingleCommunity: QueryResolvers["community"] = async (_, { commu
 	return gqlCommunity;
 };
 
+export const getSingleCommunity: QueryResolvers["community"] = async (_, { communityId }) =>
+	getSingleCommunityFunc(communityId);
+
 export async function sqlToGqlCommunity(
 	sqlCommunity: typeof community.$inferSelect,
 ): Promise<Community> {
@@ -59,7 +62,12 @@ export async function sqlToGqlCommunity(
 		.select()
 		.from(userCommunity)
 		.innerJoin(user, eq(userCommunity.userId, user.userId))
-		.where(eq(userCommunity.communityId, sqlCommunity.communityId));
+		.where(
+			and(
+				eq(userCommunity.communityId, sqlCommunity.communityId),
+				eq(userCommunity.status, "accepted"),
+			),
+		);
 
 	const goals = await db
 		.select()
@@ -129,7 +137,7 @@ export const createCommunity: MutationResolvers["createCommunity"] = async (
 	ctx: YogaInitialContext,
 ) => {
 	const session = await getSession(ctx.request.headers);
-	const userFromClerk = await clerkClient.users.getUser(session.userId);
+	const userFromClerk = { id: session.userId };
 	if (!userFromClerk) throw new Error("You are not in the database");
 
 	const communityId = await db
@@ -219,8 +227,16 @@ export const leaveCommunity: MutationResolvers["leaveCommunity"] = async (
 
 export const removeUserFromCommunity: MutationResolvers["removeUserFromCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is not in community
 	const userInCommunityArr = await db
 		.select()
@@ -238,8 +254,16 @@ export const removeUserFromCommunity: MutationResolvers["removeUserFromCommunity
 
 export const inviteUserToCommunity: MutationResolvers["inviteUserToCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is already in community
 	const userInCommunityArr = await db
 		.select()
@@ -259,8 +283,16 @@ export const inviteUserToCommunity: MutationResolvers["inviteUserToCommunity"] =
 
 export const blockUserFromCommunity: MutationResolvers["blockUserFromCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is already in community
 	const userInCommunityArr = await db
 		.select()
@@ -286,8 +318,16 @@ export const blockUserFromCommunity: MutationResolvers["blockUserFromCommunity"]
 
 export const unBlockUserFromCommunity: MutationResolvers["unBlockUserFromCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is already in community
 	const userInCommunityArr = await db
 		.select()
@@ -329,8 +369,16 @@ export const editCommunity: MutationResolvers["editCommunity"] = async (
 
 export const addUserToCommunity: MutationResolvers["addUserToCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+
+	const userId = userFromDb[0].userId;
 	// check if user is already in community
 	const userInCommunityArr = await db
 		.select()
@@ -350,8 +398,16 @@ export const addUserToCommunity: MutationResolvers["addUserToCommunity"] = async
 
 export const makeUserAdminOfCommunity: MutationResolvers["makeUserAdminOfCommunity"] = async (
 	_,
-	{ communityId, userId },
+	{ communityId, username },
 ) => {
+	const userFromDb = await db
+		.select({ userId: user.userId })
+		.from(user)
+		.where(eq(user.username, username));
+
+	if (userFromDb.length === 0) throw new Error("User does not exist");
+	const userId = userFromDb[0].userId;
+
 	// check if user is not in community
 	const userInCommunityArr = await db
 		.select()
@@ -411,4 +467,166 @@ export const enterInCommunity: MutationResolvers["enterInCommunity"] = async (
 	});
 
 	return "User requested to enter community";
+};
+export const invitedUsersInCommunity: QueryResolvers["invitedUsersInCommunity"] = async (
+	_,
+	{ communityNametag },
+	ctx,
+) => {
+	const communityIdArr = await db
+		.select({ communityId: community.communityId })
+		.from(community)
+		.where(eq(community.nametag, communityNametag));
+	if (communityIdArr.length === 0) throw new Error("Community does not exist");
+	const communityId = communityIdArr[0].communityId;
+
+	// check if admin
+	const session = await getSession(ctx.request.headers);
+	const userFromClerk = { id: session.userId };
+
+	const userInCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.where(
+			and(eq(userCommunity.userId, userFromClerk.id), eq(userCommunity.communityId, communityId)),
+		);
+
+	if (userInCommunityArr.length === 0) throw new Error("User is not in community");
+
+	if (userInCommunityArr[0].role !== "admin") throw new Error("User is not admin of community");
+
+	const invitedUsers = await db
+		.select()
+		.from(userCommunity)
+		.innerJoin(user, eq(userCommunity.userId, user.userId))
+		.where(and(eq(userCommunity.communityId, communityId), eq(userCommunity.status, "pending")));
+
+	const invitedUsersGql = invitedUsers.map(user => ({
+		...user.account,
+		id: user.account.userId,
+	}));
+
+	return invitedUsersGql;
+};
+
+export const blockedUsersInCommunity: QueryResolvers["blockedUsersInCommunity"] = async (
+	_,
+	{ communityNametag },
+	ctx,
+) => {
+	const communityIdArr = await db
+		.select({ communityId: community.communityId })
+		.from(community)
+		.where(eq(community.nametag, communityNametag));
+	if (communityIdArr.length === 0) throw new Error("Community does not exist");
+	const communityId = communityIdArr[0].communityId;
+
+	// check if admin
+	const session = await getSession(ctx.request.headers);
+	const userFromClerk = { id: session.userId };
+	if (!userFromClerk) throw new Error("You are not in the database");
+
+	const userInCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.where(
+			and(eq(userCommunity.userId, userFromClerk.id), eq(userCommunity.communityId, communityId)),
+		);
+
+	if (userInCommunityArr.length === 0) throw new Error("User is not in community");
+
+	if (userInCommunityArr[0].role !== "admin") throw new Error("User is not admin of community");
+
+	const blockedUsers = await db
+		.select()
+		.from(userCommunity)
+		.innerJoin(user, eq(userCommunity.userId, user.userId))
+		.where(and(eq(userCommunity.communityId, communityId), eq(userCommunity.status, "blocked")));
+
+	const invitedUsersGql = blockedUsers.map(user => ({
+		...user.account,
+		id: user.account.userId,
+	}));
+
+	return invitedUsersGql;
+};
+
+export const communityRequests: QueryResolvers["communityRequests"] = async (
+	_,
+	{ communityNametag },
+	ctx,
+) => {
+	const communityIdArr = await db
+		.select({ communityId: community.communityId })
+		.from(community)
+		.where(eq(community.nametag, communityNametag));
+	if (communityIdArr.length === 0) throw new Error("Community does not exist");
+	const communityId = communityIdArr[0].communityId;
+
+	// check if admin
+	const session = await getSession(ctx.request.headers);
+	const userFromClerk = { id: session.userId };
+	if (!userFromClerk) throw new Error("You are not in the database");
+
+	const userInCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.where(
+			and(eq(userCommunity.userId, userFromClerk.id), eq(userCommunity.communityId, communityId)),
+		);
+
+	if (userInCommunityArr.length === 0) throw new Error("User is not in community");
+
+	if (userInCommunityArr[0].role !== "admin") throw new Error("User is not admin of community");
+
+	const blockedUsers = await db
+		.select()
+		.from(userCommunity)
+		.innerJoin(user, eq(userCommunity.userId, user.userId))
+		.where(and(eq(userCommunity.communityId, communityId), eq(userCommunity.status, "requested")));
+
+	const invitedUsersGql = blockedUsers.map(user => ({
+		...user.account,
+		id: user.account.userId,
+	}));
+
+	return invitedUsersGql;
+};
+
+export const communityInvitations: QueryResolvers["communityInvitations"] = async (_, __, ctx) => {
+	const session = await getSession(ctx.request.headers);
+
+	const userCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.innerJoin(community, eq(userCommunity.communityId, community.communityId))
+		.where(and(eq(userCommunity.userId, session.userId), eq(userCommunity.status, "pending")));
+
+	const communities = await Promise.all(
+		userCommunityArr.map(async community => {
+			const communityGql = await sqlToGqlCommunity(community.community);
+			return communityGql;
+		}),
+	);
+
+	return communities;
+};
+
+export const requestedCommunities: QueryResolvers["requestedCommunities"] = async (_, __, ctx) => {
+	const session = await getSession(ctx.request.headers);
+
+	const userCommunityArr = await db
+		.select()
+		.from(userCommunity)
+		.innerJoin(community, eq(userCommunity.communityId, community.communityId))
+		.where(and(eq(userCommunity.userId, session.userId), eq(userCommunity.status, "requested")));
+
+	const communities = await Promise.all(
+		userCommunityArr.map(async community => {
+			const communityGql = await sqlToGqlCommunity(community.community);
+			return communityGql;
+		}),
+	);
+
+	return communities;
 };
